@@ -1,0 +1,22 @@
+{% extends "main/header.html" %}
+{% block content %}
+    <div class="row display-flex justify-content-start">
+    {% for object in objects %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mobiledevice">
+            <article class="media content-section customhover" style="height: 95%;">
+                <div class="media-body">
+                    <a href="/{{object.cedulamed}}">
+                        <img class="img-fluid" src="/">
+                    </a>
+                    <div>
+                        <a class="article-title line-clamp-2 title-style" style="font-size: 22px" href="/consultas/{{object.cedulamed}}">
+                            {{ object.nombresmed }}
+                        </a>
+                        <p class="article-content line-clamp-5 subtitle-style">{{ object.apellidosmed }}</p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock content %}

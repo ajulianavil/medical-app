@@ -1,0 +1,29 @@
+/* Style the greeting card */
+#card_greetings {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
+    padding: 16px;
+    text-align: left;
+    background-color: #ffffff;
+    border-radius: 5px;
+    min-width: 300px;
+}
+
+/* Style the counter cards */
+.card1 {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
+    padding: 16px;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 5%;
+    height: auto;
+
+}
+
+.card_row {
+    max-width: 50%;
+}
+
+.info {
+    border-radius: 15px;
+}
+
