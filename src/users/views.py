@@ -8,8 +8,8 @@ from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
 def register(request):
-    if request.user.is_authenticated:
-        return redirect('/')
+    # if request.user.is_authenticated:
+        # return redirect('/')
 
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
