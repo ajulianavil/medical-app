@@ -102,7 +102,7 @@ DATABASES={
       'ENGINE':'django.db.backends.postgresql_psycopg2',
       'NAME':'quickdiagnosis',
       'USER':'postgres',
-      'PASSWORD':'n0Pqssword',
+      'PASSWORD':'123456',
       'HOST':'127.0.0.1',
       'PORT':'5432',
    }
