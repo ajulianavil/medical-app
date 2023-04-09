@@ -17,14 +17,14 @@
         box-sizing: border-box;
       }
 
-      /* body {
+      body {
         position: relative;
         margin: var(--header-height) 0 0 0;
         padding: 0 1rem;
         font-family: var(--body-font);
         font-size: var(--normal-font-size);
         transition: 0.5s;
-      } */
+      }
 
       a {
         text-decoration: none;
@@ -79,10 +79,9 @@
       .nav {
         height: 100%;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: space-between;
         overflow: hidden;
-        align-items: center;
       }
 
       .nav_logo,
