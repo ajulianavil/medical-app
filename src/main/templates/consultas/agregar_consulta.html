@@ -8,16 +8,28 @@
 {% endblock %}
 
 {% block content %}
-<form  method="POST", enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="file" id="file" />
-    <button type="submit">Upload file</button>
-    <!-- 
-    <p>
-        {{form.file}}
-    </p>
-    <p><input type="submit" value="Upload"></p> -->
 
-</form>
+<div class="bg-light p-5 text-center">
+    <h1 class="text-primary" style=" font-weight: bold">Agregar nuevo caso</h1>
+    <p>Por favor cargue el archivo del Ultrasonido.</p>
+    <p>Asegurese de cargar un arhivo en formato TXT y que el archivo no haya sido manipulado
+        o modificado previamente
+    </p>
+
+
+    <form  method="POST", enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" id="file" />
+        <button class="btn btn-primary" type="submit">Procesar</button>
+        <!-- 
+        <p>
+            {{form.file}}
+        </p>
+        <p><input type="submit" value="Upload"></p> -->
+    
+    </form>
+
+  </div>
+
 
 {% endblock %}
