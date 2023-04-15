@@ -1,0 +1,37 @@
+/* Set the font family and size for the form */
+form {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+/* Style the labels for the form fields */
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Style the form fields */
+input[type="text"], textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Style the submit button */
+button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Style the form error messages */
+.errorlist {
+    color: red;
+    margin-top: 5px;
+}
