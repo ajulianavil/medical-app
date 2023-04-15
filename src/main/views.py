@@ -14,7 +14,7 @@ def homepage(request):
         return redirect('/login')
     current_user = request.user
     user = get_user_model().objects.filter(email=current_user).first()
-    return render(request, 'main/index.html', {'user': user})
+    return render(request, 'main/pages/home.html', {'user': user})
    
 def personal(request, personal: int):
     matching_personal = Personalsalud.objects.filter(hospitalid=personal).all()

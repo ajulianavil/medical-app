@@ -1,24 +1,35 @@
-{% extends "main/body.html" %}
+{% extends 'main/layout.html' %}
 {% load static %}
 {% block head %}
- <!-- Custom CSS -->
-    <title>Agregar Consulta</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/ejemplo.css' %}"/>
+    <script src="https://kit.fontawesome.com/5bdb3c603b.js" crossorigin="anonymous"></script>
+
 {% endblock %}
 
 {% block content %}
-<form  method="POST", enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="file" id="file" />
-    <button type="submit">Upload file</button>
-    <!-- 
-    <p>
-        {{form.file}}
+
+<div class="bg-light p-5 text-center">
+    <h1 class="text-primary" style=" font-weight: bold">Agregar nuevo caso</h1>
+    <p>Por favor cargue el archivo del Ultrasonido.</p>
+    <p>Asegurese de cargar un arhivo en formato TXT y que el archivo no haya sido manipulado
+        o modificado previamente
     </p>
-    <p><input type="submit" value="Upload"></p> -->
 
-</form>
 
-{% endblock %}
+    <form  method="POST", enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" id="file" />
+        <button class="btn btn-primary" type="submit">Procesar</button>
+        <!-- 
+        <p>
+            {{form.file}}
+        </p>
+        <p><input type="submit" value="Upload"></p> -->
+    
+    </form>
 
-{% block javascript %}
+  </div>
+
+
 {% endblock %}

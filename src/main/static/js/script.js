@@ -1,38 +1,39 @@
- //ejecutar funcion en el evento click
 
- document.getElementById("boton_open").addEventListener("click",open_close_menu)
- //declaramos las variables
+        document.addEventListener("DOMContentLoaded", function (event) {
+            const showNavbar = (toggleId, navId, bodyId, headerId) => {
+                const toggle = document.getElementById(toggleId),
+                    nav = document.getElementById(navId),
+                    bodypd = document.getElementById(bodyId),
+                    headerpd = document.getElementById(headerId);
 
- var menu_side=document.getElementById("menu_side");
- var boton_open=document.getElementById("boton_open");
- var body=document.getElementById("body");
+                // Validate that all variables exist
+                if (toggle && nav && bodypd && headerpd) {
+                    toggle.addEventListener("click", () => {
+                        // show navbar
+                        nav.classList.toggle("show");
+                        // change icon
+                        toggle.classList.toggle("bx-x");
+                        // add padding to body
+                        bodypd.classList.toggle("body-pd");
+                        // add padding to header
+                        headerpd.classList.toggle("body-pd");
+                    });
+                }
+            };
 
-  //evento para mostrar y ocultar el menú
-   function open_close_menu(){
-     body.classList.toggle("body_move");
-     menu_side.classList.toggle("menu__side_move");
-   }
+            showNavbar("header-toggle", "nav-bar", "body-pd", "header");
 
-   //si el ancho de la pagina es menos a 760px, ocultará el menú al recargar  la pagina
+            /*===== LINK ACTIVE =====*/
+            const linkColor = document.querySelectorAll(".nav_link");
 
-   if (window.innerWidth < 760){
-    body.classList.add("body_move");
-    menu_side.classList.add("menu__side_move");
-   }
+            function colorLink() {
+                if (linkColor) {
+                    linkColor.forEach((l) => l.classList.remove("active"));
+                    this.classList.add("active");
+                }
+            }
 
-   //haciendo el menú responsive
-   window.addEventListener("resize",function(){
+            linkColor.forEach((l) => l.addEventListener("click", colorLink));
 
-    if(window.innerWidth>760){
-
-      body.classList.remove("body_move");
-      menu_side.classList.remove("menu__side_move");
-    }
-
-    if(window.innerWidth<760){
-
-      body.classList.add("body_move");
-      menu_side.classList.add("menu__side_move");
-    }
-   });
-
+            // Your code to run since DOM is loaded and ready
+        });
