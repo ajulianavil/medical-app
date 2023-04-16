@@ -15,7 +15,8 @@ def landing(request):
 def aboutUs(request):
     return render(request, 'main/pages/aboutUs.html')
 
-
+def howToRegister(request):
+    return render(request, 'main/pages/howToRegister.html' )
 def homepage(request):
     if not request.user.is_authenticated:
         return redirect('/login')

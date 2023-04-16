@@ -101,7 +101,7 @@ print(BASE_DIR)
 DATABASES={
    'default':{
       'ENGINE':'django.db.backends.postgresql_psycopg2',
-      'NAME':'quickdiagnosis',
+      'NAME':'DiagnosisApp',
       'USER':'postgres',
       'PASSWORD':'admin',
       'HOST':'127.0.0.1',
