@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
 
+body {
+  background-color: #F1F0F7; /* Replace with your desired background color */
+}
       :root {
         --header-height: 3rem;
         --nav-width: 68px;
@@ -116,10 +119,18 @@
 
       .nav_link:hover {
         color: var(--white-color);
+        background-color: rgba(13, 99, 213, 0.5);
+        border-radius: 5px 5px;
       }
 
       .nav_icon {
-        font-size: 1.25rem;
+        color: white;
+        font-size: 1rem;
+      }
+
+      .nav_name{
+        font-family: 'League Spartan', sans-serif;
+        color: white;
       }
 
       .show {
