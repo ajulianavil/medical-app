@@ -142,32 +142,25 @@ class Consulta(models.Model):
         verbose_name_plural = "Consultas"
         ordering = ['consultaid']
 
-        
+
 class Tipomedicion(models.Model):
-    idtipomedicion = models.AutoField(primary_key=True)  # Field name made lowercase.
-    nombremedicion = models.CharField(max_length=150, blank=True, null=True)  # Field name made lowercase.
+    idTipoMedicion = models.AutoField( primary_key=True)  # Field name made lowercase.
+    nombreMedicion = models.CharField( max_length=150, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         db_table = 'TipoMedicion'
         verbose_name_plural = "TiposMedicion"
         
-class Medicion(models.Model):
-    idmedicion = models.AutoField(db_column='id_medicion', primary_key=True)  # Field name made lowercase.
-    id_tipo_medicion = models.ForeignKey(Tipomedicion, on_delete=models.SET_DEFAULT, default="")
-    ga = models.IntegerField(db_column='ga', null=True)
-    valormin = models.FloatField(db_column='valor_min', default=0.0, null=True, blank=True)  # Field name made lowercase.
-    valormax = models.FloatField(db_column='valor_max', default=0.0, null=True, blank=True)  # Field name made lowercase.
-    valorinter = models.FloatField(db_column='valor_inter', default=0.0, null=True, blank=True)  # Field name made lowercase.
 
+class Medicion(models.Model):
+    idmedicion = models.AutoField(db_column='idMedicion', primary_key=True)  # Field name made lowercase.
+    ga = models.IntegerField(db_column='ga', null=False, blank=False)
+    valormin = models.FloatField(db_column='valorMin', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    valorinter = models.FloatField(db_column='valorMax', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    valordev = models.FloatField(db_column='valorDev', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    id_tipo_medicion = models.OneToOneField(Tipomedicion, models.CASCADE, db_column='idTipoMedicion', blank=False, null=False)
+    
     class Meta:
         db_table = 'Medicion'
         verbose_name_plural = "Mediciones"
-        
-
-
-        
-
-
-
-
 
