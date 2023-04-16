@@ -12,6 +12,10 @@ from .Exceptions.PersonalizedExceptions import MyCustomException
 def landing(request):
     return render(request, 'main/pages/landing.html')
 
+def aboutUs(request):
+    return render(request, 'main/pages/aboutUs.html')
+
+
 def homepage(request):
     if not request.user.is_authenticated:
         return redirect('/login')

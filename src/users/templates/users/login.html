@@ -1,25 +1,35 @@
 {% extends "users/home.html" %}
 {% load crispy_forms_tags %}
 {% block body %}
+<head> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Montserrat:wght@700&display=swap" rel="stylesheet"> 
+</head>
 <div>
     <div class="cont">
         <div class="login-card">
             <div class="row">
-                <div class="col-6">
-                    <img src="https://images.unsplash.com/photo-1543985316-0906a00dc33c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80"
-                        class="img-fluid" alt="Phone image">
-                </div>
+                
                 <div class="col login-options">
                     <form class="login-form" method="POST" novalidate>
+                    <h2> Iniciar sesión </h2>
+
                         {% csrf_token %}
-                        <label for="exampleInputEmail1">Usuario</label>
+                        <label for="exampleInputEmail1">Correo electrónico</label>
                         <input type="email" class="form-control" name="username" aria-describedby="emailHelp"
-                            placeholder="Enter email">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input type="password" class="form-control" placeholder="Password" name="password">
+                            placeholder="Email">
+                        <label for="exampleInputPassword1">Contraseña</label>
+                        <input type="password" class="form-control" placeholder="Contraseña" name="password">
                         <br />
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                        <br />
+                        <h6 class="toregister"> ¿Aún no tienes una cuenta? </h6>
+                        <a href="/registro"> Solicita una cuenta </a>
                     </form>
+                </div>
+                <div class="col-6 image-login">
+                    <img src="https://img.freepik.com/free-vector/hand-drawn-medical-symbol_23-2149491353.jpg?w=740&t=st=1681580864~exp=1681581464~hmac=b025595cec59e1ed31b6e4132217f5c9fdbc6fe530fe3607d8369e1aa5a6cbac"
+                        class="img-fluid" alt="Phone image">
                 </div>
             </div>
         </div>

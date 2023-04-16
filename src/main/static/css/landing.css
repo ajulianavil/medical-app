@@ -1,5 +1,12 @@
-#navbarNav{ 
+/* #navbarNav{ 
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+} */
+
+/* Imagenes */
+
+.logo{
+    height: 100px;
+    width: 210px;
 }
