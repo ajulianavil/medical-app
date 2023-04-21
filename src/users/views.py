@@ -41,11 +41,11 @@ def register(request):
 def custom_logout(request):
     logout(request)
     messages.info(request, "Logged out successfully!")
-    return redirect('/login')
+    return redirect("/")
 
 def custom_login(request):
     if request.user.is_authenticated:
-        return redirect('/')
+        return redirect('/app')
 
     if request.method == "POST":
         form = AuthenticationForm(request=request, data=request.POST)
@@ -57,7 +57,7 @@ def custom_login(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Hello <b>{user.username}</b>! You have been logged in")
-                return redirect('/')
+                return redirect('/app')
 
         else:
             for error in list(form.errors.values()):

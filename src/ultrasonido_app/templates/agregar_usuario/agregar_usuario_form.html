@@ -1,0 +1,39 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/registro.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Montserrat:wght@700&display=swap"
+  rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row" style="padding-top: 30px;" >
+      <div class="col-sm ">
+        <form class="login-form" method="POST" novalidate>
+          <h2> Crear usuario </h2>
+          {% csrf_token %}
+          <label for="exampleInputEmail1">Correo electrónico</label>
+          <input type="email" class="form-control" name="username" aria-describedby="emailHelp" placeholder="Email">
+          <label for="exampleInputPassword1">Contraseña</label>
+          <input type="password" class="form-control" placeholder="Contraseña" name="password">
+          <label for="exampleInputPassword1">Repetir contraseña</label>
+          <input type="password" class="form-control" placeholder="Contraseña" name="password">
+          <br />
+
+          <button type="submit" class="btn btn-primary" style="width: 60%;">Iniciar sesión</button>
+          <br />
+        </form>
+      </div>
+      <div class="col-sm image-login">
+        <!-- <div class="col-6 image-login"> -->
+          <img src="https://img.freepik.com/free-vector/hand-drawn-medical-symbol_23-2149491353.jpg?w=740&t=st=1681580864~exp=1681581464~hmac=b025595cec59e1ed31b6e4132217f5c9fdbc6fe530fe3607d8369e1aa5a6cbac"
+              class="img-fluid" alt="Phone image">
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock %}

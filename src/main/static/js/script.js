@@ -18,7 +18,28 @@
                         // add padding to header
                         headerpd.classList.toggle("body-pd");
                     });
+                    nav.addEventListener("click", (event) => {
+                        // event.preventDefault();
+                        if (event.target.classList.contains('nav_name') || event.target.classList.contains('nav_icon') || event.target.classList.contains('nav_link')) {
+                            console.log('Child element clicked');
+                            console.log(event.target.classList);
+                          } else {
+                            console.log('Child element clicked');
+                            console.log(event.target.classList);
+                                // show navbar
+                        nav.classList.toggle("show");
+                        // change icon
+                        toggle.classList.toggle("bx-x");
+                        // add padding to body
+                        bodypd.classList.toggle("body-pd");
+                        // add padding to header
+                        headerpd.classList.toggle("body-pd");
+                          }
+                    
+                    });
                 }
+
+                
             };
 
             showNavbar("header-toggle", "nav-bar", "body-pd", "header");

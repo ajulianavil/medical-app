@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'users',
+    'ultrasonido_app',
     'fontawesomefree',
     'crispy_forms',
     'crispy_bootstrap4',
@@ -103,7 +104,7 @@ DATABASES={
       'ENGINE':'django.db.backends.postgresql_psycopg2',
       'NAME':'quickdiagnosis',
       'USER':'postgres',
-      'PASSWORD':'admin',
+      'PASSWORD':'n0Pqssword',
       'HOST':'127.0.0.1',
       'PORT':'5432',
    }
