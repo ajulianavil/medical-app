@@ -1,37 +1,17 @@
-body{
+body {
     height: 100vw;
     background-color: white;
 }
-.cont{
-    height: 100vh;
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
-    background-color: #F1F0F7;
-}
+
 img {
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
 }
 
-.login-card{
-    width: 800px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    border-radius: 15px;
-}
-
-.login-options{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-form{
+.registro-form {
     display: flex;
     flex-direction: column;
-}   
+}
 
 /* Set the font family and size for the form */
 form {
@@ -41,23 +21,19 @@ form {
 
 /* Text and links */
 
-h2{
+h2 {
     font-family: 'League Spartan', sans-serif;
     font-weight: bold;
     color: #26283E;
 }
 
-h6{
+h6 {
     font-family: 'League Spartan', sans-serif;
     font-size: small;
     text-align: center;
 }
 
-.toregister{
-    margin-bottom: 0;
-}
-
-a{
+a {
     font-weight: bold;
     color: #26283E;
     font-size: small;
@@ -65,20 +41,6 @@ a{
     text-decoration: none;
     transition: color 0.2s ease-in-out;
 
-}
-
-a:visited {
-    text-decoration: none;
-}
-
-a:hover {
-text-decoration: none;
-color: #0279AF;
-
-}
-
-a:active {
-text-decoration: none;
 }
 
 /* Style the labels for the form fields */
@@ -91,7 +53,8 @@ label {
 }
 
 /* Style the form fields */
-input[type="text"], textarea {
+input[type="text"],
+textarea {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -100,7 +63,8 @@ input[type="text"], textarea {
     margin: 10px;
 }
 
-input[type="email"], textarea {
+input[type="email"],
+textarea {
     padding: 5px;
     border-radius: 5px;
     width: 100%;
@@ -115,7 +79,8 @@ input[type="email"]:hover {
     background-color: #F1F0F7;
 }
 
-input[type="password"], textarea {
+input[type="password"],
+textarea {
     padding: 5px;
     border-radius: 5px;
     width: 100%;
@@ -138,7 +103,7 @@ button[type="submit"] {
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
     width: 100%;
     height: 35px;
     margin-bottom: 10px;
@@ -147,7 +112,7 @@ button[type="submit"] {
     justify-content: center;
 }
 
-button[type="submit"]:hover{
+button[type="submit"]:hover {
     background-color: #0279AF;
 }
 
@@ -158,19 +123,13 @@ button[type="submit"]:hover{
 }
 
 /* divs */
-.login-options{
-    background-color: #FFFBFA;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
+.formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.image-login{
-    background-color: #FFFBFA;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-.img-fluid{
-    margin: 50px;   
+.img-fluid {
+    margin: 50px;
     margin-left: 0px !important;
 }

@@ -1,39 +1,56 @@
 {% extends 'main/layout.html' %}
 {% load static %}
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/registro.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" type="text/css" href="{% static 'css/registro.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Montserrat:wght@700&display=swap"
   rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-  <div class="container">
-    <div class="row" style="padding-top: 30px;" >
-      <div class="col-sm ">
-        <form class="login-form" method="POST" novalidate>
-          <h2> Crear usuario </h2>
-          {% csrf_token %}
-          <label for="exampleInputEmail1">Correo electrónico</label>
-          <input type="email" class="form-control" name="username" aria-describedby="emailHelp" placeholder="Email">
-          <label for="exampleInputPassword1">Contraseña</label>
-          <input type="password" class="form-control" placeholder="Contraseña" name="password">
-          <label for="exampleInputPassword1">Repetir contraseña</label>
-          <input type="password" class="form-control" placeholder="Contraseña" name="password">
-          <br />
 
-          <button type="submit" class="btn btn-primary" style="width: 60%;">Iniciar sesión</button>
-          <br />
-        </form>
-      </div>
-      <div class="col-sm image-login">
-        <!-- <div class="col-6 image-login"> -->
-          <img src="https://img.freepik.com/free-vector/hand-drawn-medical-symbol_23-2149491353.jpg?w=740&t=st=1681580864~exp=1681581464~hmac=b025595cec59e1ed31b6e4132217f5c9fdbc6fe530fe3607d8369e1aa5a6cbac"
-              class="img-fluid" alt="Phone image">
-      </div>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+<div class="container">
+  <div class="row" style="padding-top: 30px;">
+    <div class="col-sm formulario">
+      <form class="registro-form" method="POST">
+        <h2> Crear usuario </h2>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.errors }}
+
+        <div class="fieldWrapper">
+          {{ form.email.errors }}
+          <label for="{{ form.subject.id_for_label }}">{{ form.email.label }}</label>
+          {{ form.email }}
+        </div>
+        <div class="fieldWrapper">
+          {{ form.password.errors }}
+          <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+          {{ form.password }}
+        </div>
+        <div class="fieldWrapper">
+          {{ form.repassword.errors }}
+          <label for="{{ form.repassword.id_for_label }}">{{ form.repassword.label }}</label>
+          {{ form.repassword }}
+        </div>
+        <input type="hidden" name="roles" value="{{ rol }}">
+        <br />
+        <button type="submit" class="btn btn-primary" style="width: 60%;">Iniciar sesión</button>
+      </form>
+    </div>
+    <div class="col-sm">
+      <img src="{% static 'images/logo-medical.png' %}" class="img-fluid" alt="Phone image">
     </div>
   </div>
-  
+</div>
+
 
 {% endblock %}

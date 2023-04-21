@@ -6,7 +6,8 @@ from .serializers import *
 from ultrasonido_app.forms import UploadFileForm
 from .data_processing import process_data
 from .Exceptions.PersonalizedExceptions import MyCustomException
-
+from .forms import CreateUserForm
+from django.contrib import messages
 
 
 def homepage(request):
@@ -21,13 +22,28 @@ def personal(request, personal: int):
     return render(request, 'main/personal.html', {'objects': matching_personal})
 
 def agregar_usuario(request,):
-    rol = request.GET.get('rol')
-    if rol:
-        return render(request, 'agregar_usuario/agregar_usuario_form.html')
-    
-    if not request.user.is_authenticated:
-        return redirect('/login')
-    return render(request, 'agregar_usuario/seleccionar_usuario.html')
+    if request.method == "POST":
+        form = CreateUserForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your form has been submitted successfully!')
+            rol = request.GET.get('rol')
+            form = CreateUserForm()
+            return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol,})
+        else:
+            rol = request.GET.get('rol')
+            return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
+    else:
+        rol = request.GET.get('rol')
+        if rol:
+            form = CreateUserForm()
+            return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
+        
+        if not request.user.is_authenticated:
+            return redirect('/login')   
+        return render(request, 'agregar_usuario/seleccionar_usuario.html')
+
+        
 
 
 def consultas(request, personal: str):

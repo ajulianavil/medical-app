@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import ContactForm
 
-
 def contact(request):
     form = ContactForm()
     return render(request, 'users/contact.html', {'form': form})
