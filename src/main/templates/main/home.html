@@ -3,6 +3,8 @@
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/ejemplo.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
+
     
     <script src="https://kit.fontawesome.com/5bdb3c603b.js" crossorigin="anonymous"></script>
 
@@ -11,7 +13,7 @@
 {% block content %}
     {% include 'main/components/greeting.html' %}
     <div class="container-fluid row" style="padding-top: 30px">
-        <h4 class="mb-4">Agregar nuevo caso <a class="btn text-white" style="background-color: #0796d8;" href="#!"
+        <h4 class="mb-4">Agregar nuevo caso <a class="btn text-white" style="background-color: #0796d8;" href="consultas/nueva"
                                                role="button">
             <i class="fas fa-plus"></i>
         </a></h4>
@@ -28,6 +30,7 @@
     </div>
     <div class="container-fluid col-sm" style="padding-top: 20px">
         <div class="container-fluid row">
+    
             <h3 class="mb-4">Ver Reportes</h3>
             <p class="mb-4 pb-2 mb-md-5 pb-md-0">
                 Reportes Mensuales

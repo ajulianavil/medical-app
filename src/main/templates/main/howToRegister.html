@@ -27,27 +27,18 @@
 
         .content-body {
             background-size: cover;
-            background-color: #FFFFFF;
-            background-image: url("https://images.unsplash.com/photo-1666214280391-8ff5bd3c0bf0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80");
+            backgrond-color: #FFFFFF;
+            {% comment %} background-image: url("https://images.unsplash.com/photo-1599045118108-bf9954418b76?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"); {% endcomment %}
             height: 500px;
             width: 100%;
-            display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            opacity: 0.5;
             background-color: white;
+            padding: 100px;
         }
 
-        .content-body::before {
-            content: "";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        } 
+
         
         .welcome{
             position: absolute;
@@ -58,9 +49,8 @@
             font-family: 'League Spartan', sans-serif;  
             font-size: 48px;
             font-weight: bold;
-            color: #fff;
+            color: #0796D8;
             text-align: center;
-            text-shadow: 2px 2px 4px #000;
             padding: 20px;
             border-radius: 10px;
         }
@@ -92,6 +82,7 @@
         }
 
         .logo{
+            {% comment %} height: 100px; {% endcomment %}
             width: 250px;
         }
 
@@ -143,7 +134,10 @@
         }
 
         .aboutUsImg{
-            border-radius: 10px;
+            display: block;
+            margin: auto;
+            width: 100px;
+            padding-bottom: 20px;
         }
 
     </style>
@@ -162,7 +156,7 @@
             <a class="nav-link menuItem" href="/aboutUs">Sobre nosotros</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link menuItem" href="/howToRegister">Registro</a>
+            <a class="nav-link menuItem" href="#">Registro</a>
         </li>
         <li class="nav-item">
         </li>
@@ -176,9 +170,14 @@
         <div class="all-contant">
             <div class="content-body">
                 {% comment %} <h1>Welcome to My Website</h1> {% endcomment %}
+                <h1 style="font-weight: bold; color: #0796D8;">¿Deseas registrarte?</h1> 
+                <img  class="aboutUsImg" src="{% static 'images/medicApp_face.png' %}">
+
+                <p style="font-weight: lighter; color: #909090; text-align: center;"> 
+                    Los nuevos usuarios sólo pueden ser registrados por un administrador. </p> </br> </br>
+                <p style="font-weight: bold; text-align: center;">Por favor, comunícate con un administrador para crear tu cuenta o contáctanos vía ultrasonido@contacto.com.</p>
+                <p style="font-weight: light; text-align: center; color: #909090; ">Si ya cuentas con permisos de administrador, por favor <a style="font-weight: bold; text-align: center; color: #0796D8;" href="/registro"> inicia sesión </a>para poder realizar un nuevo registro.
             </div>
-            <img class="welcome" src="{% static 'images/medicApp.png' %}" alt="medicAppLogo" />
-            
         </div>
         
         <br />

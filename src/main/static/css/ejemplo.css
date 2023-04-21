@@ -34,7 +34,6 @@
 }
 
 h5{
-    font-family: 'League Spartan', sans-serif;
     font-weight: normal;
     font-size: medium;
 }
@@ -51,4 +50,25 @@ h5{
     color: white;
     font-family: 'League Spartan', sans-serif;
 
+}
+
+/* Agregar_consulta */
+.submit-button{
+    background-color: #52CBF5;
+    width: 150px;
+    font-family: 'League Spartan', sans-serif;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+}
+
+.submit-button:hover{
+    background-color: #0796D8;
+    color: white;
 }

@@ -3,24 +3,26 @@
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/ejemplo.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
     <script src="https://kit.fontawesome.com/5bdb3c603b.js" crossorigin="anonymous"></script>
-
 {% endblock %}
 
 {% block content %}
 
 <div class="bg-light p-5 text-center">
-    <h1 class="text-primary" style=" font-weight: bold">Agregar nuevo caso</h1>
-    <p>Por favor cargue el archivo del Ultrasonido.</p>
-    <p>Asegurese de cargar un arhivo en formato TXT y que el archivo no haya sido manipulado
+    <h1 style="font-weight: bold; color: #0796D8">Agregar nuevo caso</h1>
+    <p style="font-weight: bold;">Por favor, cargue el archivo extraído del ultrasonido.</p>
+    <p style="font-weight: lighter; color: #909090">Asegúrese de cargar un arhivo en formato .txt y que el archivo no haya sido manipulado.
         o modificado previamente
     </p>
 
 
-    <form  method="POST", enctype="multipart/form-data">
+    <form method="POST", enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="file" id="file" />
-        <button class="btn btn-primary" type="submit">Procesar</button>
+        <br>
+        <br>
+        <button class="btn submit-button" type="submit">Procesar</button>
         <!-- 
         <p>
             {{form.file}}
