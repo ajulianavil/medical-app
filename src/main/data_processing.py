@@ -1,5 +1,7 @@
 import numpy as np
 
+from main.models import Medicion, Tipomedicion
+
 def process_data(file):
     file_readed = file.readlines()
     count = 0
@@ -164,3 +166,112 @@ def ConvertDateTime(studydate, studytime):
     
     fullDate = year+"-"+month+"-"+day+" "+studytime
     return fullDate
+
+def comparison(diagnosisData):
+    gest_age = diagnosisData['ga']
+    
+    #'nombreMedicion': valorDatoReporte
+    valores_normales = {}
+    #'nombreMedicion': [Diagnostico, valorDatoReporte, valorReferencia]
+    valores_anormales = {}
+    
+    data = {'hc_hadlock': diagnosisData['hc_hadlock_1'], 'bpd_hadlock': diagnosisData['bdp_hadlock_1'], 'csp': diagnosisData['hc_hadlock_1'],
+            'cm': diagnosisData['cm_1'], 'vp': diagnosisData['vp_1'], 'va': diagnosisData['va_1'], 'cereb_hill': diagnosisData['cereb_hill_1'],
+            'efw': diagnosisData['efw']}
+
+    # print("DATOS", data)
+    tipos_mediciones = Tipomedicion.objects.all()
+    mediciones = {}
+    
+    # Guarda el id y el nombre de cada tipo de medición
+    for obj in tipos_mediciones:
+        mediciones[obj.idTipoMedicion] = obj.nombreMedicion
+
+    #Filtra por tipo de medicion y luego por edad gestional
+    
+    # valorinter -> valor max || valordev -> valordev(valor intermedio)
+    for key in mediciones:        
+        #or key == 7
+        if key == 1 or key == 2 or key == 7:
+            try:
+                med = Medicion.objects.get(id_tipo_medicion=key, ga=gest_age)
+                
+                if key == 1: #HC_HADLOCK
+                    if (data["hc_hadlock"] > med.valorinter):
+                        
+                        valores_anormales.update({'Circunferencia de la cabeza (HC_HADLOCK)': ['Macro', data["hc_hadlock"], med.valorinter]})
+                        print("Macroo")
+                        
+                    elif (data["hc_hadlock"] < med.valormin):
+                        valores_anormales.update({'Circunferencia de la cabeza (HC_HADLOCK)': ['Microcefalia', data["hc_hadlock"], med.valormin]})
+                        print("Microcefalia")
+                    else:
+                        valores_normales.update({'Circunferencia de la cabeza (HC_HADLOCK)': data["hc_hadlock"]})
+                        print("OK - HC en valores normales")
+
+                if key == 2: #BPD
+                    if (data["bpd_hadlock"] > med.valorinter):
+                        valores_anormales.update({'Diámetro biparietal (BPD_HADLOCK)': ['Valor superior al normal', data["bpd_hadlock"], med.valorinter]})
+                        print("bpd_hadlock valor superior al normal")
+                        
+                    elif (data["bpd_hadlock"] < med.valormin):
+                        valores_anormales.update({'Diámetro biparietal (BPD_HADLOCK)': ['Valor inferior al normal', data["bpd_hadlock"], med.valormin]})
+                        print("bpd_hadlock valor inferior al normal")
+                        
+                    else:
+                        valores_normales.update({'Diámetro biparietal (BPD_HADLOCK)': data["bpd_hadlock"]})
+                        print("OK - bpd_hadlock valores normales")
+                        
+                if key == 7: #Diametro transverso del cerebelo CEREB_HILL
+                    print("cerebhill")
+                    # if (data["cereb_hill"] < med.valormin):
+                    #     print("Hipoplasia cereberal")
+                    # else:
+                    #     print("OK - cereb_hill en valores normales")
+                                
+            except Medicion.DoesNotExist:
+                med = None
+                print("Para la llave:", key, "no se encontró nada con esta edad gestacional")
+                     
+        if key == 3: #CSP
+            print("CSP")
+        
+        if key == 4: #CM -> Para todas las edades
+            if (float(data["cm"]) > 10):
+                valores_anormales.update({'Cisterna Magna (CM)': ['Megacisterno o cisterno alargada', data["cm"], 10]})
+                print("Megacisterno o cisterno alargada")
+            else:
+                valores_normales.update({'Cisterna Magna (CM)': data["cm"]})
+                print("OK - CM en valores normales")
+        
+        if key == 5 or key == 6: #VP or VA
+            if (float(data["vp"]) < 9.9 or float(data["va"]) < 9.9):
+                valores_normales.update({'Ventrículo posterior': data["vp"]})
+                valores_normales.update({'Ventrículo anterior': data["va"]})
+                print("Normal")
+                
+            elif ((10 < float(data["vp"]) < 11.9) or (10 < float(data["va"]) < 11.9)):
+                valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia leve', data["vp"], '10 - 11.9']})
+                valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia leve', data["va"], '10 - 11.9']})
+                print("Ventriculomegalia leve")
+                
+            elif ((12 < float(data["vp"]) < 14.9) or (12 < float(data["va"]) < 14.9)):
+                valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia moderada', data["vp"], '12 - 14.9']})
+                valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia moderada', data["va"], '12 - 14.9']})
+                print("Ventriculomegalia moderada")   
+                
+            elif (float(data["vp"]) > 15 or float(data["va"]) > 15):
+                valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia severa', data["vp"], 15]})
+                valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia severa', data["va"], 15]})
+                print("Ventriculomegalia severa")
+                
+            else:
+                valores_normales.update({'Ventrículo posterior': data["vp"]})
+                valores_normales.update({'Ventrículo anterior': data["va"]})
+                print("OK - VP y VA en valores normales")
+                
+        # if key == 6: #VA
+        #     print("VA")
+    
+        
+    

@@ -158,9 +158,8 @@ class Medicion(models.Model):
     valormin = models.FloatField(db_column='valorMin', max_length=50, blank=True, null=True)  # Field name made lowercase.
     valorinter = models.FloatField(db_column='valorMax', max_length=50, blank=True, null=True)  # Field name made lowercase.
     valordev = models.FloatField(db_column='valorDev', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    id_tipo_medicion = models.OneToOneField(Tipomedicion, models.CASCADE, db_column='idTipoMedicion', blank=False, null=False)
+    id_tipo_medicion = models.ForeignKey(Tipomedicion, on_delete=models.SET_DEFAULT, default="", db_column='idTipoMedicion', blank=False, null=False)
     
     class Meta:
         db_table = 'Medicion'
         verbose_name_plural = "Mediciones"
-

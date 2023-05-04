@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from .models import *
 from .serializers import *
 from main.forms import UploadFileForm
-from .data_processing import process_data
+from .data_processing import comparison, process_data
 from rest_framework.decorators import api_view
 from .Exceptions.PersonalizedExceptions import MyCustomException
 
@@ -81,13 +81,13 @@ def agregar_consulta(request):
             
             if clinicHistory_serializer.is_valid():
                 print("Guardar Historia Clinica")
-                clinicHistory_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE LA HISTORIA
+                #clinicHistory_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE LA HISTORIA
             
             # ------------------- CREA EL REPORTE CON LOS RESULTADOS
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
                 print("Guardar Reporte")
-                reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
+                #reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
                 # Consulta en la tabla reporte y trae el Id del registro recién insertaado
                 last_report = (Reporte.objects.last()).idreporte        
             
@@ -104,8 +104,10 @@ def agregar_consulta(request):
             if consulta_serializer.is_valid():
                 #set_medico = (Personalsalud.objects.filter())
                 print('Guarda Consulta. Fin del flujo. Eureka!')
-                consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+                #consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
            
+            diagnosis = comparison(processedDataReport)
+            
         return JsonResponse({"success": "true"})
     else:
         form = UploadFileForm()
