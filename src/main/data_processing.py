@@ -125,6 +125,11 @@ def process_data(file):
             Vp = Vp[:-1]
             vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
             vp_avg = Vp[0].split("=")[1].split(" ")[0] #1
+        if ('AFI' in line):
+            afi = line.strip().split("|")
+            afi = afi[:-1]
+            afi_sum = afi[4].split("=")[1].split(" ")[0]
+            
     textodos = "El Vp es de", Vp
     reporte_info = {
         'efw': EFW,
@@ -153,7 +158,8 @@ def process_data(file):
         'va_avg': va_avg,
         'vp_1': vp_1,
         'vp_avg': vp_avg,
-        'ga_days': ga_days
+        'ga_days': ga_days,
+        'afi': afi_sum
     }
     
     return insert_paciente, reporte_info, convertedDate, clinical_lmp, med_name, med_lastname
@@ -177,7 +183,7 @@ def comparison(diagnosisData):
     
     data = {'hc_hadlock': diagnosisData['hc_hadlock_1'], 'bpd_hadlock': diagnosisData['bdp_hadlock_1'], 'csp': diagnosisData['hc_hadlock_1'],
             'cm': diagnosisData['cm_1'], 'vp': diagnosisData['vp_1'], 'va': diagnosisData['va_1'], 'cereb_hill': diagnosisData['cereb_hill_1'],
-            'efw': diagnosisData['efw']}
+            'efw': diagnosisData['efw'], 'afi': diagnosisData['afi']}
 
     # print("DATOS", data)
     tipos_mediciones = Tipomedicion.objects.all()
@@ -188,9 +194,8 @@ def comparison(diagnosisData):
         mediciones[obj.idTipoMedicion] = obj.nombreMedicion
 
     #Filtra por tipo de medicion y luego por edad gestional
-    
     # valorinter -> valor max || valordev -> valordev(valor intermedio)
-    for key in mediciones:        
+    for key in mediciones:
         #or key == 7
         if key == 1 or key == 2 or key == 7:
             try:
@@ -272,6 +277,21 @@ def comparison(diagnosisData):
                 
         # if key == 6: #VA
         #     print("VA")
+        if key == 8:
+            if (float(data["afi"]) < 5):
+                valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Oligohidramnios', data["afi"], 5]})
+                print("Oligohidramnios")
+                
+            elif (5 < float(data["afi"]) < 24):
+                valores_normales.update({'Indice de líquido amniótico (AFI)': data["afi"]})
+                print("AFI Normal")
+                
+            elif (float(data["afi"]) > 24):
+                valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
+                print("Polihidramnios")
+                
+                
+                
     
         
     

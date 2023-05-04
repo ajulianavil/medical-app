@@ -65,6 +65,7 @@ class Reporte(models.Model):
     vp_1 = models.CharField(max_length=50, blank=True, null=True)
     vp_avg = models.CharField(max_length=50, blank=True, null=True)
     ga_days = models.CharField(max_length=100, blank=True, null=True)
+    afi = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         db_table = 'Reporte'

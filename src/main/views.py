@@ -116,3 +116,6 @@ def agregar_consulta(request):
         template_name='consultas/agregar_consulta.html',
         context={"form": form}
     )
+    
+def historia_clinica(request):
+    return render(request, 'reporte/historia_clinica.html' )
