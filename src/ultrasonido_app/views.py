@@ -8,18 +8,30 @@ from .data_processing import process_data
 from .Exceptions.PersonalizedExceptions import MyCustomException
 from .forms import CreateUserForm
 from django.contrib import messages
-
+from datetime import datetime
 
 def homepage(request):
     if not request.user.is_authenticated:
         return redirect('/login')
     current_user = request.user
     user = get_user_model().objects.filter(email=current_user).first()
-    return render(request, 'main/home.html', {'user': user})
+    return render(request, 'home/home.html', {'user': user})
    
 def personal(request, personal: int):
     matching_personal = Personalsalud.objects.filter(hospitalid=personal).all()
     return render(request, 'main/personal.html', {'objects': matching_personal})
+
+def reportes(request,):
+    matching_consultas = Consulta.objects.all()
+    return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
+
+def reporteInfo(request, param: int):
+    matching_consulta = Consulta.objects.filter(consultaid=param).first()
+    formatted_date = datetime.strftime(matching_consulta.fecha_consulta, '%Y/%m/%d')
+    formatted_hora = datetime.strftime(matching_consulta.fecha_consulta, '%H:%M')
+    matching_consulta.formatted_fecha_consulta = formatted_date
+    matching_consulta.formatted_hora_consulta = formatted_hora
+    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta})
 
 def agregar_usuario(request,):
     if request.method == "POST":

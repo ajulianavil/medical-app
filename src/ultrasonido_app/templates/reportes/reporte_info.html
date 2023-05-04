@@ -1,0 +1,50 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/registrar_consulta.css' %}" />
+<script src="{% static 'js/reporte_script.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<br>
+<br>
+<div class="box container ">
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <strong class="col-md-auto">
+          Fecha exámen
+        </strong>
+        <div class="col">
+          <input id="date" type="text" name="date" value="{{consulta.formatted_fecha_consulta}}" disabled="false">
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="row">
+        <strong class="col-md-auto">
+          Hora exámen
+        </strong>
+        <div class="col">
+          <input id="date" type="text" name="date" value="{{consulta.formatted_hora_consulta}}" disabled="false">
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="row">
+        <strong class="col-md-auto">
+          Médico encargado
+        </strong>
+        <div class="col">
+          <input id="date" type="text" name="date" value="{{consulta.medUltrasonido}}" disabled="false">
+        </div>
+      </div>
+    </div>
+  </div>
+  <br/>
+  
+</div>
+
+
+{% endblock %}

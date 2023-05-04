@@ -111,11 +111,11 @@ print(BASE_DIR)
 # }
 DATABASES={
    'default':{
-      'ENGINE':'django.db.backends.postgresql_psycopg2',
-      'NAME':'quickdiagnosis',
+      'ENGINE':'django.db.backends.postgresql',
+      'NAME':'UsDiagnosisApp',
       'USER':'postgres',
-      'PASSWORD':'n0Pqssword',
-      'HOST':'127.0.0.1',
+      'PASSWORD':'adminuis',
+      'HOST':'datacoildb.chjxvyh29cm7.us-east-2.rds.amazonaws.com',
       'PORT':'5432',
    }
 }
