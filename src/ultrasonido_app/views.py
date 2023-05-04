@@ -31,7 +31,14 @@ def reporteInfo(request, param: int):
     formatted_hora = datetime.strftime(matching_consulta.fecha_consulta, '%H:%M')
     matching_consulta.formatted_fecha_consulta = formatted_date
     matching_consulta.formatted_hora_consulta = formatted_hora
-    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta})
+    
+    matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
+    
+    matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
+    # formatted_date = datetime.strftime(matching_clinichist.lmp, '%Y/%m/%d')
+    # matching_clinichist.formatted_lmp = formatted_date
+    
+    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist})
 
 def agregar_usuario(request,):
     if request.method == "POST":

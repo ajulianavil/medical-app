@@ -20,3 +20,12 @@
     padding: 0;
     margin:0;
 } 
+
+hr {
+    border-top: 2px solid black;
+    color: black;
+  }
+
+.label{
+    font-size: small;
+}
