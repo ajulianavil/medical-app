@@ -29,3 +29,8 @@ hr {
 .label{
     font-size: small;
 }
+
+input #med{
+    background-color: #f2f2f2;
+    border-radius: 10px;
+}

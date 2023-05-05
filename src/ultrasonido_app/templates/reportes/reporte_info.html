@@ -9,7 +9,7 @@
 
 <br>
 <br>
-<div class="box container ">
+<div class="box container " style="height: 100%; margin-bottom:20px">
   <div class="row">
     <div class="col">
       <div class="row">
@@ -53,55 +53,104 @@
   <br/>
 
   <form class="report-form">
+    <div class="row">
+      <div class="col">
+        <strong class="col-md-auto label"> Primer nombre </strong>
+      </div>
+      <div class="col">
+        <input id="med" type="text" name="text" value="{{paciente.nombreuno}}" disabled="false">
+      </div>
+      <div class="col">
+        <strong class="col-md-auto label"> Segundo nombre </strong>
+      </div>
+      <div class="col">
+        <input id="med" type="text" name="text" value="{{paciente.nombredos}}" disabled="false">
+      </div>
+      <div class="col">
+        <strong class="col-md-auto label"> Primer apellido </strong>
+      </div>
+      <div class="col">
+        <input id="med" type="text" name="text" value="{{paciente.apellido_paterno}}" disabled="false">
+      </div>
+      <div class="col">
+        <strong class="col-md-auto label"> Segundo apellido </strong>
+      </div>
+      <div class="col">
+      <input id="med" type="text" name="text" value="{{paciente.apellido_materno}}" disabled="false">
+      </div>
+    </div>
+    <br/>
+    <div class="row">
+      <div class="col">
+        <strong class="col-md-auto label"> Último periodo menstrual (LMP) </strong>
+      </div>
+      <div class="col">
+        <input id="med" type="text" name="text" value="{{clinicalhist.lmp}}" disabled="false">
+      </div>
+      <div class="col">
+        <strong class="col-md-auto label"> Cédula </strong>
+      </div>
+      <div class="col">
+        <input id="med" type="text" name="text" value="{{paciente.cedulapac}}" disabled="false">
+      </div>
+      <div class="col">
+        <strong class="col-md-auto label"> Gestaciones </strong>
+      </div>
+      <div class="col">
+        <input id="med" type="text" name="text" value="{{paciente.numgestacion}}" disabled="false">
+      </div>
+    </div>
+    <br/>
+    <div class="row">
+      <div class="col">
+        <strong class="col-md-auto label"> Ant. Quirúrgico </strong>
+      </div>
+      <div class="col">
+        <input id="med" type="text" name="text" value="{{clinicalhist.antquirurgico}}" disabled="false">
+      </div>
+      <div class="col">
+        <strong class="col-md-auto label"> Ant. Ginecológico </strong>
+      </div>
+      <div class="col">
+        <input id="med" type="text" name="text" value="{{clinicalhist.antginecologico}}" disabled="false">
+      </div>
+      <div class="col">
+        <button class="btn submit-button" type="submit" style="width: 200px !important">Editar historia clínica</button>
+      </div>
+    </div>
+  </form>
+
   <div class="row">
     <div class="col">
-      <strong class="col-md-auto label"> Primer nombre </strong>
-    </div>
-    <div class="col">
-      <input id="med" type="text" name="text" value="{{paciente.nombreuno}}" disabled="false">
-    </div>
-    <div class="col">
-      <strong class="col-md-auto label"> Segundo nombre </strong>
-    </div>
-    <div class="col">
-      <input id="med" type="text" name="text" value="{{paciente.nombredos}}" disabled="false">
-    </div>
-    <div class="col">
-      <strong class="col-md-auto label"> Primer apellido </strong>
-    </div>
-    <div class="col">
-      <input id="med" type="text" name="text" value="{{paciente.apellido_paterno}}" disabled="false">
-    </div>
-    <div class="col">
-      <strong class="col-md-auto label"> Segundo apellido </strong>
-    </div>
-    <div class="col">
-    <input id="med" type="text" name="text" value="{{paciente.apellido_materno}}" disabled="false">
+      <h4 style="font-weight: bold;"> Datos feto </h4>
+      <hr>
     </div>
   </div>
   <br/>
   <div class="row">
     <div class="col">
-      <strong class="col-md-auto label"> Último periodo menstrual (LMP) </strong>
+      <strong class="col-md-auto label"> Fecha estimada de parto (EDB) </strong>
     </div>
     <div class="col">
-      <input id="med" type="text" name="text" value="{{clinicalhist.lmp}}" disabled="false">
+      <input id="med" type="text" name="text" value="{{reporte.edb}}" disabled="false">
     </div>
     <div class="col">
-      <strong class="col-md-auto label"> Cédula </strong>
+      <strong class="col-md-auto label"> Peso fetal estimado (EFW) </strong>
     </div>
     <div class="col">
-      <input id="med" type="text" name="text" value="{{paciente.cedulapac}}" disabled="false">
+      <input id="med" type="text" name="text" value="{{reporte.efw}} gr" disabled="false">
     </div>
     <div class="col">
-      <strong class="col-md-auto label"> Gestaciones </strong>
+      <strong class="col-md-auto label"> Edad gestacional (GA) </strong>
     </div>
     <div class="col">
-      <input id="med" type="text" name="text" value="{{paciente.numgestacion}}" disabled="false">
+      <input id="med" type="text" name="text" value="{{reporte.ga}} semanas" disabled="false">
     </div>
   </div>
-</form>
-  
+  <br/>
+  <div>
+    <textarea id="description" name="description" rows="5" cols="30" style="width: 100%"></textarea>
+  </div>
 </div>
 
 
