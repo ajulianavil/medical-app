@@ -1,0 +1,46 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block head %}
+    <script src="https://kit.fontawesome.com/5bdb3c603b.js" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+{% block content %}
+
+  <div>
+    <div class="container-fluid row" style="padding-top: 30px">
+      <h4 class="mb-4">Buscar registro</h4>
+    </div>
+    <div class="input-group input-group-sm"
+        style="padding-top: 0; position: relative; padding-right:100px; padding-left:20px ">
+        <input type="text" class="form-control form-control-lg rounde bg-transparent text-black-50"
+            placeholder="Type Keywords" aria-label="Type Keywords" aria-describedby="basic-addon2" />
+        <span class="input-group-text border-0" id="basic-addon2"><i class="fas fa-search fa-lg"
+                style="color: blue"></i></span>
+    </div>
+    <br>
+    <br>
+    {% for consulta in objects %}
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          {{consulta.fecha_consulta}}
+        </div>
+        <div class="col">
+          {{consulta.medUltrasonido}}
+        </div>
+        <div class="col">
+          {{consulta.motivo_consulta}}
+        </div>
+        <div class="col">
+          <!-- <a class="btn btn-primary" href="/registros/consulta/{{ consulta }}" role="button">Ver reporte</a> -->
+          <a class="btn btn-primary" href="/registros/consulta/{{consulta}}" role="button">Ver reporte</a>
+          
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+
+{% endblock %}

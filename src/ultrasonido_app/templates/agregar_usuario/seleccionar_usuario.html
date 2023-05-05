@@ -1,0 +1,36 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/agregar_usuario.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/registro2.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="big-box">
+    <p style="font-size:30px; padding-top: 150px; position: relative; color: #0279AF; font-weight: bold;">Crear nuevo usuario</p>
+    <br/>
+    <div id="pick-rol">
+        <div class="rol">
+            <a href="/usuario/nuevo?rol=investigador">
+                <div class="square1">
+                </div>
+            </a>
+            <br />
+            <p style="font-size:20px; font-weight: bold;">Investigadorx</p>
+        </div>
+        <div class="rol">
+            <a href="/usuario/nuevo?rol=médico">
+                <div class="square2">
+                </div>
+            </a>
+            <br />
+            <p style="font-size:20px; font-weight: bold;">Doctorx</p>
+
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}
