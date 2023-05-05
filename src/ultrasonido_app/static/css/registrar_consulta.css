@@ -12,6 +12,14 @@
     margin: 0;
     gap: 10px;
 }
+.linea {
+    width: fit-content;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    margin: 0;
+    gap: 10px;
+}
 .col{
     padding: 0;
     margin:0;
@@ -33,4 +41,25 @@ hr {
 input #med{
     background-color: #f2f2f2;
     border-radius: 10px;
+    width: 100px;
 }
+#med{
+    background: #F1F0F7;
+    padding: 3px 0px 3px 10px;
+    border-radius: 5px;
+}
+input[type="text"]:disabled {
+    background: #F1F0F7;
+    border: none;
+    padding: 3px 0px 3px 10px;
+    color: #909090;
+  }
+
+  #description {
+    border-radius: 15px;
+    background: #F1F0F7;
+    border: none;
+    padding: 10px 0px 3px 15px;
+    color: #909090;
+    resize: none;
+  }
