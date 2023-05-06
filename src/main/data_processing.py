@@ -7,7 +7,6 @@ def process_data(file):
     count = 0
     for row_bytes in file_readed:
         row = row_bytes.decode("utf-8") 
-        print('=========')
         if ('STUDYDATE' in row):
             studydate = row.strip().split(" ")[1]
         elif ('STUDYTIME' in row):
@@ -211,7 +210,7 @@ def comparison(diagnosisData):
                         valores_anormales.update({'Circunferencia de la cabeza (HC_HADLOCK)': ['Microcefalia', data["hc_hadlock"], med.valormin]})
                         print("Microcefalia")
                     else:
-                        valores_normales.update({'Circunferencia de la cabeza (HC_HADLOCK)': data["hc_hadlock"]})
+                        valores_normales.update({'Circunferencia de la cabeza (HC_HADLOCK)':  ['Normal',data["hc_hadlock"], f'{med.valormin} - {med.valorinter}']})
                         print("OK - HC en valores normales")
 
                 if key == 2: #BPD
@@ -224,7 +223,7 @@ def comparison(diagnosisData):
                         print("bpd_hadlock valor inferior al normal")
                         
                     else:
-                        valores_normales.update({'Diámetro biparietal (BPD_HADLOCK)': data["bpd_hadlock"]})
+                        valores_normales.update({'Diámetro biparietal (BPD_HADLOCK)': ['Normal',data["bpd_hadlock"], f'{med.valormin} - {med.valorinter}']})
                         print("OK - bpd_hadlock valores normales")
                         
                 if key == 7: #Diametro transverso del cerebelo CEREB_HILL
@@ -243,38 +242,41 @@ def comparison(diagnosisData):
         
         if key == 4: #CM -> Para todas las edades
             if (float(data["cm"]) > 10):
-                valores_anormales.update({'Cisterna Magna (CM)': ['Megacisterno o cisterno alargada', data["cm"], 10]})
+                valores_anormales.update({'Cisterna Magna (CM)': ['Megacisterno o cisterno alargada', data["cm"], '> 10']})
                 print("Megacisterno o cisterno alargada")
             else:
-                valores_normales.update({'Cisterna Magna (CM)': data["cm"]})
+                valores_normales.update({'Cisterna Magna (CM)':['Normal', data["cm"], '< 10']})
                 print("OK - CM en valores normales")
         
         if key == 5 or key == 6: #VP or VA
-            if (float(data["vp"]) < 9.9 or float(data["va"]) < 9.9):
-                valores_normales.update({'Ventrículo posterior': data["vp"]})
-                valores_normales.update({'Ventrículo anterior': data["va"]})
-                print("Normal")
-                
-            elif ((10 < float(data["vp"]) < 11.9) or (10 < float(data["va"]) < 11.9)):
+            
+            if (float(data["vp"]) < 9.9):
+                valores_normales.update({'Ventrículo posterior': ['Normal', data["vp"], ' > 9.9']})
+            if(float(data["va"]) < 9.9):
+                valores_normales.update({'Ventrículo anterior':  ['Normal', data["vp"], ' > 9.9']})
+
+            elif ((10 < float(data["vp"]) < 11.9) ):
                 valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia leve', data["vp"], '10 - 11.9']})
+                print("Ventriculomegalia leve")
+
+            elif ( (10 < float(data["va"]) < 11.9)):
                 valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia leve', data["va"], '10 - 11.9']})
                 print("Ventriculomegalia leve")
-                
-            elif ((12 < float(data["vp"]) < 14.9) or (12 < float(data["va"]) < 14.9)):
+
+            elif (12 < float(data["vp"]) < 14.9 ):
                 valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia moderada', data["vp"], '12 - 14.9']})
+                print("Ventriculomegalia moderada")   
+            elif (12 < float(data["va"]) < 14.9):
                 valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia moderada', data["va"], '12 - 14.9']})
                 print("Ventriculomegalia moderada")   
                 
-            elif (float(data["vp"]) > 15 or float(data["va"]) > 15):
+            elif (float(data["vp"]) > 15 ):
                 valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia severa', data["vp"], 15]})
+                print("Ventriculomegalia severa")
+            elif ( float(data["va"]) > 15):
                 valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia severa', data["va"], 15]})
                 print("Ventriculomegalia severa")
-                
-            else:
-                valores_normales.update({'Ventrículo posterior': data["vp"]})
-                valores_normales.update({'Ventrículo anterior': data["va"]})
-                print("OK - VP y VA en valores normales")
-                
+ 
         # if key == 6: #VA
         #     print("VA")
         if key == 8:
@@ -283,15 +285,17 @@ def comparison(diagnosisData):
                 print("Oligohidramnios")
                 
             elif (5 < float(data["afi"]) < 24):
-                valores_normales.update({'Indice de líquido amniótico (AFI)': data["afi"]})
+                valores_normales.update({'Indice de líquido amniótico (AFI)': ['Normal', data["afi"], '< 24']})
                 print("AFI Normal")
                 
             elif (float(data["afi"]) > 24):
                 valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
                 print("Polihidramnios")
-                
-                
-                
+
+    return {
+        "valores_normales":valores_normales,
+        "valores_anormales":valores_anormales,
+    }
     
         
-    
+        

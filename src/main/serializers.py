@@ -39,3 +39,8 @@ class HistoriaClinicaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Historiaclinica
         fields = '__all__'
+
+class FetoMedicionDiagnosticoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FetoMedicionDiagnostico
+        fields = ('reporte', 'nombre_valor', 'valor_med', 'valor_ref', 'diagnostico')

@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.http import  JsonResponse
-from .models import *
+from main.models import *
+from main.serializers import *
 from .serializers import *
 from ultrasonido_app.forms import UploadFileForm
 from .data_processing import process_data

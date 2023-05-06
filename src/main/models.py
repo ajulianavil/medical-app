@@ -164,3 +164,16 @@ class Medicion(models.Model):
     class Meta:
         db_table = 'Medicion'
         verbose_name_plural = "Mediciones"
+
+
+class FetoMedicionDiagnostico(models.Model):
+    idfetomediciondiagnostico = models.AutoField( primary_key=True)  # Field name made lowercase.
+    reporte = models.ForeignKey(Reporte, models.CASCADE, default="")  # Field name made lowercase.
+    nombre_valor = models.CharField( max_length=100,null=False, blank=False,default="")
+    valor_med = models.CharField( max_length=100,db_column='valor_med',null=False, blank=False, default="",)
+    valor_ref = models.CharField(max_length=100,db_column='valor_ref', null=False, blank=False, default="",)
+    diagnostico = models.CharField( max_length=100, null=False, blank=False)
+    
+    class Meta:
+        db_table = 'FetoMedicionDiagnostico'
+        verbose_name_plural = "FetoMedicionDiagnostico"

@@ -81,13 +81,13 @@ def agregar_consulta(request):
             
             if clinicHistory_serializer.is_valid():
                 print("Guardar Historia Clinica")
-                #clinicHistory_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE LA HISTORIA
+                clinicHistory_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE LA HISTORIA
             
             # ------------------- CREA EL REPORTE CON LOS RESULTADOS
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
                 print("Guardar Reporte")
-                #reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
+                reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
                 # Consulta en la tabla reporte y trae el Id del registro recién insertaado
                 last_report = (Reporte.objects.last()).idreporte        
             
@@ -104,10 +104,29 @@ def agregar_consulta(request):
             if consulta_serializer.is_valid():
                 #set_medico = (Personalsalud.objects.filter())
                 print('Guarda Consulta. Fin del flujo. Eureka!')
-                #consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
-           
+                consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+
+            # Aqui toca hacer que estos datos queden guardados en la bd
             diagnosis = comparison(processedDataReport)
+            print('===============================')
+            print(len(diagnosis["valores_normales"]))
+            print(len(diagnosis["valores_anormales"]))
+            print('===============================')
+            for nombre in diagnosis["valores_normales"].keys():
+                last_report = (Reporte.objects.last()).idreporte        
+                feto_medicion_diagnostico = {
+                    'reporte': last_report,
+                    'nombre_valor': nombre,
+                    'diagnostico': diagnosis["valores_normales"][nombre][0],
+                    'valor_med': f'{diagnosis["valores_normales"][nombre][1]}',
+                    'valor_ref': diagnosis["valores_normales"][nombre][2],
+                }
+                feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=feto_medicion_diagnostico)
+                if feto_medicion_diagnostico_serializer.is_valid():
+                    feto_medicion_diagnostico_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+
             
+
         return JsonResponse({"success": "true"})
     else:
         form = UploadFileForm()
