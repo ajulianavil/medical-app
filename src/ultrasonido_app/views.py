@@ -33,13 +33,22 @@ def reporteInfo(request, param: int):
     matching_consulta.formatted_fecha_consulta = formatted_date
     matching_consulta.formatted_hora_consulta = formatted_hora
     
+    print("CONSULTAA", matching_consulta.consultaid)
     matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
     
     matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
 
     matching_report = Reporte.objects.filter(idreporte=matching_consulta.idreporte_id).first()
     
-    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist, "reporte": matching_report})
+    print(matching_report.idreporte)
+    matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
+    print("AAA", matching_result_info)
+    for x in matching_result_info:
+        print("=========")  
+        print(x)
+        print(x.diagnostico)
+    
+    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist, "reporte": matching_report, "diagnostico": matching_result_info})
 
 def agregar_usuario(request,):
     if request.method == "POST":
