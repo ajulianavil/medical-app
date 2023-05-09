@@ -103,7 +103,7 @@
           <input id="med" type="text" name="text" value="{%if clinicalhist.antginecologico == None%}No registra{%else%}{{clinicalhist.antginecologico}}{%endif%}" disabled="false">
         </div>
       </div>
-      <button onclick="location.href='{% url 'historia_clinica' %}'" class="btn submit-button" type="submit" style="width: 200px !important">Editar información</button>
+      <button  class="btn submit-button" type="submit" style="width: 200px !important">Editar información</button>
 
     </div>
     <!-- <div class="row">
@@ -148,8 +148,9 @@
   <br />
   <div>
     <textarea id="description" name="description" rows="8" cols="30" style="width: 100%">
-      El feto presenta valores normales en: {{count}} de {{diagnostico.count}} valores medidos.
+      El feto presenta valores normales en: {{count}} de {{diagnostico.values}} valores medidos.
       {% for item in diagnostico %}
+      item
         {% if item.diagnostico == "Normal" %}
           {{item.nombre_valor}} con {{item.valor_med}}, que se encuentra dentro del rango {{item.valor_ref}}
           {%else%}
@@ -178,11 +179,10 @@
       <button class="btn submit-button" type="submit" style="width: 200px !important; background-color: #0796D8; float: left;">Descargar reporte</button>
       <button class="btn submit-button" type="submit" style="width: 200px !important; float: right;">Editar reporte</button>
     </div>
-    <div class="col-12" style="    display: flex;
+    <div class="col-12" style="display: flex;
     flex-direction: row-reverse;
     justify-content: flex-start;
-    margin-top: 10px; margin-bottom: 10px
-}">
+    margin-top: 10px; margin-bottom: 10px">
       <button class="btn submit-button" type="submit" style="width: 200px !important; background-color: #63AC3D;">Ver análisis completo</button>
     </div>
   </div>

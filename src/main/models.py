@@ -169,11 +169,16 @@ class Medicion(models.Model):
 class FetoMedicionDiagnostico(models.Model):
     idfetomediciondiagnostico = models.AutoField( primary_key=True)  # Field name made lowercase.
     reporte = models.ForeignKey(Reporte, models.CASCADE, default="")  # Field name made lowercase.
-    nombre_valor = models.CharField( max_length=100,null=False, blank=False,default="")
-    valor_med = models.CharField( max_length=100,db_column='valor_med',null=False, blank=False, default="",)
-    valor_ref = models.CharField(max_length=100,db_column='valor_ref', null=False, blank=False, default="",)
-    diagnostico = models.CharField( max_length=100, null=False, blank=False)
-    
+    hc_hadlock = models.CharField( max_length=100,db_column='hc_hadlock',null=False, blank=False, default="",)
+    bpd_hadlock = models.CharField( max_length=100,db_column='bpd_hadlock',null=False, blank=False, default="",)
+    cm = models.CharField( max_length=100,db_column='cm',null=False, blank=False, default="",)
+    vp = models.CharField( max_length=100,db_column='vp',null=False, blank=False, default="",)
+    va = models.CharField( max_length=100,db_column='va',null=False, blank=False, default="",)
+    afi = models.CharField( max_length=100,db_column='afi',null=False, blank=False, default="",)
+    cereb_hill = models.CharField( max_length=100,db_column='cereb_hill',null=False, blank=False, default="",)
+    efw = models.CharField( max_length=100,db_column='efw',null=False, blank=False, default="",)
+    csp = models.CharField( max_length=100,db_column='csp',null=False, blank=False, default="",)
+
     class Meta:
         db_table = 'FetoMedicionDiagnostico'
         verbose_name_plural = "FetoMedicionDiagnostico"

@@ -43,4 +43,4 @@ class HistoriaClinicaSerializer(serializers.ModelSerializer):
 class FetoMedicionDiagnosticoSerializer(serializers.ModelSerializer):
     class Meta:
         model = FetoMedicionDiagnostico
-        fields = ('reporte', 'nombre_valor', 'valor_med', 'valor_ref', 'diagnostico')
+        fields =  'reporte', 'hc_hadlock', 'bpd_hadlock', 'csp', 'cm', 'vp', 'va', 'cereb_hill', 'efw', 'afi',

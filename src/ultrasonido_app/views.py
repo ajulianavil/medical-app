@@ -43,11 +43,25 @@ def reporteInfo(request, param: int):
     print(matching_report.idreporte)
     matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
     print("AAA", matching_result_info)
-    count = 0;
-    for x in matching_result_info:
-        if x.diagnostico == 'Normal':
-            count = count+1;
-    
+    count = 0
+
+
+    normal_columns = []
+    anormal_columns = []
+    anormal_columns = []
+
+        # for field in instance._meta.fields:
+        #     if getattr(instance, field.name) == 'Normal':
+        #         normal_columns.append(field.name)
+    for field in matching_result_info.get()._meta.fields:
+        if getattr(matching_result_info.get(), field.name) == 'Normal':
+            normal_columns.append(field.name)
+        else:
+            anormal_columns.append(field.name)
+
+   
+    print(normal_columns)
+    print(anormal_columns[2:])
     return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist, "reporte": matching_report, "diagnostico": matching_result_info, "count": count})
 
 def agregar_usuario(request,):
