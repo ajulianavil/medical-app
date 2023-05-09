@@ -136,3 +136,5 @@ def agregar_consulta(request):
         context={"form": form}
     )
     
+def repositorio(request):
+    return render(request, 'repositorio/repositorio.html')
