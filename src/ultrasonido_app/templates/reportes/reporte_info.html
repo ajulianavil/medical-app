@@ -1,5 +1,7 @@
 {% extends 'main/layout.html' %}
 {% load static %}
+{% load my_filters %}
+
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/registrar_consulta.css' %}" />
     <script src="{% static 'js/reporte_script.js' %}"></script>
@@ -148,24 +150,29 @@
   <br />
   <div>
     <textarea id="description" name="description" rows="8" cols="30" style="width: 100%">
-      El feto presenta valores normales en: {{count}} de {{diagnostico.values}} valores medidos.
-      {% for item in diagnostico %}
-      item
-        {% if item.diagnostico == "Normal" %}
-          {{item.nombre_valor}} con {{item.valor_med}}, que se encuentra dentro del rango {{item.valor_ref}}
-          {%else%}
-          ningún valor.
-        {% endif %} 
+      El feto presenta valores normales en: {{diagnostico.count}} de {{diagnostico.num_fields}} valores medidos.
+      {% for item in diagnostico.form %}
+        {% for field in item|get_fields %}
+          {{ field.name }}: {{item|get_field_value:field}}
+              {% if item|get_field_value:field == "Normal" %}
+                {{field.name}} - presenta un valor de ?????, que se encuentra dentro del rango ???
+              {%else%}
+                ningún valor.
+              {% endif %} 
+        {%endfor%}
       {% endfor %}
       Anormalidades:
       {% with counter=0 %}
-        {% for item in diagnostico %}
-          {% if item.diagnostico != 'Normal'%}
-            {{ counter|add:"1" }}
-              Se encontraron anormalidades:
-              {{item.nombre_valor}}: El valor del feto es {{item.valor_med}}, lo que podría indicar {{item.diagnostico}}, debido a que
-              no está en el rango normal estimado {{valor.ref}}.
-          {%endif%}
+        {% for item in diagnostico.form %}
+          {% for field in item|get_fields %}
+          {{item|get_field_value:field}}
+            {% if item|get_field_value:field != "Normal"%}
+              {{ counter|add:"1" }}
+                Se encontraron anormalidades:
+                {{item.nombre_valor}}: El valor del feto es {{item.valor_med}}, lo que podría indicar {{item.diagnostico}}, debido a que
+                no está en el rango normal estimado {{valor.ref}}.
+            {%endif%}
+          {%endfor%}
         {% endfor %}
         {%if counter == 0%}
           No se encontraron anormalidades
