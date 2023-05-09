@@ -9,5 +9,4 @@ urlpatterns = [
     path("registros/consulta", views.reportes, name="registros"),
     path("registros/consulta/<int:param>", views.reporteInfo, name="registros"),
     path("historia_clinica", views.historia_clinica, name="historia_clinica")    
-    
 ]
