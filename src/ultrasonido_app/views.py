@@ -43,12 +43,12 @@ def reporteInfo(request, param: int):
     print(matching_report.idreporte)
     matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
     print("AAA", matching_result_info)
+    count = 0;
     for x in matching_result_info:
-        print("=========")  
-        print(x)
-        print(x.diagnostico)
+        if x.diagnostico == 'Normal':
+            count = count+1;
     
-    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist, "reporte": matching_report, "diagnostico": matching_result_info})
+    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist, "reporte": matching_report, "diagnostico": matching_result_info, "count": count})
 
 def agregar_usuario(request,):
     if request.method == "POST":
@@ -161,3 +161,6 @@ def agregar_consulta(request):
         template_name='consultas/agregar_consulta.html',
         context={"form": form}
     )
+
+def historia_clinica(request):
+    return render(request, 'reportes/historia_clinica.html' )

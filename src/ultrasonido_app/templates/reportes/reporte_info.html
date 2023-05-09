@@ -39,19 +39,19 @@
     <div class="row">
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Primer nombre </strong>
-        <input id="med" type="text" name="text" value="{{paciente.nombreuno}}" disabled="false">
+        <input id="med" type="text" name="text" value="{%if paciente.nombreuno == None%}-{%else%}{{paciente.nombreuno}}{%endif%}" disabled="false">
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Segundo nombre </strong>
-        <input id="med" type="text" name="text" value="{{paciente.nombredos}}" disabled="false">
+        <input id="med" type="text" name="text" value="{%if paciente.nombredos == None%}-{%else%}{{paciente.nombredos}}{%endif%}" disabled="false">
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Primer apellido </strong>
-        <input id="med" type="text" name="text" value="{{paciente.apellido_paterno}}" disabled="false">
+        <input id="med" type="text" name="text" value="{%if paciente.apellido_paterno == None%}-{%else%}{{paciente.apellido_paterno}}{%endif%}" disabled="false">
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Segundo apellido </strong>
-        <input id="med" type="text" name="text" value="{{paciente.apellido_materno}}" disabled="false">
+        <input id="med" type="text" name="text" value="{%if paciente.apellido_materno == None%}-{%else%}{{paciente.apellido_materno}}{%endif%}" disabled="false">
       </div>
     </div>
     <br />
@@ -96,14 +96,14 @@
   ">
         <div class="col-md-auto">
           <strong class="col-md-auto label"> Ant. Quirúrgico </strong>
-          <input id="med" type="text" name="text" value="{{clinicalhist.antquirurgico}}" disabled="false">
+          <input id="med" type="text" name="text" value="{%if clinicalhist.antquirurgico == None%}No registra{%else%}{{clinicalhist.antquirurgico}}{%endif%}" disabled="false">
         </div>
         <div class="col-md-auto">
           <strong class="col-md-auto label"> Ant. Ginecológico </strong>
-          <input id="med" type="text" name="text" value="{{clinicalhist.antginecologico}}" disabled="false">
+          <input id="med" type="text" name="text" value="{%if clinicalhist.antginecologico == None%}No registra{%else%}{{clinicalhist.antginecologico}}{%endif%}" disabled="false">
         </div>
       </div>
-      <button class="btn submit-button" type="submit" style="width: 200px !important">Editar historia clínica</button>
+      <button onclick="location.href='{% url 'historia_clinica' %}'" class="btn submit-button" type="submit" style="width: 200px !important">Editar información</button>
 
     </div>
     <!-- <div class="row">
@@ -148,7 +148,7 @@
   <br />
   <div>
     <textarea id="description" name="description" rows="8" cols="30" style="width: 100%">
-      El feto presenta valores normales en:
+      El feto presenta valores normales en: {{count}} de {{diagnostico.count}} valores medidos.
       {% for item in diagnostico %}
         {% if item.diagnostico == "Normal" %}
           {{item.nombre_valor}} con {{item.valor_med}}, que se encuentra dentro del rango {{item.valor_ref}}
@@ -172,6 +172,19 @@
       {% endwith %}
 
       </textarea>
+  </div>
+  <div class="grid">
+    <div class="col-12" style="margin-top: 10px; margin-bottom: 10px">
+      <button class="btn submit-button" type="submit" style="width: 200px !important; background-color: #0796D8; float: left;">Descargar reporte</button>
+      <button class="btn submit-button" type="submit" style="width: 200px !important; float: right;">Editar reporte</button>
+    </div>
+    <div class="col-12" style="    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    margin-top: 10px; margin-bottom: 10px
+}">
+      <button class="btn submit-button" type="submit" style="width: 200px !important; background-color: #63AC3D;">Ver análisis completo</button>
+    </div>
   </div>
 </div>
 

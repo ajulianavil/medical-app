@@ -136,5 +136,3 @@ def agregar_consulta(request):
         context={"form": form}
     )
     
-def historia_clinica(request):
-    return render(request, 'reporte/historia_clinica.html' )

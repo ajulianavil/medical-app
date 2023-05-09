@@ -6,7 +6,5 @@ urlpatterns = [
     path("consultas/nueva", views.agregar_consulta, name="consultas/nueva"),
     path("landing", views.landing, name="landing"),
     path("aboutUs", views.aboutUs, name="aboutUs"),
-    path("howToRegister", views.howToRegister, name="howToRegister"),
-    path("historia_clinica", views.historia_clinica, name="historia_clinica")    
-    
+    path("howToRegister", views.howToRegister, name="howToRegister")    
 ]
