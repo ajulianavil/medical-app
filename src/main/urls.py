@@ -8,5 +8,11 @@ urlpatterns = [
     path("aboutUs", views.aboutUs, name="aboutUs"),
     path("howToRegister", views.howToRegister, name="howToRegister"),
     path("repositorio", views.repositorio, name="repositorio") ,
+    path("historia_clinica", views.historia_clinica, name="historia_clinica")    ,
+    path("registros/consulta", views.reportes, name="registros"),
+    path("registros/consulta/<int:param>", views.reporteInfo, name="registros"),
+    path("usuario/nuevo", views.agregar_usuario, name="usuario/nuevo"),
+    path("registros", views.reportes, name="registros"),
+
      
 ]

@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, JsonResponse
-from .models import *
-from .serializers import *
-from main.forms import UploadFileForm
+from main.forms import CreateUserForm, UploadFileForm
 from .data_processing import comparison, process_data
-from rest_framework.decorators import api_view
 from .Exceptions.PersonalizedExceptions import MyCustomException
+from datetime import datetime as dt
+from django.http import  JsonResponse
+from main.models import *
+from main.serializers import *
+from django.contrib import messages
 
 # Create your views here.
 def landing(request):
@@ -133,6 +135,101 @@ def agregar_consulta(request):
         template_name='consultas/agregar_consulta.html',
         context={"form": form}
     )
+
+def reporteInfo(request, param: int):
+    print(param)
+    matching_consulta = Consulta.objects.filter(consultaid=param).first()
+    print(matching_consulta)
+    formatted_date = dt.strftime(matching_consulta.fecha_consulta, '%Y/%m/%d')
+    formatted_hora = dt.strftime(matching_consulta.fecha_consulta, '%H:%M')
+    matching_consulta.formatted_fecha_consulta = formatted_date
+    matching_consulta.formatted_hora_consulta = formatted_hora
     
+    print("CONSULTAA", matching_consulta.consultaid)
+    matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
+    
+    matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
+
+    matching_report = Reporte.objects.filter(idreporte=matching_consulta.idreporte_id).first()
+    
+    print(matching_report.idreporte)
+    matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
+    print("AAA", matching_result_info)
+    count = 0
+    num_fields = 0
+    # for x in matching_result_info:
+    #     if isinstance(x, FetoMedicionDiagnostico):
+    #         print('hola',x)
+    #         for field in x._meta.fields:
+    #             num_fields = num_fields+1
+                
+    #             value = getattr(x, field.name)
+    #             if value == 'Normal':
+    #                 print(value)
+    #                 count = count+1
+
+
+    normal_columns = []
+    anormales_columns = []
+
+        # for field in instance._meta.fields:
+        #     if getattr(instance, field.name) == 'Normal':
+        #         normal_columns.append(field.name)
+    for field in matching_result_info.get()._meta.fields:
+        if getattr(matching_result_info.get(), field.name) == 'Normal':
+            normal_columns.append(field.name)
+        else:
+            anormales_columns.append(field.name)
+    
+   
+    print(type(matching_report))
+    diagnostico = { 
+            'form': matching_result_info,
+            'num_fields': len(normal_columns) + len(anormales_columns[2:]), 
+            'count': len(normal_columns),
+            'normales':normal_columns,
+            'anormales':anormales_columns[2:]
+        }
+    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist, "reporte": matching_report, "diagnostico": diagnostico})
+
 def repositorio(request):
     return render(request, 'repositorio/repositorio.html')
+
+def reportes(request,):
+    matching_consultas = Consulta.objects.all()
+    return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
+
+
+def agregar_usuario(request):
+    if request.method == "POST":
+        form = CreateUserForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your form has been submitted successfully!')
+            rol = request.GET.get('rol')
+            form = CreateUserForm()
+            return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol,})
+        else:
+            rol = request.GET.get('rol')
+            return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
+    else:
+        rol = request.GET.get('rol')
+        if rol:
+            form = CreateUserForm()
+            return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
+        
+        if not request.user.is_authenticated:
+            return redirect('/login')   
+        return render(request, 'agregar_usuario/seleccionar_usuario.html')
+
+
+def consultas(request, personal: str):
+    matching_consultas = Consulta.objects.filter(medConsulta=personal).all()
+    return render(
+        request=request,
+        template_name='main/consultas.html',
+        context={"objects": matching_consultas}
+        )
+
+def historia_clinica(request):
+    return render(request, 'reportes/historia_clinica.html' )

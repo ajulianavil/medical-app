@@ -4,7 +4,7 @@
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/registrar_consulta.css' %}" />
-    <script src="{% static 'js/reporte_script.js' %}"></script>
+<script src="{% static 'js/reporte_script.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -41,19 +41,25 @@
     <div class="row">
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Primer nombre </strong>
-        <input id="med" type="text" name="text" value="{%if paciente.nombreuno == None%}-{%else%}{{paciente.nombreuno}}{%endif%}" disabled="false">
+        <input id="med" type="text" name="text"
+          value="{%if paciente.nombreuno == None%}-{%else%}{{paciente.nombreuno}}{%endif%}" disabled="false">
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Segundo nombre </strong>
-        <input id="med" type="text" name="text" value="{%if paciente.nombredos == None%}-{%else%}{{paciente.nombredos}}{%endif%}" disabled="false">
+        <input id="med" type="text" name="text"
+          value="{%if paciente.nombredos == None%}-{%else%}{{paciente.nombredos}}{%endif%}" disabled="false">
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Primer apellido </strong>
-        <input id="med" type="text" name="text" value="{%if paciente.apellido_paterno == None%}-{%else%}{{paciente.apellido_paterno}}{%endif%}" disabled="false">
+        <input id="med" type="text" name="text"
+          value="{%if paciente.apellido_paterno == None%}-{%else%}{{paciente.apellido_paterno}}{%endif%}"
+          disabled="false">
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Segundo apellido </strong>
-        <input id="med" type="text" name="text" value="{%if paciente.apellido_materno == None%}-{%else%}{{paciente.apellido_materno}}{%endif%}" disabled="false">
+        <input id="med" type="text" name="text"
+          value="{%if paciente.apellido_materno == None%}-{%else%}{{paciente.apellido_materno}}{%endif%}"
+          disabled="false">
       </div>
     </div>
     <br />
@@ -98,14 +104,18 @@
   ">
         <div class="col-md-auto">
           <strong class="col-md-auto label"> Ant. Quirúrgico </strong>
-          <input id="med" type="text" name="text" value="{%if clinicalhist.antquirurgico == None%}No registra{%else%}{{clinicalhist.antquirurgico}}{%endif%}" disabled="false">
+          <input id="med" type="text" name="text"
+            value="{%if clinicalhist.antquirurgico == None%}No registra{%else%}{{clinicalhist.antquirurgico}}{%endif%}"
+            disabled="false">
         </div>
         <div class="col-md-auto">
           <strong class="col-md-auto label"> Ant. Ginecológico </strong>
-          <input id="med" type="text" name="text" value="{%if clinicalhist.antginecologico == None%}No registra{%else%}{{clinicalhist.antginecologico}}{%endif%}" disabled="false">
+          <input id="med" type="text" name="text"
+            value="{%if clinicalhist.antginecologico == None%}No registra{%else%}{{clinicalhist.antginecologico}}{%endif%}"
+            disabled="false">
         </div>
       </div>
-      <button  class="btn submit-button" type="submit" style="width: 200px !important">Editar información</button>
+      <button class="btn submit-button" type="submit" style="width: 200px !important">Editar información</button>
 
     </div>
     <!-- <div class="row">
@@ -150,52 +160,32 @@
   <br />
   <div>
     <textarea id="description" name="description" rows="8" cols="30" style="width: 100%">
+      {% for item in diagnostico.normales %}
+        {{ item|get_med_name }} - presenta un valor de  {{reporte|get_field_value:item }}, que se encuentra dentro del rango {{reporte|get_ref_values:item}}
+       
+      {%endfor%}
 
-      El feto presentASDASDa valores normales en: {{diagnostico.count}} de {{diagnostico.num_fields}} valores medidos.
-      {% for item in diagnostico.form %}
-        {% for field in item|get_fields %}
-          {{ convertidor_mediciones.field.name}}: {{item|get_field_value:field}}
-              {% if item|get_field_value:field == "Normal" %}
-                {{convertidor_mediciones.field.name}} - presenta un valor de ?????, que se encuentra dentro del rango ???
-              {%else%}
-                ningún valor.
-              {% endif %} 
-        {%endfor%}
-      {% endfor %}
-      Anormalidades:
-      {% with counter=0 %}
-        {% for item in diagnostico.form %}
-          {% for field in item|get_fields %}
-          {{item|get_field_value:field}}
-            {% if item|get_field_value:field != "Normal"%}
-              {{ counter|add:"1" }}
-                Se encontraron anormalidades:
-                {{item.nombre_valor}}: El valor del feto es {{item.valor_med}}, lo que podría indicar {{item.diagnostico}}, debido a que
-                no está en el rango normal estimado {{valor.ref}}.
-            {%endif%}
-          {%endfor%}
-        {% endfor %}
-        {%if counter == 0%}
-          No se encontraron anormalidades
-        {%endif%}
-      {% endwith %}
+
+     
 
       </textarea>
   </div>
   <div class="grid">
     <div class="col-12" style="margin-top: 10px; margin-bottom: 10px">
-      <button class="btn submit-button" type="submit" style="width: 200px !important; background-color: #0796D8; float: left;">Descargar reporte</button>
-      <button class="btn submit-button" type="submit" style="width: 200px !important; float: right;">Editar reporte</button>
+      <button class="btn submit-button" type="submit"
+        style="width: 200px !important; background-color: #0796D8; float: left;">Descargar reporte</button>
+      <button class="btn submit-button" type="submit" style="width: 200px !important; float: right;">Editar
+        reporte</button>
     </div>
     <div class="col-12" style="display: flex;
     flex-direction: row-reverse;
     justify-content: flex-start;
     margin-top: 10px; margin-bottom: 10px">
-      <button class="btn submit-button" type="submit" style="width: 200px !important; background-color: #63AC3D;">Ver análisis completo</button>
+      <button class="btn submit-button" type="submit" style="width: 200px !important; background-color: #63AC3D;">Ver
+        análisis completo</button>
     </div>
   </div>
 </div>
 
 
 {% endblock %}
-
