@@ -23,7 +23,9 @@ def get_med_name(item):
     convertidorDeMediciones = {
         'hc_hadlock': 'Circunferencia de la cabeza (HC_HADLOCK)',
         'bpd_hadlock': 'Diámetro biparietal (BPD_HADLOCK)',
-        'cerebhill' : 'cerebhill',
+        'cereb_hill' : 'Diámetro transverso del cerebelo',
+        'efw' : 'Peso estimado fetal',
+        'csp': 'Cavum septumpellucidum',
         'cm':'Cisterna Magna (CM)',
         'vp':'Ventrículo posterior (VP)',
         'va':'Ventrículo anterior (VA)',
@@ -44,7 +46,7 @@ def get_ref_values(reporte, medicion):
             med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
             return str(med.valormin) + ' - ' + str(med.valorinter)
         if idMedicion == 3: #CSP
-            return 'wtf'
+            return 'X'
         if idMedicion == 4:
             return '10'
         if idMedicion == 5 or idMedicion == 6:
@@ -52,6 +54,8 @@ def get_ref_values(reporte, medicion):
                 return 'va'
             if(medicion == 'vp'):
                 return 'nose'
+        if idMedicion == 8:
+            return 'aaa'
     except Medicion.DoesNotExist:
         med = None
         print('medicion', medicion)

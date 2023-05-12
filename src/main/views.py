@@ -10,6 +10,13 @@ from main.models import *
 from main.serializers import *
 from django.contrib import messages
 
+from django.http import FileResponse
+import io 
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+
+
 # Create your views here.
 def landing(request):
     return render(request, 'main/pages/landing.html')
@@ -233,3 +240,30 @@ def consultas(request, personal: str):
 
 def historia_clinica(request):
     return render(request, 'reportes/historia_clinica.html' )
+
+def reporte_pdf(request):
+    buf = io.BytesIO()
+    # canvas
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    #textobject
+    textob = c.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica", 15)
+    
+    # Add some lines
+    lines = [
+        "Line 1",
+        "This is line 2",
+        "This is line 3 "
+    ]
+    
+    for line in lines:
+        textob.textLine(line)
+        
+    #finish
+    c.drawText(textob)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+    
+    return FileResponse(buf, as_attachment=True, filename='reporte_ultrasonido.pdf')

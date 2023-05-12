@@ -159,21 +159,47 @@
   </div>
   <br />
   <div>
-    <textarea id="description" name="description" rows="8" cols="30" style="width: 100%">
+    <div class="col" id="description" name="description">
+    {% comment %} <textarea id="description" name="description" rows="8" cols="30" style="width: 100%"> {% endcomment %}
+      <p class="title"> Valores normales </p>
+      <span style="display: inline-block; font-size: 16px;"> El feto presenta valores normales en </span>
+
+      <h5 class="diagnosis">{{diagnostico.count}} de {{diagnostico.num_fields}} </h5> 
+
+      <span style="display: inline-block; font-size: 15px;"> valores medidos. </span>
+    
+      </br></br>
+
       {% for item in diagnostico.normales %}
-        {{ item|get_med_name }} - presenta un valor de  {{reporte|get_field_value:item }}, que se encuentra dentro del rango {{reporte|get_ref_values:item}}
-       
+        <p class="diagnosis"> {{ item|get_med_name }} </p> 
+        <span style="display: inline-block; font-size: 15px;">- presenta un valor de  {{reporte|get_field_value:item }}, 
+          que se encuentra dentro del rango {{reporte|get_ref_values:item}} </span> </br>
       {%endfor%}
 
+      </br>
+
+      <p class="title"> Anormalidades </p>
+      {% for item in diagnostico.anormales %}
+        <p class="diagnosis"> {{ item|get_med_name }} </p> 
+        <span style="display: inline-block; font-size: 15px;">- El feto presenta un valor de {{reporte|get_field_value:item }}, 
+          lo que indica un XXXX ya que que se encuentra fuera del rango normal establecido para su edad gestacional de
+          {{reporte|get_ref_values:item}} </span> </br>
+      {%endfor%} 
+      
+      </br>
+
+      <p class="title"> Conclusiones </p>
 
      
 
-      </textarea>
+      {% comment %} </textarea> {% endcomment %}
+    </div>
   </div>
   <div class="grid">
     <div class="col-12" style="margin-top: 10px; margin-bottom: 10px">
       <button class="btn submit-button" type="submit"
         style="width: 200px !important; background-color: #0796D8; float: left;">Descargar reporte</button>
+        <a href="{% url 'reporte_pdf'%}"> Descargar pdf </a>
       <button class="btn submit-button" type="submit" style="width: 200px !important; float: right;">Editar
         reporte</button>
     </div>

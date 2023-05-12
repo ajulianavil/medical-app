@@ -55,11 +55,46 @@ input[type="text"]:disabled {
     color: #909090;
   }
 
-  #description {
+#description {
     border-radius: 15px;
     background: #F1F0F7;
     border: none;
-    padding: 10px 0px 3px 15px;
-    color: #909090;
+    /* color: #909090; */
     resize: none;
-  }
+    color: #26283E; 
+    overflow: auto; 
+    height: 500px; width: 100%; padding: 30px !important; 
+}
+
+.title{
+    font-size: 20px; font-weight: bold;
+}
+
+.diagnosis{
+    font-size: 16px;
+    display: inline-block;
+    font-weight: bold;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6, p, span {
+    font-family: 'League Spartan', sans-serif;
+}
+
+/* Style the scrollbar */
+#description::-webkit-scrollbar {
+    width: 10px; /* Width of the entire scrollbar */
+}
+  
+#description::-webkit-scrollbar-track {
+background: #f1f1f1; /* Color of the tracking area */
+}
+  
+#description::-webkit-scrollbar-thumb {
+    background-color: #888; /* Color of the scroll thumb */
+    border-radius: 20px; /* Roundness of the scroll thumb */
+}
+  
+#description::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Color of the scroll thumb on hover */
+}
