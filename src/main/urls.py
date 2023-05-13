@@ -13,6 +13,6 @@ urlpatterns = [
     path("registros/consulta/<int:param>", views.reporteInfo, name="registros"),
     path("usuario/nuevo", views.agregar_usuario, name="usuario/nuevo"),
     path("registros", views.reportes, name="registros"),
-    path("reporte_pdf", views.reporte_pdf, name="reporte_pdf")
+    path("reporte_pdf/<int:idreporte_id>", views.reporte_pdf, name="reporte_pdf")
      
 ]

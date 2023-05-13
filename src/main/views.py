@@ -13,8 +13,15 @@ from django.contrib import messages
 from django.http import FileResponse
 import io 
 from reportlab.pdfgen import canvas
-from reportlab.lib.units import inch
+from reportlab.lib.units import inch, mm
 from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, PageTemplate
+from reportlab.graphics.shapes import Line, Drawing
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from ultrasonido_app.templatetags import my_filters
+from reportlab.platypus.frames import Frame
+
 
 
 # Create your views here.
@@ -152,44 +159,23 @@ def reporteInfo(request, param: int):
     matching_consulta.formatted_fecha_consulta = formatted_date
     matching_consulta.formatted_hora_consulta = formatted_hora
     
-    print("CONSULTAA", matching_consulta.consultaid)
     matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
     
     matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
 
     matching_report = Reporte.objects.filter(idreporte=matching_consulta.idreporte_id).first()
     
-    print(matching_report.idreporte)
     matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
-    print("AAA", matching_result_info)
-    count = 0
-    num_fields = 0
-    # for x in matching_result_info:
-    #     if isinstance(x, FetoMedicionDiagnostico):
-    #         print('hola',x)
-    #         for field in x._meta.fields:
-    #             num_fields = num_fields+1
-                
-    #             value = getattr(x, field.name)
-    #             if value == 'Normal':
-    #                 print(value)
-    #                 count = count+1
-
 
     normal_columns = []
     anormales_columns = []
 
-        # for field in instance._meta.fields:
-        #     if getattr(instance, field.name) == 'Normal':
-        #         normal_columns.append(field.name)
     for field in matching_result_info.get()._meta.fields:
         if getattr(matching_result_info.get(), field.name) == 'Normal':
             normal_columns.append(field.name)
         else:
             anormales_columns.append(field.name)
-    
-   
-    print(type(matching_report))
+
     diagnostico = { 
             'form': matching_result_info,
             'num_fields': len(normal_columns) + len(anormales_columns[2:]), 
@@ -197,6 +183,7 @@ def reporteInfo(request, param: int):
             'normales':normal_columns,
             'anormales':anormales_columns[2:]
         }
+        
     return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist, "reporte": matching_report, "diagnostico": diagnostico})
 
 def repositorio(request):
@@ -241,29 +228,193 @@ def consultas(request, personal: str):
 def historia_clinica(request):
     return render(request, 'reportes/historia_clinica.html' )
 
-def reporte_pdf(request):
+def footer(canvas, doc):
+    # Add your footer content here
+    canvas.drawString(10*mm, 10*mm, "This is the footer")
+
+def reporte_pdf(request, idreporte_id: int):
     buf = io.BytesIO()
-    # canvas
-    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
-    #textobject
-    textob = c.beginText()
-    textob.setTextOrigin(inch, inch)
-    textob.setFont("Helvetica", 15)
     
-    # Add some lines
-    lines = [
-        "Line 1",
-        "This is line 2",
-        "This is line 3 "
+    # Styles
+    # Define a custom ParagraphStyle
+    report_style = ParagraphStyle(
+        name='CustomTitleReport',
+        fontName='Helvetica-Bold',
+        fontSize=18,
+        leading=18,
+        spaceAfter=2*mm,
+        textColor='#0279AF'
+        )
+    
+    title_style = ParagraphStyle(
+        name='CustomTitle',
+        fontName='Helvetica-Bold',
+        fontSize=14,
+        textColor='#0279AF'
+    )
+    
+    obs_style = ParagraphStyle(
+        name='ObservationsTitle',
+        fontName='Helvetica-Bold',
+        fontSize=10,
+        textColor='#0279AF'
+    )
+    
+    val_style = ParagraphStyle(
+        name='ValuesTitle',
+        fontName='Helvetica',
+        fontSize=10,
+        textColor='#0279AF'
+    )
+    
+    text_style = ParagraphStyle(
+        name='TextTitle',
+        fontName='Helvetica',
+        fontSize=10,
+    )
+    
+    # Information
+    matching_consulta = Consulta.objects.filter(consultaid=idreporte_id).first()
+    formatted_date = dt.strftime(matching_consulta.fecha_consulta, '%Y/%m/%d')
+    formatted_hora = dt.strftime(matching_consulta.fecha_consulta, '%H:%M')
+    matching_consulta.formatted_fecha_consulta = formatted_date
+    matching_consulta.formatted_hora_consulta = formatted_hora
+    
+    matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
+    
+    matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
+
+    matching_report = Reporte.objects.filter(idreporte=matching_consulta.idreporte_id).first()
+    
+    matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
+    
+    normal_columns = []
+    anormales_columns = []
+
+    for field in matching_result_info.get()._meta.fields:
+        if getattr(matching_result_info.get(), field.name) == 'Normal':
+            normal_columns.append(field.name)
+        else:
+            anormales_columns.append(field.name)
+
+    diagnostico = { 
+            'form': matching_result_info,
+            'num_fields': len(normal_columns) + len(anormales_columns[2:]), 
+            'count': len(normal_columns),
+            'normales':normal_columns,
+            'anormales':anormales_columns[2:]
+        }
+    
+    doc = SimpleDocTemplate(buf, pagesize=letter,
+                            rightMargin=40, leftMargin=50,
+                            topMargin=50, bottomMargin=40)
+    
+     # Create a list to hold the flowables.
+    elements = []
+
+    # Add a title to the document.
+    styles = getSampleStyleSheet()
+    report_title = Paragraph('REPORTE MÉDICO N°{}'.format(idreporte_id), report_style)
+    elements.append(report_title)
+    title = Paragraph('ANOMALÍAS DEL SISTEMA NERVIOSO CENTRAL FETAL', title_style)
+    elements.append(title)
+    
+    # Add a logo to the top corner of the document.
+    # logo = Image('/static/images/logo_foscal.png', width=1.5*inch, height=1.5*inch)
+    # logo.wrapOn(doc, 72, 72)
+    # logo.drawOn(doc, doc.leftMargin, doc.height + doc.topMargin - logo.height)
+
+    # Add a spacer to create a margin between the title and the logo.
+    spacer = Spacer(1, 0.25*inch)
+    elements.append(spacer)
+
+     # Create a line drawing
+    line_drawing = Drawing(400, 1)
+    line_drawing.add(Line(0, 0, 500, 0))
+    elements.append(line_drawing)
+    
+    spacer = Spacer(1, 0.1*inch)
+    elements.append(spacer)
+
+    # Define the data for the table
+    general_data = [
+        ["Fecha y hora de atención:", f"{formatted_date}" + " " + f"{formatted_hora}", "Médico encargado:", f"{matching_consulta.medUltrasonido}"],
+    ]
+
+    # Define the style for the table cells
+    table_style = [
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
     ]
     
-    for line in lines:
-        textob.textLine(line)
-        
-    #finish
-    c.drawText(textob)
-    c.showPage()
-    c.save()
-    buf.seek(0)
+    # Create the table
+    generaldata_table = Table(general_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
+    # generaldata_table._argW[0] = 2*inch
     
-    return FileResponse(buf, as_attachment=True, filename='reporte_ultrasonido.pdf')
+    elements.append(generaldata_table)
+    
+    line_drawing = Drawing(400, 1)
+    line_drawing.add(Line(0, 0, 500, 0))
+    elements.append(line_drawing)
+    
+    spacer = Spacer(1, 0.1*inch)
+    elements.append(spacer)
+    
+    patient_data = [
+    ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{matching_report.edb}"],
+    ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{matching_report.ga} semanas"],
+    ["Fecha nacimiento:", f"{matching_patient.fechanac}", "Peso fetal:",  f"{matching_report.efw} gr"],
+    ["Último periodo menstrual:", f"{matching_clinichist.lmp}"],    
+    ]
+    
+    patientdata_table = Table(patient_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
+    elements.append(patientdata_table)
+    
+    line_drawing = Drawing(400, 1)
+    line_drawing.add(Line(0, 0, 500, 0))
+    elements.append(line_drawing)
+    
+    spacer = Spacer(1, 0.3*inch)
+    elements.append(spacer)
+    
+    obs_title = Paragraph('Observaciones', obs_style)
+    elements.append(obs_title)
+    
+    elements.append(Spacer(1, 0.3*inch))
+    
+    elements.append(Paragraph('El feto presenta valores normales en {} de {} mediciones.'.format(diagnostico['count'], diagnostico['num_fields']), text_style))
+    elements.append(Spacer(1, 0.2*inch))
+    elements.append(Paragraph('Valores normales', val_style))
+    elements.append(Spacer(1, 0.2*inch))
+    
+    
+    for med in diagnostico['normales']:
+        print("---------------------------", med)
+        nombre_medicion = my_filters.get_med_name(med)
+        print("medicion", nombre_medicion)
+        # valor_feto = my_filters.get_field_value(med)
+        valor_feto = "hola"
+        print("feto", valor_feto)
+        valor_ref = my_filters.get_ref_values(matching_report, med)
+        print("ref", valor_ref)
+                
+        elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
+                                  .format(nombre_medicion, valor_ref), text_style))
+        elements.append(Spacer(1, 0.1*inch))
+    
+    
+    #Footer
+    # Define the page template with the footer
+    frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
+    template = PageTemplate(id='test', frames=[frame], onPage=footer)
+    doc.addPageTemplates([template])
+
+    
+    # Build the document and render the PDF.
+    doc.build(elements)
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buf.seek(0)
+    return FileResponse(buf, as_attachment=True, filename='my_pdf.pdf')
