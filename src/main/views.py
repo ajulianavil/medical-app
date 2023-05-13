@@ -21,7 +21,7 @@ from reportlab.graphics.shapes import Line, Drawing
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from ultrasonido_app.templatetags import my_filters
 from reportlab.platypus.frames import Frame
-
+from datetime import datetime
 
 
 # Create your views here.
@@ -229,8 +229,23 @@ def historia_clinica(request):
     return render(request, 'reportes/historia_clinica.html' )
 
 def footer(canvas, doc):
+    # Define a style for the text
+    styles = getSampleStyleSheet()
+    style = styles["Normal"]
+    style.fontName = "Helvetica-Bold"
+    style.fontSize = 8
+    style.textColor = colors.black
+    
     # Add your footer content here
-    canvas.drawString(10*mm, 10*mm, "This is the footer")
+    current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    x1, y1 = 50, 90
+    x2, y2 = 560, 90
+    canvas.line(x1, y1, x2, y2)
+    # Set the font and draw the text with the current date and time
+    canvas.setFont(style.fontName, style.fontSize)
+    canvas.setFillColor(style.textColor)
+    canvas.drawString(18*mm, 20*mm, f"Fecha y hora de impresión: {current_date}")
 
 def reporte_pdf(request, idreporte_id: int):
     buf = io.BytesIO()
@@ -253,16 +268,16 @@ def reporte_pdf(request, idreporte_id: int):
         textColor='#0279AF'
     )
     
-    obs_style = ParagraphStyle(
+    section_title_style = ParagraphStyle(
         name='ObservationsTitle',
         fontName='Helvetica-Bold',
-        fontSize=10,
+        fontSize=12,
         textColor='#0279AF'
     )
     
     val_style = ParagraphStyle(
         name='ValuesTitle',
-        fontName='Helvetica',
+        fontName='Helvetica-Bold',
         fontSize=10,
         textColor='#0279AF'
     )
@@ -272,6 +287,13 @@ def reporte_pdf(request, idreporte_id: int):
         fontName='Helvetica',
         fontSize=10,
     )
+    
+    # Define the style for the table cells
+    table_style = [
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]
     
     # Information
     matching_consulta = Consulta.objects.filter(consultaid=idreporte_id).first()
@@ -307,13 +329,22 @@ def reporte_pdf(request, idreporte_id: int):
     
     doc = SimpleDocTemplate(buf, pagesize=letter,
                             rightMargin=40, leftMargin=50,
-                            topMargin=50, bottomMargin=40)
+                            topMargin=50, bottomMargin=90)
     
      # Create a list to hold the flowables.
     elements = []
+    
+    spacer_logo = Spacer(1, 0.25*inch)
+    spacer_section = Spacer(1, 0.18*inch)
+    spacer_subsection = Spacer(1, 0.23*inch)
+    spacer_data = Spacer(1, 0.15*inch)
 
     # Add a title to the document.
     styles = getSampleStyleSheet()
+    
+    max_height = 7 * inch  # adjust the value as needed
+    current_height = 0
+    
     report_title = Paragraph('REPORTE MÉDICO N°{}'.format(idreporte_id), report_style)
     elements.append(report_title)
     title = Paragraph('ANOMALÍAS DEL SISTEMA NERVIOSO CENTRAL FETAL', title_style)
@@ -325,43 +356,23 @@ def reporte_pdf(request, idreporte_id: int):
     # logo.drawOn(doc, doc.leftMargin, doc.height + doc.topMargin - logo.height)
 
     # Add a spacer to create a margin between the title and the logo.
-    spacer = Spacer(1, 0.25*inch)
-    elements.append(spacer)
+
+    elements.append(spacer_logo)
 
      # Create a line drawing
     line_drawing = Drawing(400, 1)
     line_drawing.add(Line(0, 0, 500, 0))
     elements.append(line_drawing)
     
-    spacer = Spacer(1, 0.1*inch)
-    elements.append(spacer)
-
-    # Define the data for the table
-    general_data = [
-        ["Fecha y hora de atención:", f"{formatted_date}" + " " + f"{formatted_hora}", "Médico encargado:", f"{matching_consulta.medUltrasonido}"],
-    ]
-
-    # Define the style for the table cells
-    table_style = [
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-    ]
-    
-    # Create the table
-    generaldata_table = Table(general_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
-    # generaldata_table._argW[0] = 2*inch
-    
-    elements.append(generaldata_table)
-    
-    line_drawing = Drawing(400, 1)
-    line_drawing.add(Line(0, 0, 500, 0))
+    elements.append(spacer_data)
+    elements.append(Paragraph('DATOS DEL PACIENTE', section_title_style))
+    elements.append(spacer_data)
     elements.append(line_drawing)
+    elements.append(spacer_section)
     
-    spacer = Spacer(1, 0.1*inch)
-    elements.append(spacer)
     
     patient_data = [
+    ["Fecha y hora de atención:", f"{formatted_date}" + " " + f"{formatted_hora}", "Médico encargado:", f"{matching_consulta.medUltrasonido}"],
     ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{matching_report.edb}"],
     ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{matching_report.ga} semanas"],
     ["Fecha nacimiento:", f"{matching_patient.fechanac}", "Peso fetal:",  f"{matching_report.efw} gr"],
@@ -371,38 +382,49 @@ def reporte_pdf(request, idreporte_id: int):
     patientdata_table = Table(patient_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
     elements.append(patientdata_table)
     
-    line_drawing = Drawing(400, 1)
-    line_drawing.add(Line(0, 0, 500, 0))
+    elements.append(spacer_section)
     elements.append(line_drawing)
     
-    spacer = Spacer(1, 0.3*inch)
-    elements.append(spacer)
+        
+    # SECCION ANTECEDENTES
+    elements.append(spacer_data)
+    elements.append(Paragraph('ANTECEDENTES', section_title_style))
+    elements.append(spacer_data)
+    elements.append(line_drawing)
+    elements.append(spacer_section)
+    elements.append(Paragraph('Antecedentes ginecológicos', val_style))
+    elements.append(spacer_data)
+    elements.append(Paragraph('{}.'.format(matching_clinichist.antginecologico), text_style))
     
-    obs_title = Paragraph('Observaciones', obs_style)
-    elements.append(obs_title)
+    elements.append(spacer_subsection)
+    elements.append(Paragraph('Antecedentes quirúrgicos', val_style))
+    elements.append(spacer_data)
+    elements.append(Paragraph('{}.'.format(matching_clinichist.antquirurgico), text_style))
+    elements.append(spacer_data)
     
-    elements.append(Spacer(1, 0.3*inch))
+    elements.append(line_drawing)
     
+    # SECCION OBSERVACIONES
+    elements.append(spacer_section)
+    elements.append(spacer_section)
+    elements.append(Paragraph('OBSERVACIONES', section_title_style))
+    
+    elements.append(spacer_data)
     elements.append(Paragraph('El feto presenta valores normales en {} de {} mediciones.'.format(diagnostico['count'], diagnostico['num_fields']), text_style))
-    elements.append(Spacer(1, 0.2*inch))
+    elements.append(spacer_subsection)
     elements.append(Paragraph('Valores normales', val_style))
-    elements.append(Spacer(1, 0.2*inch))
+    elements.append(spacer_data)
     
     
     for med in diagnostico['normales']:
-        print("---------------------------", med)
         nombre_medicion = my_filters.get_med_name(med)
-        print("medicion", nombre_medicion)
         # valor_feto = my_filters.get_field_value(med)
         valor_feto = "hola"
-        print("feto", valor_feto)
         valor_ref = my_filters.get_ref_values(matching_report, med)
-        print("ref", valor_ref)
                 
         elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
                                   .format(nombre_medicion, valor_ref), text_style))
-        elements.append(Spacer(1, 0.1*inch))
-    
+        elements.append(spacer_data)
     
     #Footer
     # Define the page template with the footer
