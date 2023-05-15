@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, JsonResponse
 from main.forms import CreateUserForm, UploadFileForm
-from main.utils import get_matching_consulta
+from main.utils import get_matching_consulta, get_mediciones
 from .data_processing import comparison, process_data
 from .Exceptions.PersonalizedExceptions import MyCustomException
 from datetime import datetime as dt
@@ -181,8 +181,10 @@ def reportes(request,):
     matching_consultas = Consulta.objects.all()
     return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
-def reporte_graficos(request, idpaciente:int ):
-    return render(request, 'reportes/reporte_graficos.html',)
+def reporte_graficos(request, idreporte_id:int ):
+    matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
+    mediciones = get_mediciones()
+    return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones})
 
 
 def agregar_usuario(request):

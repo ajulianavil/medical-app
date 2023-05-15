@@ -1,10 +1,71 @@
 {% extends 'main/layout.html' %}
 {% load static %}
-
+{% include 'material/includes/material_css.html' %}
+{% include 'material/includes/material_js.html' %}
 {% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reporte_graficos.css' %}"/>
 {% endblock %}
 
 {% block content %}
+<div class="container">
+  <table id="infoTable" class="table table-fixed table-condensed">
+    <thead>
+      <tr>
+        <th class="col-xs-3">Medición</th>
+        <th class="col-xs-3">Dato</th>
+        <th class="col-xs-3">Minimo</th>
+        <th class="col-xs-3">Máximo</th>
+        <th class="col-xs-3">DEV</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for med in mediciones %}
+      <tr class="clickableRow">
+        <td class="col-xs-3">{{ med }}</td>
+        <td class="col-xs-3">{{reporte.med_1}}</td>
+        <td class="col-xs-3"></td>
+        <td class="col-xs-3"></td>
+        <td class="col-xs-3"></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
+<script src="{% static 'js/jquery.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    console.log("Hello world!"); 
+  });
+
+  $('#infoTable').on('click', 'tbody tr', function(event) {
+  $(this).addClass('highlight').siblings().removeClass('highlight');
+});
+  </script>
+  
+
+<!-- <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+  <thead>
+    <tr>
+      <th class="mdl-data-table__cell--non-numeric"></th>
+      <th>Dato</th>
+      <th>Minimo</th>
+      <th>Máximo</th>
+      <th>DEV</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for value in mediciones %}
+    <tr>
+      <td class="mdl-data-table__cell--non-numeric">{{ value }}</td>
+      <td>Value 2</td>
+      <td>Value 3</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+    <p>{{reporte.efw}}</p>
+     -->
 
 {% endblock %}
