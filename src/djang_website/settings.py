@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'users',
-    'ultrasonido_app',
     'fontawesomefree',
     'crispy_forms',
     'crispy_bootstrap4',
@@ -157,6 +156,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "main/static",
+]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, JsonResponse
 from main.forms import CreateUserForm, UploadFileForm
+from main.utils import get_matching_consulta
 from .data_processing import comparison, process_data
 from .Exceptions.PersonalizedExceptions import MyCustomException
 from datetime import datetime as dt
@@ -19,10 +20,10 @@ from reportlab.lib import colors
 from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, PageTemplate
 from reportlab.graphics.shapes import Line, Drawing
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from ultrasonido_app.templatetags import my_filters
+from main.templatetags import my_filters
 from reportlab.platypus.frames import Frame
 from datetime import datetime
-
+from django.templatetags.static import static
 
 # Create your views here.
 def landing(request):
@@ -151,21 +152,8 @@ def agregar_consulta(request):
     )
 
 def reporteInfo(request, param: int):
-    print(param)
-    matching_consulta = Consulta.objects.filter(consultaid=param).first()
-    print(matching_consulta)
-    formatted_date = dt.strftime(matching_consulta.fecha_consulta, '%Y/%m/%d')
-    formatted_hora = dt.strftime(matching_consulta.fecha_consulta, '%H:%M')
-    matching_consulta.formatted_fecha_consulta = formatted_date
-    matching_consulta.formatted_hora_consulta = formatted_hora
-    
-    matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
-    
-    matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
 
-    matching_report = Reporte.objects.filter(idreporte=matching_consulta.idreporte_id).first()
-    
-    matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
+    matching_consulta, matching_patient, matching_clinichist, matching_report, matching_result_info = get_matching_consulta(param)
 
     normal_columns = []
     anormales_columns = []
@@ -192,6 +180,9 @@ def repositorio(request):
 def reportes(request,):
     matching_consultas = Consulta.objects.all()
     return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
+
+def reporte_graficos(request, idpaciente:int ):
+    return render(request, 'reportes/reporte_graficos.html',)
 
 
 def agregar_usuario(request):
@@ -296,19 +287,8 @@ def reporte_pdf(request, idreporte_id: int):
     ]
     
     # Information
-    matching_consulta = Consulta.objects.filter(consultaid=idreporte_id).first()
-    formatted_date = dt.strftime(matching_consulta.fecha_consulta, '%Y/%m/%d')
-    formatted_hora = dt.strftime(matching_consulta.fecha_consulta, '%H:%M')
-    matching_consulta.formatted_fecha_consulta = formatted_date
-    matching_consulta.formatted_hora_consulta = formatted_hora
-    
-    matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
-    
-    matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
+    matching_consulta, matching_patient, matching_clinichist, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
 
-    matching_report = Reporte.objects.filter(idreporte=matching_consulta.idreporte_id).first()
-    
-    matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
     
     normal_columns = []
     anormales_columns = []
@@ -329,7 +309,7 @@ def reporte_pdf(request, idreporte_id: int):
     
     doc = SimpleDocTemplate(buf, pagesize=letter,
                             rightMargin=40, leftMargin=50,
-                            topMargin=50, bottomMargin=90)
+                            topMargin=20, bottomMargin=90)
     
      # Create a list to hold the flowables.
     elements = []
@@ -351,9 +331,12 @@ def reporte_pdf(request, idreporte_id: int):
     elements.append(title)
     
     # Add a logo to the top corner of the document.
-    # logo = Image('/static/images/logo_foscal.png', width=1.5*inch, height=1.5*inch)
+    # logo = Image('main/static/images/logo_foscal.png', width=1.5*inch, height=1.5*inch)
     # logo.wrapOn(doc, 72, 72)
     # logo.drawOn(doc, doc.leftMargin, doc.height + doc.topMargin - logo.height)
+    image = Image('main/static/images/logo_foscal.png', width=1.5*inch, height=0.8*inch, hAlign="LEFT")
+    elements.insert(0,image)
+
 
     # Add a spacer to create a margin between the title and the logo.
 
@@ -372,7 +355,7 @@ def reporte_pdf(request, idreporte_id: int):
     
     
     patient_data = [
-    ["Fecha y hora de atención:", f"{formatted_date}" + " " + f"{formatted_hora}", "Médico encargado:", f"{matching_consulta.medUltrasonido}"],
+    ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{matching_consulta.medUltrasonido}"],
     ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{matching_report.edb}"],
     ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{matching_report.ga} semanas"],
     ["Fecha nacimiento:", f"{matching_patient.fechanac}", "Peso fetal:",  f"{matching_report.efw} gr"],
