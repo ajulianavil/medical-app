@@ -415,7 +415,6 @@ def reporte_pdf(request, idreporte_id: int):
     elements.append(Paragraph('Valores normales', val_style))
     elements.append(spacer_data)
     
-    
     for med in diagnostico['normales']:
         nombre_medicion = my_filters.get_med_name(med)
         # valor_feto = my_filters.get_field_value(med)
@@ -425,6 +424,26 @@ def reporte_pdf(request, idreporte_id: int):
         elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
                                   .format(nombre_medicion, valor_ref), text_style))
         elements.append(spacer_data)
+        
+    elements.append(spacer_subsection)
+    elements.append(Paragraph('Anormalidades', val_style))
+    elements.append(spacer_data)
+    
+    for med in diagnostico['anormales']:
+        nombre_medicion = my_filters.get_med_name(med)
+        # valor_feto = my_filters.get_field_value(med)
+        valor_feto = "hola"
+        valor_ref = my_filters.get_ref_values(matching_report, med)
+                
+        elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
+                                  .format(nombre_medicion, valor_ref), text_style))
+        elements.append(spacer_data)
+    
+    elements.append(spacer_subsection)
+    elements.append(Paragraph('Conclusiones', val_style))
+    elements.append(spacer_data)
+    
+    
     
     #Footer
     # Define the page template with the footer
