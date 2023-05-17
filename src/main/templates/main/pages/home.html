@@ -13,7 +13,7 @@
 {% block content %}
     {% include 'main/components/greeting.html' %}
     <div class="container-fluid row" style="padding-top: 30px">
-        <h4 class="mb-4">Agregar nuevo caso 			
+        <h4 class="mb-4">Realizar un nuevo diagnóstico			
             <a class="btn text-white" style="background-color: #0796d8;" href="consultas/nueva" role="button">
             <i class="fas fa-plus"></i>
         </a></h4>
@@ -22,19 +22,23 @@
         <h4 class="mb-4">Buscar registro</h4>
     </div>
     <div class="input-group input-group-sm" style="padding-top: 0; position: relative; padding-right:100px; padding-left:20px ">
-        <input type="text" class="form-control form-control-lg rounde bg-transparent text-black-50"
+        {% comment %} <input type="text" class="form-control form-control-lg rounde bg-transparent text-black-50"
                placeholder="Type Keywords" aria-label="Type Keywords" aria-describedby="basic-addon2"/>
         <span class="input-group-text border-0" id="basic-addon2"><i
-                class="fas fa-search fa-lg" style="color: blue"></i></span>
+                class="fas fa-search fa-lg" style="color: blue"></i></span> {% endcomment %}
+        <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_input" name="id_input" />
+        <button type="submit" class="search-button">
+            <i class="fas fa-search fa-lg"></i>
+          </button>
     </div>
     </div>
     <div class="container-fluid col-sm" style="padding-top: 20px">
         <div class="container-fluid row">
     
-            <h3 class="mb-4">Ver Reportes</h3>
-            <h5 class="mb-4 pb-2 mb-md-5 pb-md-0" style="font-weight: bold;">
+            <h2 class="mb-4">Ver Reportes</h2>
+            <p class="mb-4 pb-2 mb-md-5 pb-md-0" style="font-weight: bold; font-size: medium">
                 Reporte mensual 
-            </h5>
+            </p>
         </div>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <div class="col">
@@ -79,8 +83,11 @@
 
         </div>
         <div class="container-fluid row" style="padding-top: 20px; position: relative">
-            <button type="button" class="btn btn-success  info">
-                Check full Information
+            <p class="mb-4 pb-2 mb-md-5 pb-md-0" style="font-weight: bold; font-size: medium">
+                Otras consultas
+            </p>
+            <button type="button" class="btn btn-success info">
+                Ir a repositorio
             </button>
         </div>
     </div>
