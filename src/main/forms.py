@@ -1,5 +1,6 @@
 from django import forms
 from users.models import Appuser
+from main.models import *
 from django.contrib.auth.hashers import make_password
 
 
@@ -33,3 +34,4 @@ class CreateUserForm(forms.ModelForm):
     class Meta:
         model = Appuser
         fields = ['email', 'password', 'roles']
+        

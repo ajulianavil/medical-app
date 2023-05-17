@@ -93,3 +93,17 @@ button[type="submit"]:hover{
     max-width: 60%;
     height: auto;
 }
+
+.alert {
+    padding: 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-success{
+    padding: 20px;
+    background-color: #0dd338;
+    color: white;
+}

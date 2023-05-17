@@ -125,7 +125,7 @@ class Consulta(models.Model):
     fecha_consulta = models.DateTimeField()
     motivo_consulta = models.CharField(max_length=100, default='Ultrasonido de control')
     txtresults = models.CharField( max_length=100, blank=True, null=True)  # Field name made lowercase.
-    medConsulta = models.ForeignKey(Personalsalud, models.SET_DEFAULT, default="", blank=True, null=True)
+    medConsulta = models.ForeignKey(Personalsalud, models.SET_DEFAULT, default="", blank=True, null=True) #ESTO DEBERIA IR ENLAZADO A USER
     medUltrasonido = models.CharField(max_length=200, blank=True, null=True)  # Field name made lowercase.# Field name made lowercase.
     idpac = models.ForeignKey(Paciente, models.SET_DEFAULT, default="")  # Field name made lowercase.
     idfeto = models.IntegerField( blank=True, null=True)  # Field name made lowercase.
