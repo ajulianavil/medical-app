@@ -41,7 +41,7 @@ def current_user(request):
                 telefono = medico_data.telefonomed
                 direccion = medico_data.direccionmed
 
-            if investigador_data != None:
+            elif investigador_data != None:
                 nombre = investigador_data.nombresext
                 apellido = investigador_data.apellidosext
                 cedula = investigador_data.cedulaext
