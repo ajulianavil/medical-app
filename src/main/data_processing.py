@@ -203,7 +203,7 @@ def comparison(diagnosisData):
                 if key == 1: #HC_HADLOCK
                     if (data["hc_hadlock"] > med.valorinter):
                         # valores_anormales.update({'Circunferencia de la cabeza (HC_HADLOCK)': ['Macro', data["hc_hadlock"], med.valorinter]})
-                        diagnosisResult["hc_hadlock"] = 'Macro'
+                        diagnosisResult["hc_hadlock"] = 'Macrocrania'
                         # print("Macroo")
                         
                     elif (data["hc_hadlock"] < med.valormin):

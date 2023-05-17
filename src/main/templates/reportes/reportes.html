@@ -4,6 +4,8 @@
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/search_record.css' %}" />
+<script src="{% static 'js/validations.js' %}"></script>
+
 {% endblock %}
 {% block content %}
 
@@ -13,7 +15,7 @@
     </div>
     <div class="input-group input-group-sm"
         style="padding-top: 0; position: relative; padding-right:100px; padding-left:20px ">
-        <form class="search-form" method="POST">
+        <form class="search-formm" method="POST">
           {% csrf_token %}
           <div class="row">
             <div class="col-6">
@@ -25,11 +27,8 @@
           </div>
           <div class="row">
             <div class="col-6">
-              <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_input" name="id_input" />
+              <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_input" name="id_input" oninput="validateNumberInput(this)" maxlength="12" />
             </div>
-            {% comment %} <div class="col-4">
-              <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_report" name="id_report" />
-            </div> {% endcomment %}
             <div class="col-2" style="display: flex;
             align-items: center;
             justify-content: space-between; border: none">
@@ -41,6 +40,13 @@
         </form>
     </div>
     <br>
+    {% if messages %}
+      {% for message in messages %}
+          <div class="alert alert-warning">
+              {{ message }}
+          </div> 
+      {% endfor %}
+    {% endif %}
     <br>
     <div class="container">
     <table>

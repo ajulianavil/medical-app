@@ -40,29 +40,31 @@ def aboutUs(request):
 
 def howToRegister(request):
     return render(request, 'main/pages/howToRegister.html' )
+
 def homepage(request):
     if not request.user.is_authenticated:
         return redirect('/login')
 
-    user_logged = current_user(request)
-    info = list(user_logged.values())
-    useremail = info[0]['useremail']
-    userid = info[0]['userid']
-    userrol = info[0]['userrol']
+    else:
+        user_logged = current_user(request)
+        info = list(user_logged.values())
+        useremail = info[0]['useremail']
+        userid = info[0]['userid']
+        userrol = info[0]['userrol']
 
-    user = get_user_model().objects.filter(email=useremail).first()
+        user = get_user_model().objects.filter(email=useremail).first()
 
-    if userrol == 'médico':
-        is_register_complete = Personalsalud.objects.filter(userid=userid).all()
-        if not is_register_complete:
-            return render(request, 'users/user_data.html')
+        if userrol == 'médico':
+            is_register_complete = Personalsalud.objects.filter(userid=userid).all()
+            if not is_register_complete:
+               return redirect('user_data')
+            
+        if userrol == 'investigador':
+            is_register_complete = Usuarioexterno.objects.filter(userid=userid).all()
+            if not is_register_complete:
+                return redirect('user_data')
         
-    if userrol == 'investigador':
-        is_register_complete = Usuarioexterno.objects.filter(userid=userid).all()
-        if not is_register_complete:
-            return render(request, 'users/user_data.html')
-    
-    return render(request, 'main/pages/home.html', {'user': user})
+        return render(request, 'main/pages/home.html', {'user': user})
    
 def personal(request, personal: int):
     matching_personal = Personalsalud.objects.filter(hospitalid=personal).all()
@@ -205,17 +207,33 @@ def repositorio(request):
     return render(request, 'repositorio/repositorio.html')
 
 def reportes(request,):
+    user_logged = current_user(request)
+    info = list(user_logged.values())
+    userced = info[0]['user_identification']
+    
     if request.method == 'POST':
         id_input = request.POST.get('id_input')
-        pacient = Paciente.objects.filter(cedulapac=id_input)
-        if pacient:
-            for item in pacient:
-                idpac = item.idpac
-                
-        matching_records = Consulta.objects.filter(idpac=idpac)
-        return render(request, 'reportes/reportes.html',  context={"objects": matching_records})
+        if id_input == '':
+            # matching_consultas = Consulta.objects.all()
+            matching_consultas = Consulta.objects.filter(medConsulta=userced)
+            
+            return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
+        
+        else:
+            pacient = Paciente.objects.filter(cedulapac=id_input)
+            print(pacient)
+            if pacient:
+                for item in pacient:
+                    idpac = item.idpac
+                    
+                matching_records = Consulta.objects.filter(idpac=idpac, medConsulta=userced)
+                return render(request, 'reportes/reportes.html',  context={"objects": matching_records})
+            else:
+                messages.warning(request, f'No se encontraron coincidencias para el paciente de cédula {id_input}')
+                matching_consultas = Consulta.objects.filter(medConsulta=userced)
+                return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
     else:
-        matching_consultas = Consulta.objects.all()
+        matching_consultas = Consulta.objects.filter(medConsulta=userced)
         return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
 def reporte_graficos(request, idreporte_id:int ):
@@ -386,7 +404,7 @@ def reporte_pdf(request, idreporte_id: int):
     max_height = 7 * inch  # adjust the value as needed
     current_height = 0
     
-    report_title = Paragraph('REPORTE MÉDICO N°{}'.format(idreporte_id), report_style)
+    report_title = Paragraph('REPORTE MÉDICO N°{}'.format(matching_report.idreporte), report_style)
     elements.append(report_title)
     title = Paragraph('ANOMALÍAS DEL SISTEMA NERVIOSO CENTRAL FETAL', title_style)
     elements.append(title)

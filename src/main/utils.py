@@ -3,6 +3,7 @@ from datetime import datetime
 from main.models import *
 
 def get_matching_consulta(consulta_id):
+    print(consulta_id)
     matching_consulta = Consulta.objects.filter(consultaid=consulta_id).first()
     formatted_date = datetime.strftime(matching_consulta.fecha_consulta, '%Y/%m/%d')
     formatted_hora = datetime.strftime(matching_consulta.fecha_consulta, '%H:%M')
