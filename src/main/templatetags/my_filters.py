@@ -36,12 +36,12 @@ def get_med_name(item):
 @register.filter
 def get_ref_values(reporte, medicion):
     try:
-        print('med', medicion)
+        # print('med', medicion)
         tipo_medicion = Tipomedicion.objects.get(nombreMedicion = medicion.upper())
-        print('tipo_medicion', tipo_medicion)
+        # print('tipo_medicion', tipo_medicion)
         idMedicion = tipo_medicion.idTipoMedicion
-        print('tipo_medicion', tipo_medicion.idTipoMedicion)
-        print('idMedicion',idMedicion)
+        # print('tipo_medicion', tipo_medicion.idTipoMedicion)
+        # print('idMedicion',idMedicion)
         if idMedicion == 1 or idMedicion == 2 or idMedicion == 7:
             med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
             return str(med.valormin) + ' - ' + str(med.valorinter)
@@ -58,7 +58,7 @@ def get_ref_values(reporte, medicion):
             return 'aaa'
     except Medicion.DoesNotExist:
         med = None
-        print('medicion', medicion)
-        print('report', reporte)
-        print('tipo_medicion.idTipoMedicion', tipo_medicion.idTipoMedicion)
+        # print('medicion', medicion)
+        # print('report', reporte)
+        # print('tipo_medicion.idTipoMedicion', tipo_medicion.idTipoMedicion)
         return 'Nani'

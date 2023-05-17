@@ -204,32 +204,32 @@ def comparison(diagnosisData):
                     if (data["hc_hadlock"] > med.valorinter):
                         # valores_anormales.update({'Circunferencia de la cabeza (HC_HADLOCK)': ['Macro', data["hc_hadlock"], med.valorinter]})
                         diagnosisResult["hc_hadlock"] = 'Macro'
-                        print("Macroo")
+                        # print("Macroo")
                         
                     elif (data["hc_hadlock"] < med.valormin):
                         # valores_anormales.update({'Circunferencia de la cabeza (HC_HADLOCK)': ['Microcefalia', data["hc_hadlock"], med.valormin]})
                         diagnosisResult["hc_hadlock"] = 'Microcefalia'
-                        print("Microcefalia")
+                        # print("Microcefalia")
                     else:
                         # valores_normales.update({'Circunferencia de la cabeza (HC_HADLOCK)':  ['Normal',data["hc_hadlock"], f'{med.valormin} - {med.valorinter}']})
                         diagnosisResult["hc_hadlock"] = 'Normal'
-                        print("OK - HC en valores normales")
+                        # print("OK - HC en valores normales")
 
                 if key == 2: #BPD
                     if (data["bpd_hadlock"] > med.valorinter):
                         # valores_anormales.update({'Diámetro biparietal (BPD_HADLOCK)': ['Valor superior al normal', data["bpd_hadlock"], med.valorinter]})
                         diagnosisResult["bpd_hadlock"] = 'Valor superior al normal'
-                        print("bpd_hadlock valor superior al normal")
+                        # print("bpd_hadlock valor superior al normal")
                         
                     elif (data["bpd_hadlock"] < med.valormin):
                         # valores_anormales.update({'Diámetro biparietal (BPD_HADLOCK)': ['Valor inferior al normal', data["bpd_hadlock"], med.valormin]})
                         diagnosisResult["bpd_hadlock"] = 'Valor inferior al normal'
-                        print("bpd_hadlock valor inferior al normal")
+                        # print("bpd_hadlock valor inferior al normal")
                         
                     else:
                         # valores_normales.update({'Diámetro biparietal (BPD_HADLOCK)': ['Normal',data["bpd_hadlock"], f'{med.valormin} - {med.valorinter}']})
                         diagnosisResult["bpd_hadlock"] = 'Normal'
-                        print("OK - bpd_hadlock valores normales")
+                        # print("OK - bpd_hadlock valores normales")
                         
                 if key == 7: #Diametro transverso del cerebelo CEREB_HILL
                     print("cerebhill")
@@ -249,11 +249,11 @@ def comparison(diagnosisData):
             if (float(data["cm"]) > 10):
                 # valores_anormales.update({'Cisterna Magna (CM)': ['Megacisterno o cisterno alargada', data["cm"], '> 10']})
                 diagnosisResult["cm"] = 'Megacisterno o cisterno alargada'
-                print("Megacisterno o cisterno alargada")
+                # print("Megacisterno o cisterno alargada")
             else:
                 # valores_normales.update({'Cisterna Magna (CM)':['Normal', data["cm"], '< 10']})
                 diagnosisResult["cm"] = 'Normal'
-                print("OK - CM en valores normales")
+                # print("OK - CM en valores normales")
         
         if key == 5 or key == 6: #VP or VA
             

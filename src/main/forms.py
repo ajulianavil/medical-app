@@ -17,8 +17,8 @@ class CreateUserForm(forms.ModelForm):
         password2 = cleaned_data.get('repassword')
 
         if password1 and password2 and password1 != password2:
-            self.add_error("repassword","Passwords do not match")
-            raise forms.ValidationError('Passwords do not match')
+            self.add_error("repassword","Las contraseñas no coinciden")
+            raise forms.ValidationError('Las contraseñas no coinciden')
 
         return cleaned_data
     

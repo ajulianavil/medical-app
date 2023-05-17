@@ -1,0 +1,52 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}" />
+<script src="{% static 'js/reporte_script.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container rounded mt-5 mb-5" >
+    <div class="row">
+        <div class="col border-right"  style="display: flex;
+        justify-content: space-around;">
+            <div class="col-6 p-3 py-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="text-right">Complete su registro</h2>
+                </div>  
+                <h6 class="subtitle-text">Debe completar su registro para tener acceso a las funcionalidades del aplicativo.</h6>
+                <form class="report-form" method="POST">
+                {% csrf_token %}
+                    <div class="row mt-2">
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}">{{ form.nombres.label }}</label>
+                            {{form.nombres}}
+                            {% comment %} <input type="text" class="form-control" placeholder=" " value="" required></div> {% endcomment %}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.apellidos.label}}</label>
+                            {{form.apellidos}}
+                            {% comment %} <input type="text" class="form-control" value="" placeholder=" " required></div> {% endcomment %}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.identificacion.label}}</label>
+                            {{form.identificacion}}
+                            {% comment %} <input type="text" class="form-control" value="" placeholder=" " required></div> {% endcomment %}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.telefono.label}}</label>
+                            {{form.telefono}}
+                            {% comment %} <input type="text" class="form-control" value="" placeholder=" " required></div> {% endcomment %}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.direccion.label}}</label>
+                            {{form.direccion}}
+                            {% comment %} <input type="text" class="form-control" value="" placeholder=" " required></div> {% endcomment %}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.hospital.label}}</label>
+                            {{form.hospital}}
+                            {% comment %} <input type="text" class="form-control" value="" placeholder=" " required></div> {% endcomment %}
+                    </div>
+                    <div class="mt-5 text-center" style="display: flex;
+                    justify-content: space-around;">
+                    <button class="btn btn-primary profile-button" type="submit">Completar registro</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock %}

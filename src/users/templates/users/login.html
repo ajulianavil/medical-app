@@ -1,5 +1,7 @@
 {% extends "users/home.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
+
 {% block body %}
 <head> <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +30,7 @@
                     </form>
                 </div>
                 <div class="col-6 image-login">
-                    <img src="https://img.freepik.com/free-vector/hand-drawn-medical-symbol_23-2149491353.jpg?w=740&t=st=1681580864~exp=1681581464~hmac=b025595cec59e1ed31b6e4132217f5c9fdbc6fe530fe3607d8369e1aa5a6cbac"
+                    <img src="{% static 'images/logo-medical.png' %}"
                         class="img-fluid" alt="Phone image">
                 </div>
             </div>

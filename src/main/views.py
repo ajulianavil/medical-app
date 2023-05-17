@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.urls import reverse
+from users.context_processors import current_user
 from main.forms import CreateUserForm, UploadFileForm
 from main.utils import get_matching_consulta
 from .data_processing import comparison, process_data
@@ -24,6 +26,8 @@ from main.templatetags import my_filters
 from reportlab.platypus.frames import Frame
 from datetime import datetime
 from django.templatetags.static import static
+from reportlab.lib.colors import Color
+
 
 # Create your views here.
 def landing(request):
@@ -37,8 +41,25 @@ def howToRegister(request):
 def homepage(request):
     if not request.user.is_authenticated:
         return redirect('/login')
-    current_user = request.user
-    user = get_user_model().objects.filter(email=current_user).first()
+
+    user_logged = current_user(request)
+    info = list(user_logged.values())
+    useremail = info[0]['useremail']
+    userid = info[0]['userid']
+    userrol = info[0]['userrol']
+
+    user = get_user_model().objects.filter(email=useremail).first()
+
+    if userrol == 'médico':
+        is_register_complete = Personalsalud.objects.filter(userid=userid).all()
+        if not is_register_complete:
+            return render(request, 'users/user_data.html')
+        
+    if userrol == 'investigador':
+        is_register_complete = Usuarioexterno.objects.filter(userid=userid).all()
+        if not is_register_complete:
+            return render(request, 'users/user_data.html')
+                
     return render(request, 'main/pages/home.html', {'user': user})
    
 def personal(request, personal: int):
@@ -140,9 +161,12 @@ def agregar_consulta(request):
             if feto_medicion_diagnostico_serializer.is_valid():
                 print('entra')
                 feto_medicion_diagnostico_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+        target_url = reverse('registroinfo', args=[last_report])
 
+        # Redirect to the target view
+        return HttpResponseRedirect(target_url)
 
-        return JsonResponse({"success": "true"})
+        # return JsonResponse({"success": "true"})
     else:
         form = UploadFileForm()
     return render(
@@ -190,7 +214,7 @@ def agregar_usuario(request):
         form = CreateUserForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Your form has been submitted successfully!')
+            messages.success(request, 'Usuario creado con éxito.')
             rol = request.GET.get('rol')
             form = CreateUserForm()
             return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol,})
@@ -289,7 +313,6 @@ def reporte_pdf(request, idreporte_id: int):
     # Information
     matching_consulta, matching_patient, matching_clinichist, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
 
-    
     normal_columns = []
     anormales_columns = []
 
@@ -344,7 +367,9 @@ def reporte_pdf(request, idreporte_id: int):
 
      # Create a line drawing
     line_drawing = Drawing(400, 1)
-    line_drawing.add(Line(0, 0, 500, 0))
+    line = Line(0, 0, 500, 0)
+    line.strokeColor = Color(0.851, 0.851, 0.851)
+    line_drawing.add(line)
     elements.append(line_drawing)
     
     elements.append(spacer_data)
@@ -368,7 +393,6 @@ def reporte_pdf(request, idreporte_id: int):
     elements.append(spacer_section)
     elements.append(line_drawing)
     
-        
     # SECCION ANTECEDENTES
     elements.append(spacer_data)
     elements.append(Paragraph('ANTECEDENTES', section_title_style))

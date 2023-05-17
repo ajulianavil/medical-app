@@ -1,0 +1,91 @@
+body {
+    background: #F1F0F7;
+}
+
+form {
+    font-size: 16px;
+    font-family: 'League Spartan', sans-serif;
+}
+
+.text-right{
+    font-weight: bold;
+}
+
+.subtitle-text{
+    font-weight: lighter;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #0796D8
+}
+
+/* Style the submit button */
+button[type="submit"] {
+    background-color: #0796D8;
+    color: #fff;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);
+    width: 200px;
+    height: 40px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'League Spartan', sans-serif;
+}
+
+.profile-button:disabled{
+    background: #D9D9D9;
+}
+
+.profile-button {
+    background: #0796D8;
+    box-shadow: none;
+    border: none
+}
+
+.profile-button:hover {
+    background: #0279AF
+}
+
+.profile-button:focus {
+    background: #0279AF;
+    box-shadow: none
+}
+
+.profile-button:active {
+    background: #0279AF;
+    box-shadow: none
+}
+
+.back:hover {
+    color: #0796D8;
+    cursor: pointer
+}
+
+.labels {
+    font-size: 15px !important;
+    display: block;
+    font-weight: bold;
+    color: #26283E;
+    margin-top: 20px;
+}
+
+.form-control, input[type="email"]{
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #26283E;
+    margin: 8px 0 8px 0;
+    height: 40px;
+}
+
+.container{
+    padding-right: 50px;
+    margin-top: 50px
+}
