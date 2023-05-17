@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from django.views import View
 from users.context_processors import current_user
 from main.forms import CreateUserForm, UploadFileForm
 from main.utils import get_matching_consulta, get_mediciones
@@ -12,7 +13,7 @@ from django.http import  JsonResponse
 from main.models import *
 from main.serializers import *
 from django.contrib import messages
-
+from django.views.generic import TemplateView
 from django.http import FileResponse
 import io 
 from reportlab.pdfgen import canvas
@@ -27,8 +28,9 @@ from reportlab.platypus.frames import Frame
 from datetime import datetime
 from django.templatetags.static import static
 from reportlab.lib.colors import Color
+import json
 
-
+from chartjs.views.lines import BaseLineChartView
 # Create your views here.
 def landing(request):
     return render(request, 'main/pages/landing.html')
@@ -207,8 +209,30 @@ def reportes(request,):
 
 def reporte_graficos(request, idreporte_id:int ):
     matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
-    mediciones = get_mediciones()
+    print('matching_report')
+    mediciones = get_mediciones().keys()
     return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones})
+
+def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str):
+    mediciones = get_mediciones()
+    # value_reporte = my_filters.get_field_value(nombreMedicion)
+    valores_medicion = Medicion.objects.filter(id_tipo_medicion=mediciones[nombreMedicion])
+    matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
+    value_reporte = my_filters.get_field_value(matching_report,nombreMedicion)
+
+    values_min = [result.valormin for result in valores_medicion]
+    values_max = [result.valorinter for result in valores_medicion]
+    values_ga = [result.ga for result in valores_medicion]
+    data = {
+        'values_min': values_min,
+        'values_max': values_max,
+        'values_ga': values_ga,
+        'ga_reporte': ga,
+        'value_reporte': value_reporte
+    }
+
+    # Return the updated chart data as a JSON response
+    return JsonResponse(data, safe=False)
 
 
 def agregar_usuario(request):
@@ -468,3 +492,37 @@ def reporte_pdf(request, idreporte_id: int):
     # present the option to save the file.
     buf.seek(0)
     return FileResponse(buf, as_attachment=True, filename='my_pdf.pdf')
+
+
+    def get(self, request, *args, **kwargs):
+        parameter = request.GET.get('parameter')
+        print('hola ', parameter)
+        if parameter == 'example1':
+            data = {
+                'labels': ["January", "February", "March", "April", "May", "June", "July"],
+                'datasets': [
+                    [75, 44, 92, 11, 44, 95, 35],
+                    [41, 92, 18, 3, 73, 87, 92],
+                    [87, 21, 94, 3, 90, 13, 65]
+                ]
+            }
+        elif parameter == 'example2':
+            data = {
+                'labels': ["January", "February", "March", "April", "May", "June", "July"],
+                'datasets': [
+                    [50, 60, 70, 80, 90, 100, 110],
+                    [20, 30, 40, 50, 60, 70, 80],
+                    [10, 20, 30, 40, 50, 60, 70]
+                ]
+            }
+        else:
+            data = {
+                'labels': ["January", "February", "March", "April", "May", "June", "July"],
+                'datasets': [
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0]
+                ]
+            }
+
+        return JsonResponse(data)

@@ -15,7 +15,11 @@ def get_field_value(item, field):
         value = getattr(item, prefixed_attr)
         return value
     else:
-        return None
+        if hasattr(item, field):
+            value = getattr(item, field)
+            return value
+        else:
+            return None
 
 
 @register.filter

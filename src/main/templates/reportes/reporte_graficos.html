@@ -1,71 +1,187 @@
 {% extends 'main/layout.html' %}
 {% load static %}
+{% load my_filters %}
 {% include 'material/includes/material_css.html' %}
 {% include 'material/includes/material_js.html' %}
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/reporte_graficos.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'css/reporte_graficos.css' %}" />
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <table id="infoTable" class="table table-fixed table-condensed">
-    <thead>
-      <tr>
-        <th class="col-xs-3">Medición</th>
-        <th class="col-xs-3">Dato</th>
-        <th class="col-xs-3">Minimo</th>
-        <th class="col-xs-3">Máximo</th>
-        <th class="col-xs-3">DEV</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for med in mediciones %}
-      <tr class="clickableRow">
-        <td class="col-xs-3">{{ med }}</td>
-        <td class="col-xs-3">{{reporte.med_1}}</td>
-        <td class="col-xs-3"></td>
-        <td class="col-xs-3"></td>
-        <td class="col-xs-3"></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div style="display: flex; font-size: 16px;">
+
+  <div style="margin-right: 100px;">
+    <table id="infoTable" class="table table-fixed table-condensed">
+      <thead>
+        <tr>
+          <th class="col-xs-3">Medición</th>
+          <th class="col-xs-3">Dato</th>
+          <th class="col-xs-3">Minimo</th>
+          <th class="col-xs-3">Máximo</th>
+          <th class="col-xs-3">DEV</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for med in mediciones %}
+        <tr class="clickableRow">
+          <td class="col-xs-3">{{ med }}</td>
+          <td class="col-xs-3">{{reporte.med_1}}</td>
+          <td class="col-xs-3"></td>
+          <td class="col-xs-3"></td>
+          <td class="col-xs-3"></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <h1>Seleccione una variable para ver su grafica</h1>
+    <h1 id="title"></h1>
+    <canvas id="myChart"></canvas>
+  </div>
 </div>
 
-<script src="{% static 'js/jquery.js' %}"></script>
 <script>
-  $(document).ready(function() {
-    console.log("Hello world!"); 
+
+  $('#infoTable').on('click', 'tbody tr', function (event) {
+    $(this).addClass('highlight').siblings().removeClass('highlight');
+
+    var rowData = $(this).find('td').map(function () {
+      return $(this).text();
+    }).get();
+
+    console.log('Row data:', rowData);
+    document.getElementById("title").innerHTML = rowData[0];
+  });
+</script>
+
+<!-- <script>
+  // Write JavaScript code to generate the chart using Chart.js
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['A', 'B', 'C', 'D', 'E'],
+          datasets: [{
+              label: '# of Votes',
+              data: "{{ chart_data|safe }}",  // Use the dynamic chart_data
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+</script> -->
+<script>
+  // Handle row click event
+  $('#infoTable').on('click', 'tbody tr', function (event) {
+    var row = event.target.closest('tr');
+    var id = row.getAttribute('data-id');
+    var rowData = $(this).find('td').map(function () {
+      return $(this).text();
+    }).get();
+
+    // Make an AJAX request to fetch new data based on the clicked row
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        var newData = JSON.parse(xhr.responseText);
+        // Update the chart data
+        myChart.data.datasets[0].data = newData.values_min;
+        myChart.data.datasets[1].data = newData.values_max;
+        myChart.data.labels = newData.values_ga;
+
+
+        // Add the dot at a specific label index
+        var labelIndex = newData.values_ga.indexOf(parseInt(newData.ga_reporte));
+        console.log('labels', myChart.data.labels );
+        console.log('ga_reporte',newData.ga_reporte);
+        console.log('labelIndex', newData.values_ga.indexOf(parseInt(newData.ga_reporte)) );
+        console.log('value_reporte', newData.value_reporte );
+        // Get the dataset you want to modify
+        var datasetIndex = 2;
+        var dataset = myChart.data.datasets[datasetIndex];
+
+        // Update the data array to add the dot at the specified label index
+
+        var data = [];
+        data[labelIndex] = newData.value_reporte; // Update the value at the specific label index
+
+        // Create a new array for the point background colors
+        var pointBackgroundColors = Array(data.length).fill('rgba(54, 162, 235, 0.2)');
+        pointBackgroundColors[labelIndex] = 'red'; // Set the background color of the dot
+
+        // Create a new array for the point border colors
+        var pointBorderColors = Array(data.length).fill('rgba(54, 162, 235, 1)');
+        pointBorderColors[labelIndex] = 'red'; // Set the border color of the dot
+
+        // Update the dataset properties
+        dataset.data = data;
+        dataset.pointBackgroundColor = pointBackgroundColors;
+        dataset.pointBorderColor = pointBorderColors;
+
+        myChart.update();
+      }
+    };
+    var reporteString = '{{reporte}}';
+    var startIndex = reporteString.lastIndexOf('(') + 1;
+    var endIndex = reporteString.lastIndexOf(')');
+    var reporteId = parseInt(reporteString.slice(startIndex, endIndex), 10);
+
+    xhr.open('GET', '/chart-data/' + reporteId + '/' + rowData[0] + '/' + '{{reporte.ga}}');
+    xhr.send();
   });
 
-  $('#infoTable').on('click', 'tbody tr', function(event) {
-  $(this).addClass('highlight').siblings().removeClass('highlight');
-});
-  </script>
-  
+  // Create initial chart using default data
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'minimos',
+        data: [],  // Initial default data
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'maximos',
+        data: [],  // Initial default data
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'valor reporte',
+        data: [],  // Initial default data
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        pointStyle: 'circle',  // Set pointStyle to 'circle'
+        pointRadius: 5  // Set the radius of the points
+      }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
 
-<!-- <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-  <thead>
-    <tr>
-      <th class="mdl-data-table__cell--non-numeric"></th>
-      <th>Dato</th>
-      <th>Minimo</th>
-      <th>Máximo</th>
-      <th>DEV</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for value in mediciones %}
-    <tr>
-      <td class="mdl-data-table__cell--non-numeric">{{ value }}</td>
-      <td>Value 2</td>
-      <td>Value 3</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-    <p>{{reporte.efw}}</p>
-     -->
 
 {% endblock %}

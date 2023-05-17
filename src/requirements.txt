@@ -7,3 +7,4 @@ django-bootstrap-v5
 numpy
 reportlab
 django-material
+chartjs

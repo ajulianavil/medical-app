@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'bootstrap5',
     'rest_framework',
     'numpy',
-    'material'
+    'material',
+    'chartjs'
 ]
 
 REST_FRAMEWORK = {
