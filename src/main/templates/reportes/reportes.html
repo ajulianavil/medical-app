@@ -1,40 +1,75 @@
 {% extends 'main/layout.html' %}
 {% load static %}
+{% load my_filters %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/search_record.css' %}" />
+{% endblock %}
 {% block content %}
 
   <div>
     <div class="container-fluid row" style="padding-top: 30px">
-      <h4 class="mb-4">Buscar registro</h4>
+      <h2 class="mb-4" style="font-weight: bold; color: #0796D8">Buscar reporte</h2>
     </div>
     <div class="input-group input-group-sm"
         style="padding-top: 0; position: relative; padding-right:100px; padding-left:20px ">
-        <input type="text" class="form-control form-control-lg rounde bg-transparent text-black-50"
-            placeholder="Type Keywords" aria-label="Type Keywords" aria-describedby="basic-addon2" />
-        <span class="input-group-text border-0" id="basic-addon2"><i class="fas fa-search fa-lg"
-                style="color: blue"></i></span>
+        <form class="search-form" method="POST">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-6">
+              <label> Cédula de paciente </label> 
+            </div>
+            {% comment %} <div class="col-4">
+              <label> Número de reporte </label> 
+            </div> {% endcomment %}
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_input" name="id_input" />
+            </div>
+            {% comment %} <div class="col-4">
+              <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_report" name="id_report" />
+            </div> {% endcomment %}
+            <div class="col-2" style="display: flex;
+            align-items: center;
+            justify-content: space-between; border: none">
+              <button type="submit" class="round-button">
+                <i class="fas fa-search fa-lg"></i>
+              </button>
+            </div>
+            </div>
+        </form>
     </div>
     <br>
     <br>
-    {% for consulta in objects %}
     <div class="container">
-      <div class="row">
-        <div class="col">
-          {{consulta.fecha_consulta}}
-        </div>
-        <div class="col">
-          {{consulta.medUltrasonido}}
-        </div>
-        <div class="col">
-          {{consulta.motivo_consulta}}
-        </div>
-        <div class="col">
-          <!-- <a class="btn btn-primary" href="/registros/consulta/{{ consulta }}" role="button">Ver reporte</a> -->
-          <a class="btn btn-primary" href="/registros/consulta/{{consulta}}" role="button">Ver reporte</a>
-          
-        </div>
-      </div>
-    </div>
-    {% endfor %}
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align: center;">Fecha consulta</th>
+          <th style="text-align: center;">Cédula paciente</th>
+          <th style="text-align: center;">Médico encargado</th>
+          <th style="text-align: center;">Motivo de consulta</th>
+          <th style="text-align: center;">Ver reporte</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for consulta in objects %}
+        <tr>
+          <td style="text-align: center;">{{ consulta.fecha_consulta }}</td>
+          <td style="text-align: center;">{{ consulta.idpac_id|get_pacient_id }}</td>
+          <td style="text-align: center;">{{ consulta.medUltrasonido }}</td>
+          <td style="text-align: center;">{{ consulta.motivo_consulta }}</td>
+          <td style="text-align: center;">
+            <a href="/registros/consulta/{{ consulta }}">
+              <i class="fa-regular fa-eye search"></i>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   </div>
 
 

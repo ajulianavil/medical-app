@@ -22,6 +22,10 @@
             <div class="p-3 py-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="text-right">Perfil</h2>
+                    <a href="{% url 'logout' %}">
+                <i class="fa-solid fa-right-from-bracket log-out-icon"></i>
+                    </a>
+
                 </div>
                 <form class="report-form">
 
@@ -41,7 +45,9 @@
                     </div>
                 </form>
                 <div class="mt-5 text-center" class="display: flex;
-                justify-content: space-around;"><button class="btn btn-primary profile-button" type="submit">Guardar perfil</button></div>
+                justify-content: space-around;"><button class="btn btn-primary profile-button" type="submit">Guardar perfil</button>
+                
+            </div>
             </div>
         </div>
     </div>

@@ -61,7 +61,7 @@ def homepage(request):
         is_register_complete = Usuarioexterno.objects.filter(userid=userid).all()
         if not is_register_complete:
             return render(request, 'users/user_data.html')
-                
+    
     return render(request, 'main/pages/home.html', {'user': user})
    
 def personal(request, personal: int):
@@ -132,38 +132,39 @@ def agregar_consulta(request):
                 last_report = (Reporte.objects.last()).idreporte        
             
             # ------------------- CREA LA CONSULTA
+            user_logged = current_user(request)
+            info = list(user_logged.values())
+            userid = info[0]['userid']
+            
+            med_consult = (Personalsalud.objects.filter(userid=userid)).first()
+            if med_consult:
+                med = med_consult.cedulamed
+            
             consulta_info = {
                 'fecha_consulta': fullDate,
                 'idpac': onpatient,
                 'idreporte': last_report,
                 'medUltrasonido': full_medName, #OJO, sólo se guardará la primera vez porque esto es un constraint unique. (TODO: MEJORAR LÓGICA)
+                'medConsulta': med
             }
-            
+                        
             consulta_serializer = ConsultaSerializer(data=consulta_info)
+            
             if consulta_serializer.is_valid():
-                #set_medico = (Personalsalud.objects.filter())
                 print('Guarda Consulta. Fin del flujo. Eureka!')
                 consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
-
+            
             # Aqui toca hacer que estos datos queden guardados en la bd
             diagnosis = comparison(processedDataReport)
-            # for nombre in diagnosis["valores_normales"].keys():
-            last_report = (Reporte.objects.last()).idreporte        
-            #     feto_medicion_diagnostico = {
-            #         'reporte': last_report,
-            #         'nombre_valor': nombre,
-            #         'diagnostico': diagnosis["valores_normales"][nombre][0],
-            #         'valor_med': f'{diagnosis["valores_normales"][nombre][1]}',
-            #         'valor_ref': diagnosis["valores_normales"][nombre][2],
-            #     }
+            last_report = (Reporte.objects.last()).idreporte
+            last_consulta = (Consulta.objects.filter(idreporte=last_report, medConsulta=med)).first()
+
             diagnosis["reporte"] = last_report
             feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
-            print(diagnosis)
-            print('ISVALID', feto_medicion_diagnostico_serializer.is_valid())
+            
             if feto_medicion_diagnostico_serializer.is_valid():
-                print('entra')
                 feto_medicion_diagnostico_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
-        target_url = reverse('registroinfo', args=[last_report])
+        target_url = reverse('registroinfo', args=[last_consulta])
 
         # Redirect to the target view
         return HttpResponseRedirect(target_url)
@@ -204,8 +205,18 @@ def repositorio(request):
     return render(request, 'repositorio/repositorio.html')
 
 def reportes(request,):
-    matching_consultas = Consulta.objects.all()
-    return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
+    if request.method == 'POST':
+        id_input = request.POST.get('id_input')
+        pacient = Paciente.objects.filter(cedulapac=id_input)
+        if pacient:
+            for item in pacient:
+                idpac = item.idpac
+                
+        matching_records = Consulta.objects.filter(idpac=idpac)
+        return render(request, 'reportes/reportes.html',  context={"objects": matching_records})
+    else:
+        matching_consultas = Consulta.objects.all()
+        return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
 def reporte_graficos(request, idreporte_id:int ):
     matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
@@ -240,11 +251,12 @@ def agregar_usuario(request):
         form = CreateUserForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Usuario creado con éxito.')
+            messages.success(request, f'¡Se ha creado exitosamente el usuario para {form.cleaned_data["email"]}!')
             rol = request.GET.get('rol')
             form = CreateUserForm()
-            return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol,})
+            return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
         else:
+            # messages.error(request, errorlist)
             rol = request.GET.get('rol')
             return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
     else:

@@ -8,11 +8,20 @@
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Montserrat:wght@700&display=swap" rel="stylesheet"> 
 </head>
 <div>
+
     <div class="cont">
+
         <div class="login-card">
             <div class="row">
-                
+                {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div> 
+                {% endfor %}
+            {% endif %}
                 <div class="col login-options">
+                    
                     <form class="login-form" method="POST" novalidate>
                     <h2> Iniciar sesión </h2>
 
@@ -26,7 +35,7 @@
                         <button type="submit" class="btn btn-primary">Iniciar sesión</button>
                         <br />
                         <h6 class="toregister"> ¿Aún no tienes una cuenta? </h6>
-                        <a href="/registro"> Solicita una cuenta </a>
+                        <a href="/howToRegister"> Solicita una cuenta </a>
                     </form>
                 </div>
                 <div class="col-6 image-login">

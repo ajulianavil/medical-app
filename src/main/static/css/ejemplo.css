@@ -30,7 +30,20 @@
 }
 
 .info {
-    border-radius: 15px;
+    border-radius: 10px;
+    width: 150px;
+    height: 40px;
+    background-color: #0796D8;
+    color: white;
+    border-color: #0796D8;
+    transition: background-color 0.2s ease-in-out;
+
+}
+
+.info:hover {
+    background-color: #0279AF;
+    border-color: #0279AF;
+
 }
 
 h5{
@@ -72,3 +85,18 @@ h5{
     background-color: #0796D8;
     color: white;
 }
+
+.search-button {
+    width: 40px;
+    height: 40px;
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .search-button i {
+    color: #26283E;
+  }

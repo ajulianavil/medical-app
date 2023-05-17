@@ -31,8 +31,6 @@ def current_user(request):
             
             medico_data = Personalsalud.objects.filter(userid=userid).first()
             investigador_data = Usuarioexterno.objects.filter(userid=userid).first()
-            print("medico", medico_data)
-            print("investi", investigador_data)
             
             if medico_data != None:
                 nombre = medico_data.nombresmed

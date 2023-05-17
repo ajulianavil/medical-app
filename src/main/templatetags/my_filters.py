@@ -1,6 +1,6 @@
 from django import template
 
-from main.models import Medicion, Tipomedicion
+from main.models import *
 
 register = template.Library()
 
@@ -40,7 +40,6 @@ def get_med_name(item):
 @register.filter
 def get_ref_values(reporte, medicion):
     try:
-        # print('med', medicion)
         tipo_medicion = Tipomedicion.objects.get(nombreMedicion = medicion.upper())
         # print('tipo_medicion', tipo_medicion)
         idMedicion = tipo_medicion.idTipoMedicion
@@ -66,3 +65,14 @@ def get_ref_values(reporte, medicion):
         # print('report', reporte)
         # print('tipo_medicion.idTipoMedicion', tipo_medicion.idTipoMedicion)
         return 'Nani'
+    
+@register.filter
+def get_pacient_id(id:int):
+    pacient = Paciente.objects.filter(idpac=id)
+    if pacient:
+        for item in pacient:
+            idpac = item.cedulapac
+        return idpac
+    else:
+        notFount = 'Sin cédula'
+        return notFount                  

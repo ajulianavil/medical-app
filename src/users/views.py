@@ -53,11 +53,17 @@ def custom_login(request):
 
     if request.method == "POST":
         form = AuthenticationForm(request=request, data=request.POST)
+        storage = messages.get_messages(request)
+        for message in storage:
+            pass  # Do nothing, simply iterate over the messages
+
+        storage.used = True
         if form.is_valid():
             user = authenticate(
                 username=form.cleaned_data["username"],
                 password=form.cleaned_data["password"],
             )
+            print("user", user)
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Hello <b>{user.username}</b>! You have been logged in")
@@ -65,6 +71,7 @@ def custom_login(request):
 
         else:
             for error in list(form.errors.values()):
+                print("error", error)
                 messages.error(request, error) 
 
     form = AuthenticationForm()

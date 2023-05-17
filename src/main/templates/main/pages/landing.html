@@ -28,9 +28,8 @@
         .content-body {
             background-size: cover;
             backgrond-color: #FFFFFF;
-            background-image: url("https://images.unsplash.com/photo-1666214280391-8ff5bd3c0bf0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80");
             {% comment %} background-image: url("https://images.unsplash.com/photo-1599045118108-bf9954418b76?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"); {% endcomment %}
-            height: 500px;
+            height: 400px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -99,7 +98,7 @@
 
         .welcome
         {
-            width: 80%;
+            width: 50%;
         }
 
         .navbar-nav{
@@ -148,6 +147,26 @@
             border-radius: 10px;
         }
 
+        button[type="submit"] {
+            background-color: #0796D8;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);
+            width: 200px;
+            height: 40px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button[type="submit"]:hover{
+            background-color: #0279AF;
+        }
+
     </style>
 </head>
 
@@ -176,83 +195,24 @@
     </nav>
     <main>
         <div class="all-contant">
-            <div class="content-body">
-                {% comment %} <h1>Welcome to My Website</h1> {% endcomment %}
-            </div>
-            <img class="welcome" src="{% static 'images/medicApp.png' %}" alt="medicAppLogo" />
-            
-        </div>
-        
-        <br />
-        <br />
-{% comment %} 
-        <div class="image-with-text container">
-            <img class="aboutUsImg" src="https://plus.unsplash.com/premium_photo-1663089212536-09b0aeb06614?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1181&q=80"
-                alt="Ultrasonido">
-            <div class="text info">
-                <h2>Diagnóstico inmediato</h2>
-                <p style="text-align: center"> Médicos de todo el mundo podrán diagnosticar rápida y eficientemente <br>
-                    anomalías del sistema nervioso central fetal en segundos.
-                </p>
+             <div class="content-body">
+               {% comment %}     <h1>Welcome to My Website</h1>{% endcomment %}
+            </div> 
+            <img class="welcome" src="{% static 'images/medicApp_full.png' %}" alt="medicAppLogo" />
 
-            </div>
+        </div>
+        <div style="    display: flex;
+        justify-content: space-around;
+        align-items: center; padding-top: 20px">
+            <button type="submit" class="btn btn-primary" onclick="redirectToPage()">Iniciar sesión</button>
         </div>
         <br />
-        <div class="image-with-text container">
-            <div class="text info">
-                <h2>Repositorio de datos</h2>
-                <p style="text-align: center"> Investigadores y estudiantes de medicina utilizan los datos <br>
-                recopilados de casos reales para correr estudios médicos y <br> estadísticos, sin poner en peligro la privacidad de los pacientes.
-                </p>
-            </div>
-            <img class="aboutUsImg" src="https://plus.unsplash.com/premium_photo-1676325102419-5cbc2210d0e8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                alt="Ultrasonido">
-        </div> {% endcomment %}
+        <br />
+
     </main>
     <br />
     <br />
     <footer class="footer-distributed">
-
-        {% comment %} <div class="footer-left"> {% endcomment %}
-{% comment %} 
-            <h3>Company<span>logo</span></h3>
-
-            <p class="footer-links">
-                <a href="#">Home</a>
-                ·
-                <a href="#">Blog</a>
-                ·
-                <a href="#">Pricing</a>
-                ·
-                <a href="#">About</a>
-                ·
-                <a href="#">Faq</a>
-                ·
-                <a href="#">Contact</a>
-            </p>
-
-            <p class="footer-company-name">Company Name © 2015</p>
-        </div>
-
-        <div class="footer-center">
-
-            <div>
-                <i class="fa fa-map-marker"></i>
-                <p><span>21 Revolution Street</span> Paris, France</p>
-            </div>
-
-            <div>
-                <i class="fa fa-phone"></i>
-                <p>+1 555 123456</p>
-            </div>
-
-            <div>
-                <i class="fa fa-envelope"></i>
-                <p><a href="mailto:support@company.com">support@company.com</a></p>
-            </div>
-
-        </div> {% endcomment %}
-
         <div class="footer-right">
 
             <p class="footer-company-about">
@@ -275,3 +235,9 @@
     <script src="https://cdn.tutorialzine.com/misc/enhance/v2.js" async=""></script>
 </body>
 </html>
+
+<script>
+    function redirectToPage() {
+        window.location.href = "/login";
+    }
+</script>
