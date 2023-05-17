@@ -14,6 +14,6 @@ urlpatterns = [
     path("usuario/nuevo", views.agregar_usuario, name="usuario/nuevo"),
     path("registros", views.reportes, name="registros"),
     path("reporte_pdf/<int:idreporte_id>", views.reporte_pdf, name="reporte_pdf"),
-    path("reporte/graficos/<int:idpaciente>", views.reporte_graficos, name="reporte_graficos")
+    path("reporte/graficos/<int:idreporte_id>", views.reporte_graficos, name="reporte_graficos")
      
 ]

@@ -14,3 +14,7 @@ def get_matching_consulta(consulta_id):
     matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
     
     return matching_consulta, matching_patient, matching_clinichist, matching_report, matching_result_info
+
+
+def get_mediciones():
+    return [ 'hc_hadlock', 'bpd_hadlock', 'cereb_hill', 'efw', 'csp', 'cm', 'vp', 'va', 'afi',]

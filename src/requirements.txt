@@ -6,3 +6,4 @@ crispy-bootstrap4
 django-bootstrap-v5
 numpy
 reportlab
+django-material
