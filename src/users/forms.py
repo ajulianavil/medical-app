@@ -27,32 +27,26 @@ class ContactForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
 
 class PersonalsaludForm(forms.ModelForm):
-    dropdown_field = forms.ModelChoiceField(queryset=Hospital.objects.all())
     
-    nombres = forms.CharField(label="Nombres", max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
-    apellidos = forms.CharField(label="Apellidos", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
-    identificacion = forms.IntegerField(label="Número de identificación", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
-    telefono = forms.CharField(label="Teléfono", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
-    direccion = forms.CharField(label="Dirección de residencia", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
-    hospital = forms.ModelChoiceField(queryset=Hospital.objects.all(), label="Hospital en el que labora", required=True, widget=forms.Select(attrs={'class': 'form-control'}))
-    userid = 2
-    
-    print("USER ID", userid)
-    
-    def save(self, commit=True):
-        user_data = super().save(commit=False)
-        user_data.nombresmed = self.cleaned_data['nombres']
-        user_data.apellidosmed = self.cleaned_data['apellidos']
-        user_data.cedulamed = self.cleaned_data['identificacion']
-        user_data.telefonomed = self.cleaned_data['telefono']
-        user_data.direccionmed = self.cleaned_data['direccion']
-        user_data.userid = self.cleaned_data['userid']
-        user_data.hospital = self.cleaned_data['hospital']
+    nombresmed = forms.CharField(label="Nombres", max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    apellidosmed = forms.CharField(label="Apellidos", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    cedulamed = forms.IntegerField(label="Número de identificación", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    telefonomed = forms.CharField(label="Teléfono", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    direccionmed = forms.CharField(label="Dirección de residencia", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    hospitalid = forms.ModelChoiceField(queryset=Hospital.objects.all(), label="Hospital en el que labora", required=True, widget=forms.Select(attrs={'class': 'form-control'}))
 
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.nombresmed = self.cleaned_data['nombresmed']
+        user.apellidosmed = self.cleaned_data['apellidosmed']
+        user.cedulamed = self.cleaned_data['cedulamed']
+        user.telefonomed = self.cleaned_data['telefonomed']
+        user.direccionmed = self.cleaned_data['direccionmed']
+        user.hospitalid = self.cleaned_data['hospitalid']
         if commit:
-            user_data.save()
-        return user_data
+            user.save()
+        return user
 
     class Meta:
         model = Personalsalud
-        fields = '__all__'
+        fields = ['nombresmed', 'apellidosmed', 'cedulamed', 'telefonomed', 'direccionmed', 'hospitalid']

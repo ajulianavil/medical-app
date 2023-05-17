@@ -1,3 +1,4 @@
+from django import forms
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib import messages
@@ -95,13 +96,17 @@ def profile(request):
 
 def user_data(request):
     user_logged = request.user  # Replace 'function' with the actual attribute or related model
-    print("PRIMERO")
     if request.method == "POST":
-        print("ES POST")
-        form = PersonalsaludForm(request.POST, request.FILES)
-        
+        form = PersonalsaludForm(request.POST)
         if form.is_valid():
-            print("VALIDO")
+            user_logged = current_user(request)
+            info = list(user_logged.values())
+            userid = info[0]['userid']
+            instance = form.save(commit=False)
+            appuser = Appuser.objects.get(userid=userid)  # Fetch the Appuser instance with the desired ID
+            instance.userid = appuser 
+            instance.save()
+            #aqui creo que toca meterle el user id
             form.save()
             messages.success(request, 'El registro ha sido finalizado con éxito')
             rol = Appuser.objects.filter(email=user_logged).first()
@@ -109,13 +114,15 @@ def user_data(request):
             form = PersonalsaludForm()
             return render(request, 'consultas/agregar_consulta.html', {"form": form, "rol": rol,})
         else:
-            print("NO VALIDO")
+            for field, errors in form.errors.items():
+                print(f"Errors for field '{field}':")
+                for error in errors:
+                    print(f"- {error}")
             messages.error(request, 'Hay un problema con el formulario.')
             rol = request.GET.get('rol')
             return render(request, 'users/user_data.html', {"form": form, "rol": rol})
         
     else:
-        print("NO ES POST")
         rol = Appuser.objects.filter(email=user_logged).first()
         
         if rol:
