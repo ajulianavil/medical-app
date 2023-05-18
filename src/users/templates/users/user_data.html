@@ -12,6 +12,13 @@
 {% block content %}
 <div class="container rounded mt-5 mb-5" >
     <div class="row">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div> 
+            {% endfor %}
+        {% endif %}
         <div class="col border-right"  style="display: flex;
         justify-content: space-around;">
             <div class="col-6 p-3 py-5">
@@ -22,18 +29,18 @@
                  <form class="report-form" method="POST">
                 {% csrf_token %}
                     <div class="row mt-2">
-                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}">{{ form.nombresmed.label }}</label>
-                            {{form.nombresmed}}
-                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.apellidosmed.label}}</label>
-                            {{form.apellidosmed}}
-                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.cedulamed.label}}</label>
-                            {{form.cedulamed}}
-                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.telefonomed.label}}</label>
-                            {{form.telefonomed}}
-                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.direccionmed.label}}</label>
-                            {{form.direccionmed}}
-                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {{form.hospitalid.label}}</label>
-                            {{form.hospitalid}}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}">{% if current_user.userrol == 'médico' %} {{ form.nombresmed.label }} {%else%}  {{ form.nombresext.label }} {%endif%}</label>
+                            {% if current_user.userrol == 'médico' %} {{ form.nombresmed }} {%else%}  {{ form.nombresext }} {%endif%}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {% if current_user.userrol == 'médico' %} {{ form.apellidosmed.label }} {%else%}  {{ form.apellidosext.label }} {%endif%}</label>
+                            {% if current_user.userrol == 'médico' %} {{ form.apellidosmed }} {%else%}  {{ form.apellidosext }} {%endif%}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {% if current_user.userrol == 'médico' %} {{ form.cedulamed.label }} {%else%}  {{ form.cedulaext.label }} {%endif%}</label>
+                            {% if current_user.userrol == 'médico' %} {{ form.cedulamed }} {%else%}  {{ form.cedulaext }} {%endif%}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {% if current_user.userrol == 'médico' %} {{ form.telefonomed.label }} {%else%}  {{ form.telefonoext.label }} {%endif%}</label>
+                            {% if current_user.userrol == 'médico' %} {{ form.telefonomed }} {%else%}  {{ form.telefonoext }} {%endif%}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {% if current_user.userrol == 'médico' %} {{ form.direccionmed.label }} {%else%}  {{ form.direccionext.label }} {%endif%}</label>
+                            {% if current_user.userrol == 'médico' %} {{ form.direccionmed }} {%else%}  {{ form.direccionext }} {%endif%}
+                        <div class="col-md-12"><label class="labels" for="{{ form.subject.id_for_label }}"> {% if current_user.userrol == 'médico' %} {{ form.hospitalid.label }} {%else%}  {{ form.institutionid.label }} {%endif%}</label>
+                            {% if current_user.userrol == 'médico' %} {{ form.hospitalid }} {%else%}  {{ form.institutionid }} {%endif%}
                     </div>
                 </br>
                     <div class="mt-5 text-center" style="display: flex;

@@ -1,3 +1,4 @@
+import re
 from django.urls import reverse
 from main.models import *
 from users.models import Appuser
@@ -27,7 +28,7 @@ def current_user(request):
             
             medico_data = Personalsalud.objects.filter(userid=userid).first()
             investigador_data = Usuarioexterno.objects.filter(userid=userid).first()
-            print("asdsad0", investigador_data)
+            
             if medico_data != None:
                 nombre = medico_data.nombresmed
                 apellido = medico_data.apellidosmed
@@ -62,17 +63,21 @@ def current_user(request):
             'user_address': direccion,
             }
             
-            forbbiden_urls = [
-                    reverse('consultas/nueva'),
-                    reverse('registros'),
-                    # reverse('registroinfo'),
-                    # reverse('reporte_pdf'),
-                    # reverse('reporte_graficos')
-                ]
-                
+            forbidden_url_patterns = [
+                r'^/consultas/nueva$',
+                r'^/registros$',
+                r'^/reporte_pdf/\d+$',
+                r'^/reporte/graficos/\d+$',
+                r'^/chart-data/\d+/.*/.*$'
+            ]
+
+            current_path = request.path
+
             if user_info['userrol'] == 'investigador':
-                if request.path in forbbiden_urls:
-                    raise PermissionDenied 
+                for pattern in forbidden_url_patterns:
+                    if re.match(pattern, current_path):
+                        raise PermissionDenied
+
         
         else:
             print("Error no existe el usuario")

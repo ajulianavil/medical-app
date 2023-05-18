@@ -12,8 +12,7 @@
 
 {% block content %}
     {% include 'main/components/greeting.html' %}
-    {% if current_user.userrol != 'investigador' %} 
-
+    {% if current_user.userrol == 'médico' %} 
     <div class="container-fluid row" style="padding-top: 30px">
         <h4 class="mb-4">Realizar un nuevo diagnóstico			
             <a class="btn text-white" style="background-color: #0796d8;" href="consultas/nueva" role="button">
@@ -38,9 +37,9 @@
     {%endif%}
 
     </div>
-    {% if current_user.userrol != 'investigador' %} 
-
+    
     <div class="container-fluid col-sm" style="padding-top: 20px">
+        {% if current_user.userrol == 'médico' %} 
         <div class="container-fluid row">
             <h2 class="mb-4">Ver Reportes</h2>
             <p class="mb-4 pb-2 mb-md-5 pb-md-0" style="font-weight: bold; font-size: medium">
@@ -87,7 +86,8 @@
                     </div>
                 </div>
             </div>
-
+            
+            {%endif%}
         </div>
         <div class="container-fluid row" style="padding-top: 20px; position: relative">
             <p class="mb-4 pb-2 mb-md-5 pb-md-0" style="font-weight: bold; font-size: medium">
@@ -98,7 +98,6 @@
             </button>
         </div>
     </div>
-    {%endif%}
 </div>
 
 

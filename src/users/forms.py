@@ -27,6 +27,7 @@ class ContactForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
 
 class PersonalsaludForm(forms.ModelForm):
+    print("personal")
     
     nombresmed = forms.CharField(label="Nombres", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
     apellidosmed = forms.CharField(label="Apellidos", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
@@ -50,3 +51,28 @@ class PersonalsaludForm(forms.ModelForm):
     class Meta:
         model = Personalsalud
         fields = ['nombresmed', 'apellidosmed', 'cedulamed', 'telefonomed', 'direccionmed', 'hospitalid']
+        
+class UsuarioExternoForm(forms.ModelForm):
+    print("usuario externo")
+    nombresext = forms.CharField(label="Nombres", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    apellidosext = forms.CharField(label="Apellidos", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    cedulaext = forms.IntegerField(label="Número de identificación", required=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    telefonoext = forms.CharField(label="Teléfono",required=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' ', 'inputmode': 'numeric'}) )
+    direccionext = forms.CharField(label="Dirección de residencia", max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    institutionid = forms.ModelChoiceField(queryset=Institucion.objects.all(), label="Institución a la que pertenece", required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.nombresext = self.cleaned_data['nombresext']
+        user.apellidosext = self.cleaned_data['apellidosext']
+        user.cedulaext = self.cleaned_data['cedulaext']
+        user.telefonoext = self.cleaned_data['telefonoext']
+        user.direccionext = self.cleaned_data['direccionext']
+        user.institutionid = self.cleaned_data['institutionid']
+        if commit:
+            user.save()
+        return user
+
+    class Meta:
+        model = Usuarioexterno
+        fields = ['nombresext', 'apellidosext', 'cedulaext', 'telefonoext', 'direccionext', 'institutionid']

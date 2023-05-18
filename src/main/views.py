@@ -274,7 +274,8 @@ def repositorio(request):
                     'consulta': matching_consultas,
                     'paciente': matching_paciente,
                     'ga_reporte': matching_reporte.ga,
-                    'diagnostico': matching_diagnostico
+                    'report_date': fecha_consulta,
+                    
                 }
                     
                     # Append the dictionary to the objects list
@@ -292,7 +293,7 @@ def repositorio(request):
                 matching_records = Consulta.objects.filter(idpac=idpac)
                 return render(request, 'reportes/reportes.html',  context={"objects": matching_records})
             else:
-                messages.warning(request, f'No se encontraron coincidencias para el paciente de cédula {id_input}')
+                messages.warning(request, f'No se encontraron coincidencias para el paciente de cédula')
                 matching_consultas = Consulta.objects.all()
                 return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
     else:
