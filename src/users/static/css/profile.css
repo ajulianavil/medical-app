@@ -85,6 +85,16 @@ button[type="submit"] {
     height: 40px;
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
 .container{
     padding-right: 50px;
     margin-top: 50px

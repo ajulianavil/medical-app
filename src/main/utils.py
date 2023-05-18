@@ -17,9 +17,6 @@ def get_matching_consulta(consulta_id):
     return matching_consulta, matching_patient, matching_clinichist, matching_report, matching_result_info
 
 
-# def get_mediciones():
-#     return [ 'hc_hadlock', 'bpd_hadlock', 'cereb_hill', 'efw', 'csp', 'cm', 'vp', 'va', 'afi',]
-
 def get_mediciones():
     return  {'hc_hadlock': 1, 'bpd_hadlock': 2, 'cereb_hill': 3, 'efw':4, 'csp':5, 'cm':5, 'vp':6, 'va':7, 'afi':8}
 

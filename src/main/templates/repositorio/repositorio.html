@@ -12,35 +12,40 @@
 <p style="font-weight: bold;">Por favor, ingrese sus datos de interés para filtrar la búsqueda.</p>
 
 <div class="box container " style="height: 100%; margin-bottom:20px">
-  <form class="report-form">
-
+  <form class="report-form" method="POST">
+    {% csrf_token %}
     <div class="row">
-      <div class="col-md-auto">
+      {% comment %} <div class="col-md-auto">
         <strong class="col-md-auto label"> Cédula paciente </strong>
-        <input id="med" type="text" name="text" class="form-repo">
+        <input type="text" id="patced_input" name="patced_input" class="form-repo">
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Apellido paciente </strong>
-        <input id="med" type="text" name="text" class="form-repo">
-      </div>
+        <input type="text" id="lastname_input" name="lastname_input" class="form-repo">
+      </div> {% endcomment %}
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Edad gestacional </strong>
-        <input id="med" type="text" name="text" class="form-repo">
+        <input type="text"  id="ga_input" name="ga_input"  class="form-repo">
+        {% comment %} <label class="labels" for="{{ form.subject.id_for_label }}">{{ form.ga.label }}</label> {% endcomment %}
       </div>
       <div class="col-md-auto">
-        <strong class="col-md-auto label"> Estado del feto </strong>
-        <input id="med" type="text" name="text" class="form-repo">
+        <strong class="col-md-auto label"> Condición del feto </strong>
+        <select id="state_input" name="state_input">
+          <option value="sano">Sano</option>
+          <option value="anormal">Anormal</option>
+        </select>
+        {% comment %} <input type="text"  id="state_input" name="state_input"  class="form-repo"> {% endcomment %}
       </div>
     </div>
     <br />
     <div class="row">
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Medición </strong>
-        <input id="med" type="text" name="text" value="{{clinicalhist.lmp}}" >
+        <input type="text"  id="med_input" name="med_input" value="{{clinicalhist.lmp}}" >
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Diagnóstico </strong>
-        <input id="med" type="text" name="text" value="{{paciente.cedulapac}}" >
+        <input type="text"  id="diagnosis_input" name="diagnosis_input" value="{{paciente.cedulapac}}" >
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Fecha inicial </strong>
@@ -56,6 +61,51 @@
     </div>
   </form>
   </div>
+  <br>
+  {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-warning">
+            {{ message }}
+        </div> 
+    {% endfor %}
+  {% endif %}
+  <br>
+  <div class="container">
+  <table>
+    <thead>
+      <tr>
+        {% comment %} <th style="text-align: center;">Cédula</th>
+        <th style="text-align: center;">Apellido</th> {% endcomment %}
+        <th style="text-align: center;">GA</th>
+        <th style="text-align: center;">Estado</th>
+        <th style="text-align: center;">Fecha reporte</th>
+        <th style="text-align: center;">Medicion</th>
+        <th style="text-align: center;">Valor</th>
+        <th style="text-align: center;">P5 </th>
+        <th style="text-align: center;">P50</th>
+        <th style="text-align: center;">P90</th>
+        <th style="text-align: center;">Diagnostico</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in objects %}
+      <tr>
+        <td style="text-align: center;">{{ obj.ga_reporte }}</td>
+        <td style="text-align: center;">{{ obj.paciente.apellido_paterno }}</td>
+        <td style="text-align: center;">{{ obj.report_date }}</td>
+        <td style="text-align: center;">{{ obj.consulta.idpac_id }}</td>
+        <td style="text-align: center;">{{ obj.consulta.medUltrasonido }}</td>
+        <td style="text-align: center;">{{ obj.consulta.motivo_consulta }}</td>
+        <td style="text-align: center;">
+          <a href="/registros/consulta/{{ obj.consulta.consultaid }}">
+            <i class="fa-regular fa-eye search"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 

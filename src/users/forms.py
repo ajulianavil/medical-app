@@ -30,8 +30,8 @@ class PersonalsaludForm(forms.ModelForm):
     
     nombresmed = forms.CharField(label="Nombres", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
     apellidosmed = forms.CharField(label="Apellidos", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
-    cedulamed = forms.IntegerField(label="Número de identificación", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' ', 'oninput':'validateNumberInput(this)'}) )
-    telefonomed = forms.CharField(label="Teléfono", max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    cedulamed = forms.IntegerField(label="Número de identificación", required=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
+    telefonomed = forms.CharField(label="Teléfono",required=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' ', 'inputmode': 'numeric'}) )
     direccionmed = forms.CharField(label="Dirección de residencia", max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
     hospitalid = forms.ModelChoiceField(queryset=Hospital.objects.all(), label="Hospital en el que labora", required=True, widget=forms.Select(attrs={'class': 'form-control'}))
 

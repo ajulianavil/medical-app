@@ -13,8 +13,14 @@
             <div class="d-flex flex-column align-items-center text-center p-3 py-5">
                 {%if current_user.userrol == 'médico'%}
                     <img class="rounded-circle mt-5" style="margin: 10px" width="200px" src="{% static 'images/medical-avatar.png' %}">
-                {%else%}
+                {%endif%}
+                
+                {%if current_user.userrol == 'investigador'%}
                     <img class="rounded-circle mt-5" style="margin: 10px" width="200px" src="{% static 'images/inv-avatar.png' %}">
+                {%endif%}
+
+                {% if current_user.userrol != 'médico' and current_user.userrol != 'investigador'%} 
+                    <img class="rounded-circle mt-5" style="margin: 10px" width="200px" src="{% static 'images/admin-avatar.png' %}">
                 {%endif%}
                 <span class="font-weight-bold">{{user_info.user_name}} {{user_info.user_lastname}}</span><span class="text-black-50">{{user_info.user_email}}</span><span> </span></div>
         </div>

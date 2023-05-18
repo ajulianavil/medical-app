@@ -9,9 +9,6 @@ def current_user(request):
         reverse('landing'),
         reverse('aboutUs'),
         reverse('howToRegister')
-        
-        # Replace 'login' with the actual URL name of your login page
-        
     ]
     
     if request.path in public_urls:
@@ -22,7 +19,6 @@ def current_user(request):
         user = request.user
         # Retrieve the relevant information from the user object or related models
         # Create a dictionary with the user information you need
-        
         usuario = Appuser.objects.filter(email=user).first()
         if usuario:
             userid = usuario.userid
@@ -31,7 +27,7 @@ def current_user(request):
             
             medico_data = Personalsalud.objects.filter(userid=userid).first()
             investigador_data = Usuarioexterno.objects.filter(userid=userid).first()
-            
+            print("asdsad0", investigador_data)
             if medico_data != None:
                 nombre = medico_data.nombresmed
                 apellido = medico_data.apellidosmed
@@ -45,7 +41,7 @@ def current_user(request):
                 cedula = investigador_data.cedulaext
                 telefono = investigador_data.telefonoext
                 direccion = investigador_data.direccionext
-                
+                                
             else:
                 print("aun no hay informacion del usuario")
                 nombre = ""
@@ -65,6 +61,18 @@ def current_user(request):
             'user_phone': telefono,
             'user_address': direccion,
             }
+            
+            forbbiden_urls = [
+                    reverse('consultas/nueva'),
+                    reverse('registros'),
+                    # reverse('registroinfo'),
+                    # reverse('reporte_pdf'),
+                    # reverse('reporte_graficos')
+                ]
+                
+            if user_info['userrol'] == 'investigador':
+                if request.path in forbbiden_urls:
+                    raise PermissionDenied 
         
         else:
             print("Error no existe el usuario")
