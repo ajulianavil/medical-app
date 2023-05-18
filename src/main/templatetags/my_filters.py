@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 
 from main.models import *
 
@@ -41,29 +42,27 @@ def get_med_name(item):
 def get_ref_values(reporte, medicion):
     try:
         tipo_medicion = Tipomedicion.objects.get(nombreMedicion = medicion.upper())
-        # print('tipo_medicion', tipo_medicion)
         idMedicion = tipo_medicion.idTipoMedicion
-        # print('tipo_medicion', tipo_medicion.idTipoMedicion)
-        # print('idMedicion',idMedicion)
-        if idMedicion == 1 or idMedicion == 2 or idMedicion == 7:
-            med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
+        med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
+
+        if idMedicion == 1 or idMedicion == 2 or idMedicion == 7 or idMedicion == 3 or idMedicion == 9:
             return str(med.valormin) + ' - ' + str(med.valorinter)
-        if idMedicion == 3: #CSP
-            return 'X'
+
         if idMedicion == 4:
-            return '10'
+            return settings.CM_REF
+        
         if idMedicion == 5 or idMedicion == 6:
             if(medicion == 'va'):
                 return 'va'
             if(medicion == 'vp'):
                 return 'nose'
+            
         if idMedicion == 8:
+            
             return 'aaa'
+        
     except Medicion.DoesNotExist:
         med = None
-        # print('medicion', medicion)
-        # print('report', reporte)
-        # print('tipo_medicion.idTipoMedicion', tipo_medicion.idTipoMedicion)
         return 'Nani'
     
 @register.filter

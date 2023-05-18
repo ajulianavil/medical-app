@@ -1,3 +1,4 @@
+from django.conf import settings
 import numpy as np
 
 from main.models import Medicion, Tipomedicion
@@ -43,7 +44,6 @@ def process_data(file):
         elif ('EFW_HADLOCK' in row):
             EFW = row.strip().split(" ")[1] # Estimated Fetal Weight
         else:
-            print("aaaaaaaaaaaaaaa")
             not_found_pacient = False
                         
     count += 1
@@ -62,7 +62,6 @@ def process_data(file):
         }
     
     count = 0
-    EFW = 0
     for row_bytes in file_readed:
         line = row_bytes.decode("utf-8") 
     # BIORBITAL DIAMETER Diámetro bi-orbitario externo
@@ -170,10 +169,6 @@ def process_data(file):
         'afi': afi_sum
     }
     
-    print("----------------------------------------------------")
-    print("ajkdhsjdhsad", reporte_info)
-    print("insert", insert_paciente)
-    
     return insert_paciente, reporte_info, convertedDate, clinical_lmp, med_name, med_lastname
 
     
@@ -187,13 +182,14 @@ def ConvertDateTime(studydate, studytime):
 
 def comparison(diagnosisData):
     gest_age = diagnosisData['ga']
+    print("diag", diagnosisData)
     
     #'nombreMedicion': valorDatoReporte
     valores_normales = {}
     #'nombreMedicion': [Diagnostico, valorDatoReporte, valorReferencia]
     valores_anormales = {}
     
-    data = {'hc_hadlock': diagnosisData['hc_hadlock_1'], 'bpd_hadlock': diagnosisData['bdp_hadlock_1'], 'csp': diagnosisData['hc_hadlock_1'],
+    data = {'hc_hadlock': diagnosisData['hc_hadlock_1'], 'bpd_hadlock': diagnosisData['bdp_hadlock_1'], 'csp': diagnosisData['csp_1'],
             'cm': diagnosisData['cm_1'], 'vp': diagnosisData['vp_1'], 'va': diagnosisData['va_1'], 'cereb_hill': diagnosisData['cereb_hill_1'],
             'efw': diagnosisData['efw'], 'afi': diagnosisData['afi']}
     diagnosisResult = {'hc_hadlock':'', 'bpd_hadlock': '', 'csp': 'ASDA', 'cm':'', 'vp': '', 'va': '', 'cereb_hill':'ASDA', 'efw': 'ASDA', 'afi': ''}
@@ -209,7 +205,7 @@ def comparison(diagnosisData):
     # valorinter -> valor max || valordev -> valordev(valor intermedio)
     for key in mediciones:
         #or key == 7
-        if key == 1 or key == 2 or key == 7:
+        if key == 1 or key == 2 or key == 7 or key == 3 or key==9:
             try:
                 med = Medicion.objects.get(id_tipo_medicion=key, ga=gest_age)
                 
@@ -231,12 +227,12 @@ def comparison(diagnosisData):
                 if key == 2: #BPD
                     if (data["bpd_hadlock"] > med.valorinter):
                         # valores_anormales.update({'Diámetro biparietal (BPD_HADLOCK)': ['Valor superior al normal', data["bpd_hadlock"], med.valorinter]})
-                        diagnosisResult["bpd_hadlock"] = 'Valor superior al normal'
+                        diagnosisResult["bpd_hadlock"] = 'Anormalidad por valor superior'
                         # print("bpd_hadlock valor superior al normal")
                         
                     elif (data["bpd_hadlock"] < med.valormin):
                         # valores_anormales.update({'Diámetro biparietal (BPD_HADLOCK)': ['Valor inferior al normal', data["bpd_hadlock"], med.valormin]})
-                        diagnosisResult["bpd_hadlock"] = 'Valor inferior al normal'
+                        diagnosisResult["bpd_hadlock"] = 'Anormalidad por valor inferior'
                         # print("bpd_hadlock valor inferior al normal")
                         
                     else:
@@ -245,21 +241,45 @@ def comparison(diagnosisData):
                         # print("OK - bpd_hadlock valores normales")
                         
                 if key == 7: #Diametro transverso del cerebelo CEREB_HILL
-                    print("cerebhill")
-                    # if (data["cereb_hill"] < med.valormin):
-                    #     print("Hipoplasia cereberal")
-                    # else:
-                    #     print("OK - cereb_hill en valores normales")
-                                
+                        # print("OK - bpd_hadlock valores normales")
+                    if (data["cereb_hill"] < med.valormin):
+                        diagnosisResult["cereb_hill"] = 'Hipoplasia cereberal'
+                    else:
+                        diagnosisResult["cereb_hill"] = 'Normal'
+                
+                if key == 3: #CSP
+                    if (float(data["csp"]) > med.valorinter):
+                        diagnosisResult["csp"] = 'Anormalidad por valor superior'
+                        print("aqui")
+                        
+                    elif (float(data["csp"]) < med.valormin):
+                        diagnosisResult["csp"] = 'Anormalidad por valor inferior'
+                        print("aqui22")
+                        
+                    else:
+                        diagnosisResult["csp"] = 'Normal'
+                        print("aqui333")
+                        
+                if key == 9: #EFW
+                    if (float(data["efw"]) > med.valorinter):
+                        diagnosisResult["efw"] = 'Feto grande para la edad gestacional'
+                        
+                    elif (float(data["efw"]) < med.valordev):
+                        
+                        if (float(data["efw"]) < med.valormin):
+                            diagnosisResult["efw"] = 'R.C.I.U (Restricción del crecimiento interuterino)'
+                        else:
+                            diagnosisResult["efw"] = 'Feto pequeño para la edad gestacional' 
+                    
+                    elif ( med.valordev < float(data["efw"]) < med.valorinter):
+                        diagnosisResult["efw"] = 'Normal'
+        
             except Medicion.DoesNotExist:
                 med = None
-                print("Para la llave:", key, "no se encontró nada con esta edad gestacional")
+                print("Para la medición:", key, "no se encontró nada con esta edad gestacional")
                      
-        if key == 3: #CSP
-            print("CSP")
-        
         if key == 4: #CM -> Para todas las edades
-            if (float(data["cm"]) > 10):
+            if (float(data["cm"]) > settings.CM_REF):
                 # valores_anormales.update({'Cisterna Magna (CM)': ['Megacisterno o cisterno alargada', data["cm"], '> 10']})
                 diagnosisResult["cm"] = 'Megacisterno o cisterno alargada'
                 # print("Megacisterno o cisterno alargada")
@@ -270,59 +290,37 @@ def comparison(diagnosisData):
         
         if key == 5 or key == 6: #VP or VA
             
-            if (float(data["vp"]) < 9.9):
-                # valores_normales.update({'Ventrículo posterior': ['Normal', data["vp"], ' > 9.9']})
+            if (float(data["vp"]) < settings.VT_MIN):
                 diagnosisResult["vp"] = 'Normal'
-            if(float(data["va"]) < 9.9):
-                # valores_normales.update({'Ventrículo anterior':  ['Normal', data["vp"], ' > 9.9']})
+            if(float(data["va"]) < settings.VT_MIN):
                 diagnosisResult["va"] = 'Normal'
 
-            elif ((10 < float(data["vp"]) < 11.9) ):
-                # valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia leve', data["vp"], '10 - 11.9']})
+            elif ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
                 diagnosisResult["vp"] = 'Ventriculomegalia leve'
-                print("Ventriculomegalia leve")
-            elif ( (10 < float(data["va"]) < 11.9)):
-                # valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia leve', data["va"], '10 - 11.9']})
+            elif ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
                 diagnosisResult["va"] = 'Ventriculomegalia leve'
-                print("Ventriculomegalia leve")
 
-            elif (12 < float(data["vp"]) < 14.9 ):
-                # valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia moderada', data["vp"], '12 - 14.9']})
+            elif (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
                 diagnosisResult["vp"] = 'Ventriculomegalia moderada'
-                print("Ventriculomegalia moderada")   
-            elif (12 < float(data["va"]) < 14.9):
-                # valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia moderada', data["va"], '12 - 14.9']})
+            elif (settings.VT_3 < float(data["va"]) < settings.VT_4):
                 diagnosisResult["va"] = 'Ventriculomegalia moderada'
-                print("Ventriculomegalia moderada")   
                 
-            elif (float(data["vp"]) > 15 ):
-                # valores_anormales.update({'Ventrículo posterior (VP)': ['Ventriculomegalia severa', data["vp"], 15]})
+            elif (float(data["vp"]) > settings.VT_MAX ):
                 diagnosisResult["vp"] = 'Ventriculomegalia severa'
-                print("Ventriculomegalia severa")
-            elif ( float(data["va"]) > 15):
-                # valores_anormales.update({'Ventrículo anterior (VA)': ['Ventriculomegalia severa', data["va"], 15]})
+            elif ( float(data["va"]) > settings.VT_MAX):
                 diagnosisResult["va"] = 'Ventriculomegalia severa'
-                print("Ventriculomegalia severa")
  
-        # if key == 6: #VA
-        #     print("VA")
         if key == 8:
-            if (float(data["afi"]) < 5):
-                valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Oligohidramnios', data["afi"], 5]})
+            if (float(data["afi"]) < settings.AFI_MIN):
+                # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Oligohidramnios', data["afi"], 5]})
                 diagnosisResult["afi"] = 'Oligohidramnios'
-                print("Oligohidramnios")
                 
-            elif (5 < float(data["afi"]) < 24):
-                valores_normales.update({'Indice de líquido amniótico (AFI)': ['Normal', data["afi"], '< 24']})
+            elif (settings.AFI_MIN < float(data["afi"]) < settings.AFI_MAX):
+                # valores_normales.update({'Indice de líquido amniótico (AFI)': ['Normal', data["afi"], '< 24']})
                 diagnosisResult["afi"] = 'Normal'
-                print("AFI Normal")
                 
-            elif (float(data["afi"]) > 24):
-                valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
+            elif (float(data["afi"]) > settings.AFI_MAX):
+                # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
                 diagnosisResult["afi"] = 'Polihidramnios'
-                print("Polihidramnios")
 
     return diagnosisResult
-    
-        
-        

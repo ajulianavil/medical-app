@@ -185,3 +185,16 @@ TINYMCE_DEFAULT_CONFIG = {
     "height": "600px",
     'image_caption': True,
 }
+
+# GLOBAL VARIABLES
+CM_REF = 10
+
+VT_MIN = 9.9
+VT_1 = 10
+VT_2 = 11.9
+VT_3 = 12
+VT_4 = 14.9
+VT_MAX = 15
+
+AFI_MIN = 5
+AFI_MAX = 24
