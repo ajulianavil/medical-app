@@ -82,10 +82,27 @@ def agregar_consulta(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         file = request.FILES['file']
+        
+        if file is None:
+            messages.error(request, 'Por favor seleccione un archivo')
+            return render(
+                request=request,
+                template_name='consultas/agregar_consulta.html',
+                context={"form": form}
+            )
+            
+        if not file.name.endswith('.txt'):
+            messages.error(request, 'Debe ingresar un documento .txt')
+            return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"form": form}
+                )        
         #FUNCION TRATAMIENTO DE DATOS PACIENTE
         processedData = process_data(file)
         #DATOS GENERALES
         processedDataPat = processedData[0]
+        print("processesDataPat", processedDataPat)
         pat_id = processedDataPat['cedulapac']
         #DATOS MEDICOS
         processedDataReport = processedData[1]
@@ -364,6 +381,15 @@ def reporte_pdf(request, idreporte_id: int):
         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
         ('FONTSIZE', (0, 0), (-1, -1), 10),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+    ]
+    
+    table_med_style = [
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTWEIGHT', (0, 0), (-1, -1), 'BOLD'),  # Make the font bold
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
     ]
     
     # Information
@@ -409,15 +435,8 @@ def reporte_pdf(request, idreporte_id: int):
     title = Paragraph('ANOMALÍAS DEL SISTEMA NERVIOSO CENTRAL FETAL', title_style)
     elements.append(title)
     
-    # Add a logo to the top corner of the document.
-    # logo = Image('main/static/images/logo_foscal.png', width=1.5*inch, height=1.5*inch)
-    # logo.wrapOn(doc, 72, 72)
-    # logo.drawOn(doc, doc.leftMargin, doc.height + doc.topMargin - logo.height)
     image = Image('main/static/images/logo_foscal.png', width=1.5*inch, height=0.8*inch, hAlign="LEFT")
     elements.insert(0,image)
-
-
-    # Add a spacer to create a margin between the title and the logo.
 
     elements.append(spacer_logo)
 
@@ -434,7 +453,6 @@ def reporte_pdf(request, idreporte_id: int):
     elements.append(line_drawing)
     elements.append(spacer_section)
     
-    
     patient_data = [
     ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{matching_consulta.medUltrasonido}"],
     ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{matching_report.edb}"],
@@ -446,26 +464,35 @@ def reporte_pdf(request, idreporte_id: int):
     patientdata_table = Table(patient_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
     elements.append(patientdata_table)
     
+    motivo_consulta = [
+    ["Motivo consulta:", matching_consulta.motivo_consulta],    
+    ]
+    elements.append(spacer_data)
+    motivo_consulta_table = Table(motivo_consulta, style=table_style, colWidths=[1.5*inch, 5.5*inch])
+    elements.append(motivo_consulta_table)
+    
+    # elements.append(Paragraph('{}.'.format(matching_consulta.motivo_consulta), text_style))
+        
     elements.append(spacer_section)
     elements.append(line_drawing)
     
     # SECCION ANTECEDENTES
-    elements.append(spacer_data)
-    elements.append(Paragraph('ANTECEDENTES', section_title_style))
-    elements.append(spacer_data)
-    elements.append(line_drawing)
-    elements.append(spacer_section)
-    elements.append(Paragraph('Antecedentes ginecológicos', val_style))
-    elements.append(spacer_data)
-    elements.append(Paragraph('{}.'.format(matching_clinichist.antginecologico), text_style))
+    # elements.append(spacer_data)
+    # elements.append(Paragraph('ANTECEDENTES', section_title_style))
+    # elements.append(spacer_data)
+    # elements.append(line_drawing)
+    # elements.append(spacer_section)
+    # elements.append(Paragraph('Antecedentes ginecológicos', val_style))
+    # elements.append(spacer_data)
+    # elements.append(Paragraph('{}.'.format(matching_clinichist.antginecologico), text_style))
     
-    elements.append(spacer_subsection)
-    elements.append(Paragraph('Antecedentes quirúrgicos', val_style))
-    elements.append(spacer_data)
-    elements.append(Paragraph('{}.'.format(matching_clinichist.antquirurgico), text_style))
-    elements.append(spacer_data)
+    # elements.append(spacer_subsection)
+    # elements.append(Paragraph('Antecedentes quirúrgicos', val_style))
+    # elements.append(spacer_data)
+    # elements.append(Paragraph('{}.'.format(matching_clinichist.antquirurgico), text_style))
+    # elements.append(spacer_data)
     
-    elements.append(line_drawing)
+    # elements.append(line_drawing)
     
     # SECCION OBSERVACIONES
     elements.append(spacer_section)
@@ -478,34 +505,60 @@ def reporte_pdf(request, idreporte_id: int):
     elements.append(Paragraph('Valores normales', val_style))
     elements.append(spacer_data)
     
+    med_data = ["MEDICIÓN", "VALOR", "REFERENCIA"],    
+    med_data_table = Table(med_data, style=table_med_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
+    
+    diag_data = []
     for med in diagnostico['normales']:
         nombre_medicion = my_filters.get_med_name(med)
         # valor_feto = my_filters.get_field_value(med)
         valor_feto = "hola"
         valor_ref = my_filters.get_ref_values(matching_report, med)
-                
-        elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
-                                  .format(nombre_medicion, valor_ref), text_style))
-        elements.append(spacer_data)
         
+        diag_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
+        
+        diagdata_table = Table(diag_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
+                
+        # elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
+        #                           .format(nombre_medicion, valor_ref), text_style))        
+    elements.append(med_data_table)
+    elements.append(diagdata_table)
+    
     elements.append(spacer_subsection)
     elements.append(Paragraph('Anormalidades', val_style))
     elements.append(spacer_data)
     
+    abnormal_data = []
     for med in diagnostico['anormales']:
         nombre_medicion = my_filters.get_med_name(med)
         # valor_feto = my_filters.get_field_value(med)
         valor_feto = "hola"
         valor_ref = my_filters.get_ref_values(matching_report, med)
-                
-        elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
-                                  .format(nombre_medicion, valor_ref), text_style))
-        elements.append(spacer_data)
+        
+        abnormal_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
+        
+        abnormal_data_table = Table(abnormal_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
+        # elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
+        #                           .format(nombre_medicion, valor_ref), text_style))
+        # elements.append(spacer_data)
+    elements.append(med_data_table)
+    elements.append(diagdata_table)
     
     elements.append(spacer_subsection)
     elements.append(Paragraph('Conclusiones', val_style))
     elements.append(spacer_data)
     
+    # if diagnostico['anormales'].length == 0:
+    #     elements.append(Paragraph('El feto no presenta anormalidades.', text_style))
+    for med in diagnostico['anormales']:
+        nombre_medicion = my_filters.get_med_name(med)
+        # valor_feto = my_filters.get_field_value(med)
+        valor_feto = "hola"
+        valor_ref = my_filters.get_ref_values(matching_report, med)
+        
+        elements.append(Paragraph('{}: Se encuentra fuera del rango {}, lo que puede indicar '
+                                   .format(nombre_medicion, valor_ref), text_style))
+        elements.append(spacer_data)
     
     
     #Footer

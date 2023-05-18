@@ -42,17 +42,27 @@ def process_data(file):
             CLINICAL_EDC = row.strip().split(" ")[1]
         elif ('EFW_HADLOCK' in row):
             EFW = row.strip().split(" ")[1] # Estimated Fetal Weight
+        else:
+            print("aaaaaaaaaaaaaaa")
+            not_found_pacient = False
+                        
     count += 1
-    #texto = "El día", STUDYDATE, "a las", STUDYTIME, "se realiza una ecografía a la paciente con número de cédula", PAT_ID, ". La paciente presentó su último periodo menstrual (LMP) el día", CLINICAL_LMP, "por lo que la edad gestacional del feto calculada a partir de dicha fecha es de", GA_weeks_numberOnly, "semanas", GA_days_numberOnly, "días y su fecha estimada de parto está para", CLINICAL_EDC, ". El feto tiene un peso estimado de ", EFW, "gramos."
-    convertedDate = ConvertDateTime(studydate, studytime)
-    insert_paciente = {
-    'cedulapac': pat_id,
-    'apellido_paterno': pat_lastname,
-    'nombreuno':pat_name,
-    'numgestacion':num_gesta
-    }
+    
+    error = []
+    if not_found_pacient == True:
+        error.append('No se encontró información del paciente')
+        print("aca")
+    else:
+        convertedDate = ConvertDateTime(studydate, studytime)
+        insert_paciente = {
+        'cedulapac': pat_id,
+        'apellido_paterno': pat_lastname,
+        'nombreuno':pat_name,
+        'numgestacion':num_gesta
+        }
     
     count = 0
+    EFW = 0
     for row_bytes in file_readed:
         line = row_bytes.decode("utf-8") 
     # BIORBITAL DIAMETER Diámetro bi-orbitario externo
@@ -128,8 +138,7 @@ def process_data(file):
             afi = line.strip().split("|")
             afi = afi[:-1]
             afi_sum = afi[4].split("=")[1].split(" ")[0]
-            
-    textodos = "El Vp es de", Vp
+    
     reporte_info = {
         'efw': EFW,
         'edb': CLINICAL_EDC,
@@ -160,6 +169,10 @@ def process_data(file):
         'ga_days': ga_days,
         'afi': afi_sum
     }
+    
+    print("----------------------------------------------------")
+    print("ajkdhsjdhsad", reporte_info)
+    print("insert", insert_paciente)
     
     return insert_paciente, reporte_info, convertedDate, clinical_lmp, med_name, med_lastname
 

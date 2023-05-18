@@ -95,25 +95,23 @@
     <br />
     <div class="row" style="
     display: flex;
-    justify-content: space-between;
-">
+    justify-content: space-between;">
       <div style="
       width: fit-content;
       display: flex;
-      flex-direction: row;
-  ">
+      flex-direction: row;">
         <div class="col-md-auto">
-          <strong class="col-md-auto label"> Ant. Quirúrgico </strong>
+          <strong class="col-md-auto label"> Motivo consulta </strong>
           <input id="med" type="text" name="text"
-            value="{%if clinicalhist.antquirurgico == None%}No registra{%else%}{{clinicalhist.antquirurgico}}{%endif%}"
+            value="{%if consulta.motivo_consulta == None%}No registra{%else%}{{consulta.motivo_consulta}}{%endif%}"
             disabled="false">
         </div>
-        <div class="col-md-auto">
+        {% comment %} <div class="col-md-auto">
           <strong class="col-md-auto label"> Ant. Ginecológico </strong>
           <input id="med" type="text" name="text"
             value="{%if clinicalhist.antginecologico == None%}No registra{%else%}{{clinicalhist.antginecologico}}{%endif%}"
             disabled="false">
-        </div>
+        </div> {% endcomment %}
       </div>
       <button class="btn submit-button" type="submit" style="width: 200px !important">Editar información</button>
 
@@ -172,8 +170,8 @@
 
       {% for item in diagnostico.normales %}
         <p class="diagnosis"> {{ item|get_med_name }} </p> 
-        <span style="display: inline-block; font-size: 15px;">- presenta un valor de  {{reporte|get_field_value:item }}, 
-          que se encuentra dentro del rango {{reporte|get_ref_values:item}} </span> </br>
+        <span style="display: inline-block; font-size: 15px;">:  {{reporte|get_field_value:item }}, 
+          se encuentra en el rango {{reporte|get_ref_values:item}} </span> </br>
       {%endfor%}
 
       </br>
@@ -181,9 +179,9 @@
       <p class="title"> Anormalidades </p>
       {% for item in diagnostico.anormales %}
         <p class="diagnosis"> {{ item|get_med_name }} </p> 
-        <span style="display: inline-block; font-size: 15px;">- El feto presenta un valor de {{reporte|get_field_value:item }}, 
-          lo que indica un XXXX ya que que se encuentra fuera del rango normal establecido para su edad gestacional de
-          {{reporte|get_ref_values:item}} </span> </br>
+        <span style="display: inline-block; font-size: 15px;">: {{reporte|get_field_value:item }}, 
+          se encuentra fuera del rango {{reporte|get_ref_values:item}} indicando XXXXX
+         </span> </br>
       {%endfor%} 
       
       </br>
@@ -197,9 +195,12 @@
   </div>
   <div class="grid">
     <div class="col-12" style="margin-top: 10px; margin-bottom: 10px">
-      <button class="btn submit-button" type="submit"
+      <form method="GET" action="{% url 'reporte_pdf' consulta.consultaid %}">
+        <button class="btn submit-button" type="submit"
         style="width: 200px !important; background-color: #0796D8; float: left;">Descargar reporte</button>
-        <a href="{% url 'reporte_pdf' consulta.consultaid %}"> Descargar pdf </a>
+    </form>
+      
+        {% comment %} <a href="{% url 'reporte_pdf' consulta.consultaid %}"> Descargar pdf </a> {% endcomment %}
       <button class="btn submit-button" type="submit" style="width: 200px !important; float: right;">Editar
         reporte</button>
     </div>
