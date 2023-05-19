@@ -86,8 +86,17 @@ def consultas(request, personal: str):
 def agregar_consulta(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
-        file = request.FILES['file']
         
+        try:
+            file = request.FILES['file']
+        except:
+            messages.error(request, 'Por favor seleccione un archivo')
+            return render(
+                request=request,
+                template_name='consultas/agregar_consulta.html',
+                context={"form": form}
+            )
+
         if file is None:
             messages.error(request, 'Por favor seleccione un archivo')
             return render(
@@ -95,71 +104,88 @@ def agregar_consulta(request):
                 template_name='consultas/agregar_consulta.html',
                 context={"form": form}
             )
-            
+        
         if not file.name.endswith('.txt'):
-            messages.error(request, 'Debe ingresar un documento .txt')
+            messages.error(request, 'Debe ingresar un archivo .txt')
             return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form}
                 )        
-        #FUNCION TRATAMIENTO DE DATOS PACIENTE
+            
+        #------------------------------------- FUNCION TRATAMIENTO DE DATOS PACIENTE
         processedData = process_data(file)
         
-        #DATOS GENERALES
         processedDataPat = processedData[0]
+        for key, value in processedDataPat.items():
+            if value is None:
+                messages.error(request, "El archivo no tiene información del paciente.")
+                return render(
+                request=request,
+                template_name='consultas/agregar_consulta.html',
+                context={"form": form}
+            )
         pat_id = processedDataPat['cedulapac']
-        fullDate = processedData[2]
         
-        #DATOS MEDICOS
         processedDataReport = processedData[1]
-        #LMP
-        # clinical_lmp = processedData[3]
-        #MED NAME
+        for key, value in processedDataReport.items():
+            if value is None:
+                messages.error(request, f"No encontramos información para '{key}'. Asegúrese de haber subido el archivo adecuado.")
+                return render(
+                request=request,
+                template_name='consultas/agregar_consulta.html',
+                context={"form": form}
+            )
+        
+        #--------------------------------------------- DATOS GENERALES
+        fullDate = processedData[2]
         med_name = processedData[3]
         med_lastname = processedData[4]
-        full_medName = med_name + " " + med_lastname
+
+        if med_name == None or med_lastname == None:
+            full_medName = None
+        else:
+            full_medName = med_name + " " + med_lastname
         
         onpatient = None
-        last_report = None
+        last_report = 0
+        last_consulta = 0
 
-        print("PAC", processedDataPat)
-        lmp = processedDataPat['lmp']
-        if len(lmp) > 50:
-            lmp = lmp[:50] 
-            print("laputamadre")
         paciente_serializer = PacienteSerializer(data=processedDataPat)
         if paciente_serializer.is_valid():
-            print("Guardar Paciente")
             paciente_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL PACIENTE
-            
+        
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
+                
         #Consulta en la tabla paciente y trae el userId para insertarlo en la tabla.
         onpatient = Paciente.objects.filter(cedulapac=pat_id).values_list('idpac', flat=True)[0]
 
         if onpatient is None:
             #return Response(status=status.HTTP_400_BAD_REQUEST)  
-            raise MyCustomException("Algo ocurrió. No encontramos el paciente que buscas.")
+            messages.error(request, f"No encontramos el paciente que buscas.")
+            return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"form": form}
+                )
 
         else:
-            # ------------------- CREA LA HISTORIA CLÍNICA
-            # clinicHistory_info = {
-            #         'lmp': clinical_lmp,
-            #         'idPaciente': onpatient, #ARREGLAR MODELO
-            #     }
-            # clinicHistory_serializer = HistoriaClinicaSerializer(data=clinicHistory_info)
-            
-            # if clinicHistory_serializer.is_valid():
-            #     print("Guardar Historia Clinica")
-            #     clinicHistory_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE LA HISTORIA
-            
-            # ------------------- CREA EL REPORTE CON LOS RESULTADOS
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
-                print("Guardar Reporte")
-                reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
-                # Consulta en la tabla reporte y trae el Id del registro recién insertaado
-                last_report = (Reporte.objects.last()).idreporte        
-            
+                reporte = reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
+                last_report = reporte.idreporte    
+                
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+                return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"form": form}
+                )   
+                
             # ------------------- CREA LA CONSULTA
             user_logged = current_user(request)
             info = list(user_logged.values())
@@ -176,29 +202,42 @@ def agregar_consulta(request):
                 'medUltrasonido': full_medName, #OJO, sólo se guardará la primera vez porque esto es un constraint unique. (TODO: MEJORAR LÓGICA)
                 'medConsulta': med
             }
-                        
+            
             consulta_serializer = ConsultaSerializer(data=consulta_info)
-            
             if consulta_serializer.is_valid():
-                print('Guarda Consulta. Fin del flujo. Eureka!')
-                consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
-            
-            # Aqui toca hacer que estos datos queden guardados en la bd
-            diagnosis = comparison(processedDataReport)
-            last_report = (Reporte.objects.last()).idreporte
-            last_consulta = (Consulta.objects.filter(idreporte=last_report, medConsulta=med)).first()
+                consulta = consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+                last_consulta = consulta.consultaid
+                
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+                return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"form": form}
+                )
 
+            diagnosis = comparison(processedDataReport)
             diagnosis["reporte"] = last_report
+            
             feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
             
             if feto_medicion_diagnostico_serializer.is_valid():
-                feto_medicion_diagnostico_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+                feto_medicion_diagnostico_serializer.save()
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+                return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"form": form}
+                )
+                    
         target_url = reverse('registroinfo', args=[last_consulta])
 
         # Redirect to the target view
         return HttpResponseRedirect(target_url)
 
-        # return JsonResponse({"success": "true"})
     else:
         form = UploadFileForm()
     return render(

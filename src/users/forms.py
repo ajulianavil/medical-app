@@ -27,8 +27,6 @@ class ContactForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
 
 class PersonalsaludForm(forms.ModelForm):
-    print("personal")
-    
     nombresmed = forms.CharField(label="Nombres", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
     apellidosmed = forms.CharField(label="Apellidos", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
     cedulamed = forms.IntegerField(label="Número de identificación", required=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
@@ -53,7 +51,6 @@ class PersonalsaludForm(forms.ModelForm):
         fields = ['nombresmed', 'apellidosmed', 'cedulamed', 'telefonomed', 'direccionmed', 'hospitalid']
         
 class UsuarioExternoForm(forms.ModelForm):
-    print("usuario externo")
     nombresext = forms.CharField(label="Nombres", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
     apellidosext = forms.CharField(label="Apellidos", max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}) )
     cedulaext = forms.IntegerField(label="Número de identificación", required=True, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' '}) )

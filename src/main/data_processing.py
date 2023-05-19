@@ -7,6 +7,41 @@ def process_data(file):
     file_readed = file.readlines()
     studydate = None  # Assign default value to studydate
     studytime = None
+    pat_id = None
+    pat_lastname = None
+    pat_name = None
+    num_gesta = None
+    lmp = None
+    EFW = None
+    CLINICAL_EDC = None
+    ga_weeks = None
+    csp_1 = None
+    csp_avg = None
+    cm_1 = None
+    cm_avg = None
+    hc_hadlock_1 = None
+    hc_hadlock_avg = None
+    hc_hadlock_ga = None
+    hc_hadlock_edc = None
+    hc_hadlock_dev = None
+    bpd_hadlock_1 = None
+    bpd_hadlock_avg = None
+    bpd_hadlock_ga = None
+    bpd_hadlock_edc = None
+    bpd_hadlock_dev = None
+    cereb_hill_1 = None
+    cereb_hill_avg = None
+    cereb_hill_ga = None
+    cereb_hill_edc = None
+    cereb_hill_dev = None
+    va_1 = None
+    va_avg = None
+    vp_1 = None
+    vp_avg = None
+    ga_days = None
+    afi_sum = None
+    med_name = None
+    med_lastname = None
     count = 0
     for row_bytes in file_readed:
         row = row_bytes.decode("utf-8") 
@@ -53,7 +88,6 @@ def process_data(file):
     error = []
     if not_found_pacient == True:
         error.append('No se encontró información del paciente')
-        print("aca")
     else:
         if studydate and studytime:
             convertedDate = ConvertDateTime(studydate, studytime)
@@ -260,17 +294,20 @@ def comparison(diagnosisData):
                         diagnosisResult["cereb_hill"] = 'Normal'
                 
                 if key == 3: #CSP
-                    if (float(data["csp"]) > med.valorinter):
-                        diagnosisResult["csp"] = 'Anormalidad por valor superior'
-                        print("aqui")
-                        
-                    elif (float(data["csp"]) < med.valormin):
-                        diagnosisResult["csp"] = 'Anormalidad por valor inferior'
-                        print("aqui22")
-                        
+                    if data["csp"] == None:
+                        print("asddsa")
                     else:
-                        diagnosisResult["csp"] = 'Normal'
-                        print("aqui333")
+                        if (float(data["csp"]) > med.valorinter):
+                            diagnosisResult["csp"] = 'Anormalidad por valor superior'
+                            print("aqui")
+                            
+                        elif (float(data["csp"]) < med.valormin):
+                            diagnosisResult["csp"] = 'Anormalidad por valor inferior'
+                            print("aqui22")
+                            
+                        else:
+                            diagnosisResult["csp"] = 'Normal'
+                            print("aqui333")
                         
                 if key == 9: #EFW
                     if (float(data["efw"]) > med.valorinter):
@@ -291,48 +328,56 @@ def comparison(diagnosisData):
                 print("Para la medición:", key, "no se encontró nada con esta edad gestacional")
                      
         if key == 4: #CM -> Para todas las edades
-            if (float(data["cm"]) > settings.CM_REF):
-                # valores_anormales.update({'Cisterna Magna (CM)': ['Megacisterno o cisterno alargada', data["cm"], '> 10']})
-                diagnosisResult["cm"] = 'Megacisterno o cisterno alargada'
-                # print("Megacisterno o cisterno alargada")
+            if data["cm"] == None:
+                print("asddsa")
             else:
-                # valores_normales.update({'Cisterna Magna (CM)':['Normal', data["cm"], '< 10']})
-                diagnosisResult["cm"] = 'Normal'
-                # print("OK - CM en valores normales")
+                if (float(data["cm"]) > settings.CM_REF):
+                    # valores_anormales.update({'Cisterna Magna (CM)': ['Megacisterno o cisterno alargada', data["cm"], '> 10']})
+                    diagnosisResult["cm"] = 'Megacisterno o cisterno alargada'
+                    # print("Megacisterno o cisterno alargada")
+                else:
+                    # valores_normales.update({'Cisterna Magna (CM)':['Normal', data["cm"], '< 10']})
+                    diagnosisResult["cm"] = 'Normal'
+                    # print("OK - CM en valores normales")
         
         if key == 5 or key == 6: #VP or VA
-            
-            if (float(data["vp"]) < settings.VT_MIN):
-                diagnosisResult["vp"] = 'Normal'
-            if(float(data["va"]) < settings.VT_MIN):
-                diagnosisResult["va"] = 'Normal'
+            if data["vp"] == None or data["va"] == None:
+                print("asddsa")
+            else:
+                if (float(data["vp"]) < settings.VT_MIN):
+                    diagnosisResult["vp"] = 'Normal'
+                if(float(data["va"]) < settings.VT_MIN):
+                    diagnosisResult["va"] = 'Normal'
 
-            elif ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
-                diagnosisResult["vp"] = 'Ventriculomegalia leve'
-            elif ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
-                diagnosisResult["va"] = 'Ventriculomegalia leve'
+                elif ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
+                    diagnosisResult["vp"] = 'Ventriculomegalia leve'
+                elif ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
+                    diagnosisResult["va"] = 'Ventriculomegalia leve'
 
-            elif (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
-                diagnosisResult["vp"] = 'Ventriculomegalia moderada'
-            elif (settings.VT_3 < float(data["va"]) < settings.VT_4):
-                diagnosisResult["va"] = 'Ventriculomegalia moderada'
-                
-            elif (float(data["vp"]) > settings.VT_MAX ):
-                diagnosisResult["vp"] = 'Ventriculomegalia severa'
-            elif ( float(data["va"]) > settings.VT_MAX):
-                diagnosisResult["va"] = 'Ventriculomegalia severa'
+                elif (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
+                    diagnosisResult["vp"] = 'Ventriculomegalia moderada'
+                elif (settings.VT_3 < float(data["va"]) < settings.VT_4):
+                    diagnosisResult["va"] = 'Ventriculomegalia moderada'
+                    
+                elif (float(data["vp"]) > settings.VT_MAX ):
+                    diagnosisResult["vp"] = 'Ventriculomegalia severa'
+                elif ( float(data["va"]) > settings.VT_MAX):
+                    diagnosisResult["va"] = 'Ventriculomegalia severa'
  
         if key == 8:
-            if (float(data["afi"]) < settings.AFI_MIN):
-                # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Oligohidramnios', data["afi"], 5]})
-                diagnosisResult["afi"] = 'Oligohidramnios'
-                
-            elif (settings.AFI_MIN < float(data["afi"]) < settings.AFI_MAX):
-                # valores_normales.update({'Indice de líquido amniótico (AFI)': ['Normal', data["afi"], '< 24']})
-                diagnosisResult["afi"] = 'Normal'
-                
-            elif (float(data["afi"]) > settings.AFI_MAX):
-                # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
-                diagnosisResult["afi"] = 'Polihidramnios'
+            if data["afi"] == None:
+                print("asddsa")
+            else:
+                if (float(data["afi"]) < settings.AFI_MIN):
+                    # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Oligohidramnios', data["afi"], 5]})
+                    diagnosisResult["afi"] = 'Oligohidramnios'
+                    
+                elif (settings.AFI_MIN < float(data["afi"]) < settings.AFI_MAX):
+                    # valores_normales.update({'Indice de líquido amniótico (AFI)': ['Normal', data["afi"], '< 24']})
+                    diagnosisResult["afi"] = 'Normal'
+                    
+                elif (float(data["afi"]) > settings.AFI_MAX):
+                    # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
+                    diagnosisResult["afi"] = 'Polihidramnios'
 
     return diagnosisResult
