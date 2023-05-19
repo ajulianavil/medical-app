@@ -2,7 +2,6 @@
 {% load static %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
-    {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/ejemplo.css' %}"/> {% endcomment %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/upload_file.css' %}"/>
 
@@ -15,7 +14,7 @@
 
     {% if messages %}
     {% for message in messages %}
-        <div class="alert alert-success">
+        <div class="alert alert-danger">
             {{ message }}
         </div> 
     {% endfor %}

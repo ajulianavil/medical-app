@@ -53,6 +53,8 @@ def custom_login(request):
         return redirect('/')
 
     if request.method == "POST":
+        storage = messages.get_messages(request)
+        storage.used = True
         form = AuthenticationForm(request=request, data=request.POST)
         storage = messages.get_messages(request)
         for message in storage:
@@ -67,7 +69,7 @@ def custom_login(request):
             print("user", user)
             if user is not None:
                 login(request, user)
-                messages.success(request, f"Hello <b>{user.username}</b>! You have been logged in")
+                messages.success(request, f"¡Bienvenido {user.username}!")
                 return redirect('/')
 
         else:

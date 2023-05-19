@@ -85,6 +85,8 @@ def consultas(request, personal: str):
 
 def agregar_consulta(request):
     if request.method == 'POST':
+        storage = messages.get_messages(request)
+        storage.used = True
         form = UploadFileForm(request.POST, request.FILES)
         
         try:
@@ -97,14 +99,6 @@ def agregar_consulta(request):
                 context={"form": form}
             )
 
-        if file is None:
-            messages.error(request, 'Por favor seleccione un archivo')
-            return render(
-                request=request,
-                template_name='consultas/agregar_consulta.html',
-                context={"form": form}
-            )
-        
         if not file.name.endswith('.txt'):
             messages.error(request, 'Debe ingresar un archivo .txt')
             return render(
@@ -153,18 +147,27 @@ def agregar_consulta(request):
 
         paciente_serializer = PacienteSerializer(data=processedDataPat)
         if paciente_serializer.is_valid():
-            paciente_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL PACIENTE
+            try:
+                paciente = paciente_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL PACIENTE
+            except Exception as e:
+                messages.error(request, f"Error al guardar el paciente: {str(e)}")
+                return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"form": form}
+                )
         
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
-                
+        
         #Consulta en la tabla paciente y trae el userId para insertarlo en la tabla.
         onpatient = Paciente.objects.filter(cedulapac=pat_id).values_list('idpac', flat=True)[0]
 
         if onpatient is None:
             #return Response(status=status.HTTP_400_BAD_REQUEST)  
             messages.error(request, f"No encontramos el paciente que buscas.")
+            # paciente.delete()  # Delete the paciente record
             return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',
@@ -174,12 +177,22 @@ def agregar_consulta(request):
         else:
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
-                reporte = reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
-                last_report = reporte.idreporte    
+                try:
+                    reporte = reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
+                    last_report = reporte.idreporte
+                except Exception as e:
+                    messages.error(request, f"Error al guardar el reporte: {str(e)}")
+                    paciente.delete()  # Delete the paciente record
+                    return render(
+                        request=request,
+                        template_name='consultas/agregar_consulta.html',
+                        context={"form": form}
+                    )
                 
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
+                paciente.delete()  # Delete the paciente record
                 return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',
@@ -205,12 +218,24 @@ def agregar_consulta(request):
             
             consulta_serializer = ConsultaSerializer(data=consulta_info)
             if consulta_serializer.is_valid():
-                consulta = consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
-                last_consulta = consulta.consultaid
+                try:
+                    consulta = consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+                    last_consulta = consulta.consultaid
+                except Exception as e:
+                    messages.error(request, f"Error al guardar la consulta: {str(e)}")
+                    paciente.delete()  # Delete the paciente record
+                    reporte.delete()   # Delete the reporte record
+                    return render(
+                        request=request,
+                        template_name='consultas/agregar_consulta.html',
+                        context={"form": form}
+                    )
                 
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
+                paciente.delete()  # Delete the paciente record
+                reporte.delete()   # Delete the reporte record
                 return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',
@@ -223,10 +248,24 @@ def agregar_consulta(request):
             feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
             
             if feto_medicion_diagnostico_serializer.is_valid():
-                feto_medicion_diagnostico_serializer.save()
+                try:
+                    feto_medicion_diagnostico_serializer.save()
+                except Exception as e:
+                    messages.error(request, f"Error al guardar el diagnóstico: {str(e)}")
+                    paciente.delete()  # Delete the paciente record
+                    reporte.delete()   # Delete the reporte record
+                    consulta.delete()  # Delete the consulta record
+                    return render(
+                        request=request,
+                        template_name='consultas/agregar_consulta.html',
+                        context={"form": form}
+                    )
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
+                paciente.delete()  # Delete the paciente record
+                reporte.delete()   # Delete the reporte record
+                consulta.delete()  # Delete the consulta record
                 return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',

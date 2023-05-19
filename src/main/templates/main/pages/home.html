@@ -1,18 +1,17 @@
 {% extends 'main/layout.html' %}
 {% load static %}
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/ejemplo.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
+    {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/> {% endcomment %}
+    {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/ejemplo.css' %}"/> {% endcomment %}
+    {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}"/> {% endcomment %}
 
-    
     <script src="https://kit.fontawesome.com/5bdb3c603b.js" crossorigin="anonymous"></script>
 
 {% endblock %}
 
 {% block content %}
     {% include 'main/components/greeting.html' %}
-    {% if current_user.userrol == 'médico' %} 
     <div class="container-fluid row" style="padding-top: 30px">
         <h4 class="mb-4">Realizar un nuevo diagnóstico			
             <a class="btn text-white" style="background-color: #0796d8;" href="consultas/nueva" role="button">
@@ -34,12 +33,11 @@
             </button>
         </form>
     </div>
-    {%endif%}
 
     </div>
     
     <div class="container-fluid col-sm" style="padding-top: 20px">
-        {% if current_user.userrol == 'médico' %} 
+        {% comment %} {% if current_user.userrol == 'médico' %}  {% endcomment %}
         <div class="container-fluid row">
             <h2 class="mb-4">Ver Reportes</h2>
             <p class="mb-4 pb-2 mb-md-5 pb-md-0" style="font-weight: bold; font-size: medium">
@@ -65,7 +63,7 @@
                     <i class="fa-solid fa-person" style="color: #0796d8; scale: 170% "></i><br/>
                     <div class="card-body">
                         <h5 class="card-title">
-                            Fetos </br> sanos
+                            Fetos sanos
                         </h5>
                         <button type="button" class="card-text-button" style="background-color: #63AC3D;">
                             59
@@ -86,8 +84,7 @@
                     </div>
                 </div>
             </div>
-            
-            {%endif%}
+
         </div>
         <div class="container-fluid row" style="padding-top: 20px; position: relative">
             <p class="mb-4 pb-2 mb-md-5 pb-md-0" style="font-weight: bold; font-size: medium">

@@ -8,7 +8,7 @@
     min-width: 300px;
     border: none;
 }
- 
+
 /* Style the counter cards */
 .card1 {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
@@ -63,6 +63,27 @@ h5{
     color: white;
     font-family: 'League Spartan', sans-serif;
 
+}
+
+/* Agregar_consulta */
+.submit-button{
+    background-color: #52CBF5;
+    width: 150px;
+    font-family: 'League Spartan', sans-serif;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+}
+
+.submit-button:hover{
+    background-color: #0796D8;
+    color: white;
 }
 
 .search-form {
