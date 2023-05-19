@@ -1,5 +1,7 @@
+import datetime
 from django import template
 from django.conf import settings
+from users.context_processors import current_user
 
 from main.models import *
 
@@ -75,3 +77,50 @@ def get_pacient_id(id:int):
     else:
         notFount = 'Sin cédula'
         return notFount                  
+    
+@register.filter
+def total_pacientes(id:int):
+    record_count = 0;
+    current_month = datetime.datetime.now().month
+    consulta_mes = Consulta.objects.filter(fecha_consulta__month=current_month, medConsulta=id)
+    
+    record_count = consulta_mes.count()
+    return record_count
+
+@register.filter
+def total_fetos(id:int):
+    record_count_normal = 0;
+    
+    current_month = datetime.datetime.now().month
+    consulta_mes = Consulta.objects.filter(fecha_consulta__month=current_month, medConsulta=id)
+    for consulta in consulta_mes:
+        reporte = consulta.idreporte
+        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte)
+        
+        for field in diagnostico.get()._meta.fields:
+            if getattr(diagnostico.get(), field.name) == 'Normal':
+                record_count_normal += 1
+                next
+            else:
+                break
+
+    return record_count_normal
+
+@register.filter
+def total_anormales(id:int):
+    record_count_anormal = 0;
+    
+    current_month = datetime.datetime.now().month
+    consulta_mes = Consulta.objects.filter(fecha_consulta__month=current_month, medConsulta=id)
+    for consulta in consulta_mes:
+        reporte = consulta.idreporte
+        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte)
+        
+        for field in diagnostico.get()._meta.fields:
+            if getattr(diagnostico.get(), field.name) == 'Normal':
+                break
+            else:
+                record_count_anormal += 1
+                break
+
+    return record_count_anormal

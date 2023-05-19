@@ -1,24 +1,17 @@
-/* Style the greeting card */
-#card_greetings {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
-    padding: 16px;
-    text-align: left;
-    background-color: #ffffff;
-    border-radius: 20px;
-    min-width: 300px;
-    border: none;
-}
 
 /* Style the counter cards */
 .card1 {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
-    padding: 16px;
+    padding: 50px 10px 50px 10px;
     text-align: center;
     background-color: #ffffff;
     border-radius: 17px;
-    height: auto;
+    height: 300px;
     cursor: pointer;
     transition: all 0.5s;
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
 .card1:hover{
@@ -29,6 +22,21 @@
     max-width: 50%;
 }
 
+.card2{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
+    padding: 30px 10px 30px 10px;
+    text-align: center;
+    background-color: #0796D8;
+    border-radius: 17px;
+    height: auto;
+    cursor: pointer;
+    transition: all 0.5s;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 2em;
+}
+
 .info {
     border-radius: 10px;
     width: 150px;
@@ -37,7 +45,6 @@
     color: white;
     border-color: #0796D8;
     transition: background-color 0.2s ease-in-out;
-
 }
 
 .info:hover {
@@ -53,6 +60,9 @@ h5{
 
 .card-body{
     padding: 5px;
+    display: grid;
+    justify-items: center;
+    align-items: center;
 }
 
 .card-text-button{
@@ -62,7 +72,13 @@ h5{
     height: 50px;
     color: white;
     font-family: 'League Spartan', sans-serif;
+    transition: all 0.5s;
+    background-color: #52CBF5; 
+}
 
+.card-text-button:hover{
+    background-color: #26283E;
+    transform: scale(1.05);
 }
 
 /* Agregar_consulta */
@@ -106,12 +122,58 @@ h5{
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: transform .5s ease;
+
   }
   
   .search-button i {
     color: #26283E;
   }
 
+  .search-button:hover{
+    transform: scale(1.05);
+}
   .mycard {
     max-width: 500px; height: 150px; font-family: 'League Spartan', sans-serif;display: grid; grid-template-columns: auto 100px;
+  }
+
+  .img-fl{
+    width: 50px;
+  }
+
+  .text{
+    /* margin: 0px 5px 0px 5px; */
+    font-size: xx-large;
+  }
+
+  .text-white{
+    background-color: #0796D8;
+    transition: all .5s ease;
+  }
+
+  .text-white:hover{
+    background-color: #26283E;
+    transform: scale(1.05);
+  }
+
+.card-title{
+    font-weight: bold;
+    color:#26283E   
+}
+
+.card-description{
+    color: white
+}
+
+.containerx {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .card3 {
+    width: 300px;
+    height: 200px;
+    background-color: #7e2727;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
