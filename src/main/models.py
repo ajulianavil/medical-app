@@ -80,6 +80,7 @@ class Paciente(models.Model):
     nombredos = models.CharField(db_column='nombreDos', max_length=100, blank=True, null=True)  # Field name made lowercase.
     fechanac = models.CharField(db_column='fechaNac', max_length=100, blank=True, null=True)  # Field name made lowercase.
     numgestacion = models.IntegerField(db_column='numGestacion', blank=True, null=True)  # Field name made lowercase.
+    lmp = models.CharField(db_column='LMP', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta: 
         verbose_name_plural = "Pacientes"

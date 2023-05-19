@@ -33,7 +33,7 @@ def process_data(file):
         elif ('GESTATIONS' in row):
             num_gesta = row.strip().split(" ")[1]
         elif ('CLINICAL_LMP' in row):
-            clinical_lmp = row.strip().split(" ")[1]
+            lmp = row.strip().split(" ")[1]
         elif ('CLINICAL_GA' in row):
             clinical_ga = row.strip().split(" ")
             ga_weeks = clinical_ga[1][:-1]
@@ -58,7 +58,8 @@ def process_data(file):
         'cedulapac': pat_id,
         'apellido_paterno': pat_lastname,
         'nombreuno':pat_name,
-        'numgestacion':num_gesta
+        'numgestacion':num_gesta,
+        'lmp': lmp
         }
     
     count = 0
@@ -169,7 +170,7 @@ def process_data(file):
         'afi': afi_sum
     }
     
-    return insert_paciente, reporte_info, convertedDate, clinical_lmp, med_name, med_lastname
+    return insert_paciente, reporte_info, convertedDate, med_name, med_lastname
 
     
 def ConvertDateTime(studydate, studytime):

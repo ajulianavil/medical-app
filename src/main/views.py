@@ -105,24 +105,29 @@ def agregar_consulta(request):
                 )        
         #FUNCION TRATAMIENTO DE DATOS PACIENTE
         processedData = process_data(file)
+        
         #DATOS GENERALES
         processedDataPat = processedData[0]
-        print("processesDataPat", processedDataPat)
         pat_id = processedDataPat['cedulapac']
+        fullDate = processedData[2]
+        
         #DATOS MEDICOS
         processedDataReport = processedData[1]
-        #FECHA
-        fullDate = processedData[2]
         #LMP
-        clinical_lmp = processedData[3]
+        # clinical_lmp = processedData[3]
         #MED NAME
-        med_name = processedData[4]
-        med_lastname = processedData[5]
+        med_name = processedData[3]
+        med_lastname = processedData[4]
         full_medName = med_name + " " + med_lastname
         
         onpatient = None
         last_report = None
 
+        print("PAC", processedDataPat)
+        lmp = processedDataPat['lmp']
+        if len(lmp) > 50:
+            lmp = lmp[:50] 
+            print("laputamadre")
         paciente_serializer = PacienteSerializer(data=processedDataPat)
         if paciente_serializer.is_valid():
             print("Guardar Paciente")
@@ -137,15 +142,15 @@ def agregar_consulta(request):
 
         else:
             # ------------------- CREA LA HISTORIA CLÍNICA
-            clinicHistory_info = {
-                    'lmp': clinical_lmp,
-                    'idPaciente': onpatient, #ARREGLAR MODELO
-                }
-            clinicHistory_serializer = HistoriaClinicaSerializer(data=clinicHistory_info)
+            # clinicHistory_info = {
+            #         'lmp': clinical_lmp,
+            #         'idPaciente': onpatient, #ARREGLAR MODELO
+            #     }
+            # clinicHistory_serializer = HistoriaClinicaSerializer(data=clinicHistory_info)
             
-            if clinicHistory_serializer.is_valid():
-                print("Guardar Historia Clinica")
-                clinicHistory_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE LA HISTORIA
+            # if clinicHistory_serializer.is_valid():
+            #     print("Guardar Historia Clinica")
+            #     clinicHistory_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE LA HISTORIA
             
             # ------------------- CREA EL REPORTE CON LOS RESULTADOS
             reporte_serializer = ReporteSerializer(data=processedDataReport)
@@ -204,7 +209,7 @@ def agregar_consulta(request):
 
 def reporteInfo(request, param: int):
 
-    matching_consulta, matching_patient, matching_clinichist, matching_report, matching_result_info = get_matching_consulta(param)
+    matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(param)
 
     normal_columns = []
     anormales_columns = []
@@ -223,7 +228,7 @@ def reporteInfo(request, param: int):
             'anormales':anormales_columns[2:]
         }
         
-    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "clinicalhist": matching_clinichist, "reporte": matching_report, "diagnostico": diagnostico})
+    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnostico": diagnostico})
 
 def repositorio(request):
     if request.method == 'POST':
@@ -243,6 +248,7 @@ def repositorio(request):
         # patced_input = request.POST.get('patced_input')
         # lastname_input = request.POST.get('lastname_input')
         ga_input = request.POST.get('ga_input') #reporte
+        ga_input_final = request.POST.get('ga_input_final') #reporte
         state_input = request.POST.get('state_input') #diagnosis
         med_input = request.POST.get('med_input') #diagnosis
         diagnosis_input = request.POST.get('diagnosis_input') #diagnosis
@@ -309,7 +315,7 @@ def reportes(request,):
         id_input = request.POST.get('id_input')
         if id_input == '':
             # matching_consultas = Consulta.objects.all()
-            matching_consultas = Consulta.objects.filter(medConsulta=userced)
+            matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-consultaid')
             
             return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
         
@@ -320,14 +326,14 @@ def reportes(request,):
                 for item in pacient:
                     idpac = item.idpac
                     
-                matching_records = Consulta.objects.filter(idpac=idpac, medConsulta=userced)
+                matching_records = Consulta.objects.filter(idpac=idpac, medConsulta=userced).order_by('-consultaid')
                 return render(request, 'reportes/reportes.html',  context={"objects": matching_records})
             else:
                 messages.warning(request, f'No se encontraron coincidencias para el paciente de cédula {id_input}')
-                matching_consultas = Consulta.objects.filter(medConsulta=userced)
+                matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-consultaid')
                 return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
     else:
-        matching_consultas = Consulta.objects.filter(medConsulta=userced)
+        matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-consultaid')
         return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
 def reporte_graficos(request, idreporte_id:int ):
@@ -470,7 +476,7 @@ def reporte_pdf(request, idreporte_id: int):
     ]
     
     # Information
-    matching_consulta, matching_patient, matching_clinichist, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
+    matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
 
     normal_columns = []
     anormales_columns = []
@@ -534,8 +540,7 @@ def reporte_pdf(request, idreporte_id: int):
     ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{matching_consulta.medUltrasonido}"],
     ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{matching_report.edb}"],
     ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{matching_report.ga} semanas"],
-    ["Fecha nacimiento:", f"{matching_patient.fechanac}", "Peso fetal:",  f"{matching_report.efw} gr"],
-    ["Último periodo menstrual:", f"{matching_clinichist.lmp}"],    
+    ["Peso fetal:",  f"{matching_report.efw} gr", "Último periodo menstrual:", f"{matching_patient.lmp}"],
     ]
     
     patientdata_table = Table(patient_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
@@ -552,25 +557,7 @@ def reporte_pdf(request, idreporte_id: int):
         
     elements.append(spacer_section)
     elements.append(line_drawing)
-    
-    # SECCION ANTECEDENTES
-    # elements.append(spacer_data)
-    # elements.append(Paragraph('ANTECEDENTES', section_title_style))
-    # elements.append(spacer_data)
-    # elements.append(line_drawing)
-    # elements.append(spacer_section)
-    # elements.append(Paragraph('Antecedentes ginecológicos', val_style))
-    # elements.append(spacer_data)
-    # elements.append(Paragraph('{}.'.format(matching_clinichist.antginecologico), text_style))
-    
-    # elements.append(spacer_subsection)
-    # elements.append(Paragraph('Antecedentes quirúrgicos', val_style))
-    # elements.append(spacer_data)
-    # elements.append(Paragraph('{}.'.format(matching_clinichist.antquirurgico), text_style))
-    # elements.append(spacer_data)
-    
-    # elements.append(line_drawing)
-    
+        
     # SECCION OBSERVACIONES
     elements.append(spacer_section)
     elements.append(spacer_section)
@@ -619,7 +606,7 @@ def reporte_pdf(request, idreporte_id: int):
         #                           .format(nombre_medicion, valor_ref), text_style))
         # elements.append(spacer_data)
     elements.append(med_data_table)
-    elements.append(diagdata_table)
+    elements.append(abnormal_data_table)
     
     elements.append(spacer_subsection)
     elements.append(Paragraph('Conclusiones', val_style))
@@ -633,7 +620,7 @@ def reporte_pdf(request, idreporte_id: int):
         valor_feto = "hola"
         valor_ref = my_filters.get_ref_values(matching_report, med)
         
-        elements.append(Paragraph('{}: Se encuentra fuera del rango {}, lo que puede indicar '
+        elements.append(Paragraph('{}: se encuentra fuera del rango {}, lo que puede indicar '
                                    .format(nombre_medicion, valor_ref), text_style))
         elements.append(spacer_data)
     

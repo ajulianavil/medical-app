@@ -40,7 +40,7 @@ label {
 table{
     text-align: center;
     border-collapse: collapse;
-    width: 80%;
+    width: 100%;
 }
 
 th{
@@ -83,3 +83,42 @@ table tr:nth-child(even){background-color: #f2f2f2;}
   .round-button i {
     color: #26283E;
   }
+
+  .eye-search{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+  }
+
+  #pagination{
+    margin-top: 40px;
+    text-align: center;
+    background-color: #dddddd;
+    border-radius: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-25%, -50%);
+    padding: 0px 20px 0px 20px;
+    font-weight: bold;
+  }
+  
+  .pagination {
+    display: inline-block;
+    padding-left: 0;
+    margin: 0;
+    border-radius: 0.25rem;
+
+  }
+
+a{
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #0279AF;
+    font-family: 'League Spartan', sans-serif;
+}
+
+
+a:hover{
+    color: #26283E
+    }
+
+

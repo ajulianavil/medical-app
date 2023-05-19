@@ -9,12 +9,14 @@ def get_matching_consulta(consulta_id):
     formatted_hora = datetime.strftime(matching_consulta.fecha_consulta, '%H:%M')
     matching_consulta.formatted_fecha_consulta = formatted_date
     matching_consulta.formatted_hora_consulta = formatted_hora
+    
     matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
-    matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
+    # matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
     matching_report = Reporte.objects.filter(idreporte=matching_consulta.idreporte_id).first()
     matching_result_info = FetoMedicionDiagnostico.objects.filter(reporte=matching_report.idreporte)
+       
     
-    return matching_consulta, matching_patient, matching_clinichist, matching_report, matching_result_info
+    return matching_consulta, matching_patient, matching_report, matching_result_info
 
 
 def get_mediciones():

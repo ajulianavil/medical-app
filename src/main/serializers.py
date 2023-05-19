@@ -33,7 +33,7 @@ class ConsultaSerializer(serializers.ModelSerializer):
 class PacienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paciente
-        fields = ('idpac', 'cedulapac', 'apellido_materno', 'apellido_paterno', 'nombreuno', 'nombredos', 'fechanac', 'numgestacion')
+        fields = ('idpac', 'cedulapac', 'apellido_materno', 'apellido_paterno', 'nombreuno', 'nombredos', 'fechanac', 'numgestacion', 'lmp')
         
 class HistoriaClinicaSerializer(serializers.ModelSerializer):
     class Meta:

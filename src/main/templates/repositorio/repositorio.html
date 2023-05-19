@@ -3,6 +3,8 @@
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/repositorio.css' %}" />
     <script src="{% static 'js/reporte_script.js' %}"></script>
+    <script src="{% static 'js/validations.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -24,9 +26,69 @@
         <input type="text" id="lastname_input" name="lastname_input" class="form-repo">
       </div> {% endcomment %}
       <div class="col-md-auto">
-        <strong class="col-md-auto label"> Edad gestacional </strong>
-        <input type="text"  id="ga_input" name="ga_input"  class="form-repo">
+        <strong class="col-md-auto label"> Rango de edad gestacional (semanas)</strong>
+        {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Desde"> {% endcomment %}
+        <select id="ga_input" name="ga_input">
+          <option value="15">Semana 15</option>
+          <option value="16">Semana 16</option>
+          <option value="17">Semana 17</option>
+          <option value="18">Semana 18</option>
+          <option value="19">Semana 19</option>
+          <option value="20">Semana 20</option>
+          <option value="21">Semana 21</option>
+          <option value="22">Semana 22</option>
+          <option value="23">Semana 23</option>
+          <option value="24">Semana 24</option>
+          <option value="25">Semana 25</option>
+          <option value="26">Semana 26</option>
+          <option value="27">Semana 27</option>
+          <option value="28">Semana 28</option>
+          <option value="29">Semana 29</option>
+          <option value="30">Semana 30</option>
+          <option value="31">Semana 31</option>
+          <option value="32">Semana 32</option>
+          <option value="33">Semana 33</option>
+          <option value="34">Semana 34</option>
+          <option value="35">Semana 35</option>
+          <option value="36">Semana 36</option>
+          <option value="37">Semana 37</option>
+          <option value="38">Semana 38</option>
+          <option value="39">Semana 39</option>
+          <option value="40">Semana 40</option>
+        </select>
         {% comment %} <label class="labels" for="{{ form.subject.id_for_label }}">{{ form.ga.label }}</label> {% endcomment %}
+      </div>
+      <div class="col-md-auto">
+      </br>
+      {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Hasta"> {% endcomment %}
+      <select id="ga_input_final" name="ga_input_final">
+        <option value="15">Semana 15</option>
+        <option value="16">Semana 16</option>
+        <option value="17">Semana 17</option>
+        <option value="18">Semana 18</option>
+        <option value="19">Semana 19</option>
+        <option value="20">Semana 20</option>
+        <option value="21">Semana 21</option>
+        <option value="22">Semana 22</option>
+        <option value="23">Semana 23</option>
+        <option value="24">Semana 24</option>
+        <option value="25">Semana 25</option>
+        <option value="26">Semana 26</option>
+        <option value="27">Semana 27</option>
+        <option value="28">Semana 28</option>
+        <option value="29">Semana 29</option>
+        <option value="30">Semana 30</option>
+        <option value="31">Semana 31</option>
+        <option value="32">Semana 32</option>
+        <option value="33">Semana 33</option>
+        <option value="34">Semana 34</option>
+        <option value="35">Semana 35</option>
+        <option value="36">Semana 36</option>
+        <option value="37">Semana 37</option>
+        <option value="38">Semana 38</option>
+        <option value="39">Semana 39</option>
+        <option value="40">Semana 40</option>
+      </select>
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Condición del feto </strong>
@@ -40,19 +102,49 @@
     <br />
     <div class="row">
       <div class="col-md-auto">
-        <strong class="col-md-auto label"> Medición </strong>
-        <input type="text"  id="med_input" name="med_input" value="{{clinicalhist.lmp}}" >
+        <strong class="col-md-auto label" > Medición </strong>
+        <select  id="med_input" name="med_input" onchange="updateDiagnosisOptions()">
+          <option value="todas">Todas</option>
+          <option value="hc_hadlock">HC_HADLOCK</option>
+          <option value="bpd_hadlock">BPD_HADLOCK</option>
+          <option value="csp">CSP</option>
+          <option value="cm">CM</option>
+          <option value="vp">VP</option>
+          <option value="va">VA</option>
+          <option value="cereb_hill">CEREB_HILL</option>
+          <option value="afi">AFI</option>
+          <option value="efw">EFW</option>
+        </select>
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Diagnóstico </strong>
-        <input type="text"  id="diagnosis_input" name="diagnosis_input" value="{{paciente.cedulapac}}" >
+        {% comment %} <input type="text" id="diagnosis_input" name="diagnosis_input" value="{{paciente.cedulapac}}" > {% endcomment %}
+        <select id="diagnosis_input" name="diagnosis_input" onchange="updateMedOptions()">
+          <option value="todos">Todos</option>
+          <option value="normal">Normal</option>
+          <option value="macrocrania">Macrocrania</option>
+          <option value="microcrania">Microcrania</option>
+          <option value="anormal-sup">Anormalidad por valor superior</option>
+          <option value="anormal-inf">Anormalidad por valor inferior</option>
+          <option value="hipoplasia">Hipoplasia cereberal</option>
+          <option value="rciu">R.C.I.U</option>
+          <option value="feto-grande">Feto grande</option>
+          <option value="feto-pequeño">Feto pequeño</option>
+          <option value="megacisterno">Megacisterno</option>
+          <option value="ventri-leve">Ventriculomegalia leve</option>
+          <option value="ventri-mod">Ventriculomegalia moderada</option>
+          <option value="ventri-sev">Ventriculomegalia severa</option>
+          <option value="oligohidramnios">Oligohidramnios</option>
+          <option value="polihidramnios">Polihidramnios</option>
+        </select>
       </div>
       <div class="col-md-auto">
-        <strong class="col-md-auto label"> Fecha inicial </strong>
+        <strong class="col-md-auto label"> Fecha de toma de exámen</strong>
         <input type="date" id="start_date" name="start_date">
+
       </div>
       <div class="col-md-auto">
-        <strong class="col-md-auto label"> - Fecha final </strong>
+      </br>
         <input type="date" id="end_date" name="end_date">
       </div>
       <div class="col-md-auto">
@@ -79,13 +171,33 @@
         <th style="text-align: center;">GA</th>
         <th style="text-align: center;">Estado</th>
         <th style="text-align: center;">Fecha reporte</th>
-        <th style="text-align: center;">Medicion</th>
+        <th style="text-align: center;">HC_HADLOCK</th>
         <th style="text-align: center;">Valor</th>
         <th style="text-align: center;">P5 </th>
-        <th style="text-align: center;">P50</th>
-        <th style="text-align: center;">P90</th>
-        <th style="text-align: center;">Diagnostico</th>
-
+        <th style="text-align: center;">P95 </th>
+        <th style="text-align: center;">BPD_HADLOCK </th>
+        <th style="text-align: center;">Valor</th>
+        <th style="text-align: center;">P5 </th>
+        <th style="text-align: center;">P95 </th>
+        <th style="text-align: center;">CSP </th>
+        <th style="text-align: center;">Valor</th>
+        <th style="text-align: center;">P5 </th>
+        <th style="text-align: center;">P95 </th>
+        <th style="text-align: center;">CM </th>
+        <th style="text-align: center;">Valor</th>
+        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">VP </th>
+        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">VA </th>
+        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">CEREB_HILL </th>
+        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">AFI </th>
+        <th style="text-align: center;">Min </th>
+        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">EFW </th>
+        <th style="text-align: center;">Min </th>
+        <th style="text-align: center;">Max </th>
       </tr>
     </thead>
     <tbody>
