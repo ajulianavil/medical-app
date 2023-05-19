@@ -5,6 +5,8 @@ from main.models import Medicion, Tipomedicion
 
 def process_data(file):
     file_readed = file.readlines()
+    studydate = None  # Assign default value to studydate
+    studytime = None
     count = 0
     for row_bytes in file_readed:
         row = row_bytes.decode("utf-8") 
@@ -53,7 +55,12 @@ def process_data(file):
         error.append('No se encontró información del paciente')
         print("aca")
     else:
-        convertedDate = ConvertDateTime(studydate, studytime)
+        if studydate and studytime:
+            convertedDate = ConvertDateTime(studydate, studytime)
+        else:
+            # Handle the case when studydate or studytime is not defined or empty
+            convertedDate = None  # Or any appropriate handling you prefer
+
         insert_paciente = {
         'cedulapac': pat_id,
         'apellido_paterno': pat_lastname,
@@ -174,6 +181,10 @@ def process_data(file):
 
     
 def ConvertDateTime(studydate, studytime):
+    print(studydate, studytime)
+    if studydate is None or studytime is None:
+        return None
+    
     day = studydate.split(".")[0]
     month = studydate.split(".")[1]
     year = studydate.split(".")[2]
