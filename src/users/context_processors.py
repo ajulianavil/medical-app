@@ -1,21 +1,27 @@
 import re
-from django.urls import reverse
+from django.urls import resolve, reverse
 from main.models import *
 from users.models import Appuser
 from django.core.exceptions import PermissionDenied
 
 def current_user(request):
+    params = resolve(request.path)
     public_urls = [
         reverse('login'),
         reverse('landing'),
         reverse('aboutUs'),
-        reverse('howToRegister')
+        reverse('howToRegister'),
+        reverse('reset_password'),
+        reverse('password_reset_done'),
+        reverse('password_reset_complete'),
+        reverse('password_reset_confirm', args=[params.kwargs.get('uidb64'), params.kwargs.get('token')])
     ]
     
     if request.path in public_urls:
         # Skip authentication check for the login page
         return {}
     
+
     if request.user.is_authenticated:
         user = request.user
         # Retrieve the relevant information from the user object or related models
@@ -64,8 +70,8 @@ def current_user(request):
             }
             
             forbidden_url_patterns = [
-                r'^/consultas/nueva$',
                 r'^/registros$',
+                r'^/consultas/nueva$',
                 r'^/reporte_pdf/\d+$',
                 r'^/reporte/graficos/\d+$',
                 r'^/chart-data/\d+/.*/.*$'
@@ -81,7 +87,7 @@ def current_user(request):
         
         else:
             print("Error no existe el usuario")
-                
+        print('current_user',user_info)
         return {'current_user': user_info}
     
     else:

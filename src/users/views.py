@@ -8,9 +8,23 @@ from users.context_processors import current_user
 from users.models import *
 from .forms import PersonalsaludForm, UserRegistrationForm, UsuarioExternoForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from .forms import ContactForm
-
+from .helpers import send_forget_password_mail
+def forgotpassword(request):
+    print('e')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        print('username', username)
+        if not  Appuser.objects.filter(email=username).first():
+            messages.sucess(request, 'Ningun usuario encontrado con este correo.')
+            return redirect('/forgotpassword')
+        user_obj = Appuser.objects.get(email=username)
+        # send_forget_password_mail(user_obj, token)
+    return render(
+        request=request,
+        template_name="users/forgotpassword.html",
+    )
 
 def contact(request):
     form = ContactForm()
@@ -156,3 +170,5 @@ def user_data(request):
     
         
         # return render(request, 'users/user_data.html')
+
+

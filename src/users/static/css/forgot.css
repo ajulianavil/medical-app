@@ -1,0 +1,99 @@
+.request-password{
+    padding: 50px;
+    margin: 50px;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.btn {
+    width: 200px;
+}
+.login-card{
+    width: 800px;
+    transition: 0.3s;
+    border-radius: 15px;
+}
+body {
+    background: #F1F0F7;
+}
+label {
+    font-size: small !important;
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #26283E;
+}
+
+form {
+    font-size: 16px;
+    font-family: 'League Spartan', sans-serif;
+}
+.cont{
+    height: 100vh;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    background-color: #F1F0F7;
+}
+
+/* Style the submit button */
+input[type="submit"] {
+    background-color: #0796D8;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);
+    width: 200px;
+    height: 40px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'League Spartan', sans-serif;
+}
+button[type="submit"] {
+    background-color: #0796D8;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);
+    width: 200px;
+    height: 40px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'League Spartan', sans-serif;
+}
+
+input[type="email"], textarea {
+    padding: 5px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    border-color: #26283E;
+    font-size: small;
+    transition: background-color 0.2s ease-in-out;
+}
+
+input[type="password"], textarea {
+    padding: 5px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    border-color: #26283E;
+    font-size: small;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.rowbutton{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+

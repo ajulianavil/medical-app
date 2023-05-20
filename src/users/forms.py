@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from users.context_processors import current_user
 from main.models import *
+from django.contrib.auth.forms import PasswordResetForm
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(help_text='A valid email address, please.', required=True)
@@ -73,3 +74,5 @@ class UsuarioExternoForm(forms.ModelForm):
     class Meta:
         model = Usuarioexterno
         fields = ['nombresext', 'apellidosext', 'cedulaext', 'telefonoext', 'direccionext', 'institutionid']
+
+

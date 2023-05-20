@@ -91,10 +91,6 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-input[type="number"] {
-    -moz-appearance: textfield; /* Firefox */
-}
-
 .container{
     padding-right: 50px;
     margin-top: 50px
