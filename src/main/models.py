@@ -104,6 +104,9 @@ class Institucion(models.Model):
     ciudad = models.CharField(max_length=150, blank=True, null=True)
     departamento = models.CharField(max_length=150, blank=True, null=True)
 
+    def __str__ (self):
+            return self.nombreinstitucion
+    
     class Meta:
         verbose_name_plural = "Instituciones"
         db_table = 'Institucion'
@@ -124,8 +127,8 @@ class Usuarioexterno(models.Model):
 class Consulta(models.Model):
     consultaid = models.AutoField(primary_key=True)
     fecha_consulta = models.DateTimeField()
-    motivo_consulta = models.CharField(max_length=100, default='Ultrasonido de control')
-    txtresults = models.CharField( max_length=100, blank=True, null=True)  # Field name made lowercase.
+    motivo_consulta = models.CharField(max_length=1000, default='Ultrasonido de control')
+    txtresults = models.CharField( max_length=1000, blank=True, null=True)  # Field name made lowercase.
     medConsulta = models.ForeignKey(Personalsalud, models.SET_DEFAULT, default="", blank=True, null=True) #ESTO DEBERIA IR ENLAZADO A USER
     medUltrasonido = models.CharField(max_length=200, blank=True, null=True)  # Field name made lowercase.# Field name made lowercase.
     idpac = models.ForeignKey(Paciente, models.SET_DEFAULT, default="")  # Field name made lowercase.
