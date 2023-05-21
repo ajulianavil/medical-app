@@ -732,14 +732,21 @@ def editPacientData(request, consultaid: int):
         consulta = Consulta.objects.get(consultaid=consultaid)
         paciente = Paciente.objects.get(idpac=consulta.idpac.idpac)
         
-        paciente.nombreuno = request.POST.get('name-uno')
-        paciente.nombredos = request.POST.get('name-dos')
-        paciente.apellido_paterno = request.POST.get('last-uno')
-        paciente.apellido_materno = request.POST.get('last-dos')
-        paciente.numgestacion = request.POST.get('gest')
-        paciente.lmp = request.POST.get('lmp')
+        if request.POST.get('name-uno') != "":
+            paciente.nombreuno = request.POST.get('name-uno')
+        if request.POST.get('name-dos') != "":
+            paciente.nombredos = request.POST.get('name-dos')
+        if request.POST.get('last-uno') != "":
+            paciente.apellido_paterno = request.POST.get('last-uno')
+        if request.POST.get('last-dos') != "":
+            paciente.apellido_materno = request.POST.get('last-dos')
+        if request.POST.get('gest') != "":
+            paciente.numgestacion = request.POST.get('gest')
+        if request.POST.get('lmp') != "":
+            paciente.lmp = request.POST.get('lmp')
+            
         consulta.motivo_consulta = request.POST.get('motivo')
-
+        
         paciente.save()
         consulta.save()
         target_url = reverse('registroinfo', args=[consultaid])

@@ -111,17 +111,27 @@ def editProfileData(request, userid: int):
         if usuario.roles == 'investigador':
             person = Usuarioexterno.objects.get(userid=userid)
             
-            person.nombresext = request.POST.get('nombres')
-            person.apellidosext = request.POST.get('apellidos')
-            person.telefonoext = request.POST.get('telefono')
-            person.direccionext = request.POST.get('direccion')
+            if request.POST.get('nombres') != "":
+                person.nombresext = request.POST.get('nombres')
+            if request.POST.get('apellidos') != "":
+                person.apellidosext = request.POST.get('apellidos')
+            if request.POST.get('telefono') != "":
+                person.telefonoext = request.POST.get('telefono')
+            if request.POST.get('direccion') != "":
+                person.direccionext = request.POST.get('direccion')
+                
         else:
             person = Personalsalud.objects.get(userid=userid)
-            person.nombresmed = request.POST.get('nombres')
-            person.apellidosmed = request.POST.get('apellidos')
-            person.telefonomed = request.POST.get('telefono')
-            person.direccionmed = request.POST.get('direccion')
+            if request.POST.get('nombres') != "":
+                person.nombresmed = request.POST.get('nombres')
+            if request.POST.get('apellidos') != "":
+                person.apellidosmed = request.POST.get('apellidos')
+            if request.POST.get('telefono') != "":
+                person.telefonomed = request.POST.get('telefono')
+            if request.POST.get('direccion') != "":
+                person.direccionmed = request.POST.get('direccion')
 
+        print("personaaaaaaaaa", person)
         person.save()
 
         return render(request, 'users/profile.html')

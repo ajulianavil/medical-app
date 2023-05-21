@@ -185,28 +185,28 @@ def process_data(file):
         'edb': CLINICAL_EDC,
         'ga': ga_weeks,
         'csp_1': csp_1,
-        'csp_avg': csp_avg,
+        # 'csp_avg': csp_avg,
         'cm_1': cm_1,
-        'cm_avg': cm_avg,
+        # 'cm_avg': cm_avg,
         'hc_hadlock_1': hc_hadlock_1,
-        'hc_hadlock_avg': hc_hadlock_avg,
-        'hc_hadlock_ga': hc_hadlock_ga,
-        'hc_hadlock_edc': hc_hadlock_edc,
-        'hc_hadlock_dev': hc_hadlock_dev,
-        'bdp_hadlock_1': bpd_hadlock_1,
-        'bdp_hadlock_avg': bpd_hadlock_avg,
-        'bdp_hadlock_ga': bpd_hadlock_ga,
-        'bdp_hadlock_edc': bpd_hadlock_edc,
-        'bdp_hadlock_dev': bpd_hadlock_dev,
+        # 'hc_hadlock_avg': hc_hadlock_avg,
+        # 'hc_hadlock_ga': hc_hadlock_ga,
+        # 'hc_hadlock_edc': hc_hadlock_edc,
+        # 'hc_hadlock_dev': hc_hadlock_dev,
+        'bpd_hadlock_1': bpd_hadlock_1,
+        # 'bdp_hadlock_avg': bpd_hadlock_avg,
+        # 'bdp_hadlock_ga': bpd_hadlock_ga,
+        # 'bdp_hadlock_edc': bpd_hadlock_edc,
+        # 'bdp_hadlock_dev': bpd_hadlock_dev,
         'cereb_hill_1': cereb_hill_1,
-        'cereb_hill_avg': cereb_hill_avg,
-        'cereb_hill_ga': cereb_hill_ga,
-        'cereb_hill_edc': cereb_hill_edc,
-        'cereb_hill_dev': cereb_hill_dev,
+        # 'cereb_hill_avg': cereb_hill_avg,
+        # 'cereb_hill_ga': cereb_hill_ga,
+        # 'cereb_hill_edc': cereb_hill_edc,
+        # 'cereb_hill_dev': cereb_hill_dev,
         'va_1': va_1,
-        'va_avg': va_avg,
+        # 'va_avg': va_avg,
         'vp_1': vp_1,
-        'vp_avg': vp_avg,
+        # 'vp_avg': vp_avg,
         'ga_days': ga_days,
         'afi': afi_sum
     }
@@ -228,14 +228,13 @@ def ConvertDateTime(studydate, studytime):
 
 def comparison(diagnosisData):
     gest_age = diagnosisData['ga']
-    print("diag", diagnosisData)
     
     #'nombreMedicion': valorDatoReporte
     valores_normales = {}
     #'nombreMedicion': [Diagnostico, valorDatoReporte, valorReferencia]
     valores_anormales = {}
     
-    data = {'hc_hadlock': diagnosisData['hc_hadlock_1'], 'bpd_hadlock': diagnosisData['bdp_hadlock_1'], 'csp': diagnosisData['csp_1'],
+    data = {'hc_hadlock': diagnosisData['hc_hadlock_1'], 'bpd_hadlock': diagnosisData['bpd_hadlock_1'], 'csp': diagnosisData['csp_1'],
             'cm': diagnosisData['cm_1'], 'vp': diagnosisData['vp_1'], 'va': diagnosisData['va_1'], 'cereb_hill': diagnosisData['cereb_hill_1'],
             'efw': diagnosisData['efw'], 'afi': diagnosisData['afi']}
     diagnosisResult = {'hc_hadlock':'', 'bpd_hadlock': '', 'csp': 'ASDA', 'cm':'', 'vp': '', 'va': '', 'cereb_hill':'ASDA', 'efw': 'ASDA', 'afi': ''}
