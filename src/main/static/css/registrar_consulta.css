@@ -55,6 +55,39 @@ input[type="text"]:disabled {
     color: #909090;
   }
 
+input[type="text"]:enabled {
+background: #eeeeee;
+border: 1px solid #0796D8;
+padding: 3px 0px 3px 10px;
+color: #26283E;
+}
+
+input[type="text"]:focus {
+    border: 1px solid #0796D8;
+    }
+
+.custom-area:disabled{
+    background: #F4F4F4;
+    border: 1px solid #0796D8;;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 3px 0px 3px 10px;
+    width: 100%;
+    color: rgba(38, 40, 62, 0.6);
+}
+
+.custom-area{
+    background: #F4F4F4;
+    border: 1px solid #0796D8;;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 3px 0px 3px 10px;
+    width: 100%;
+    color: #26283E
+}
+
 #description {
     border-radius: 15px;
     background: #F1F0F7;
@@ -97,4 +130,67 @@ background: #f1f1f1; /* Color of the tracking area */
   
 #description::-webkit-scrollbar-thumb:hover {
     background-color: #555; /* Color of the scroll thumb on hover */
+}
+
+.analisis-button{
+    width: 200px !important; background-color: #63AC3D;
+    font-family: 'League Spartan', sans-serif;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    transition: all .5s ease;
+}
+
+.analisis-button:hover{
+    background-color: #35840C;
+    color: white;
+    transform: scale(1.1);
+}
+
+.report-button{
+    width: 200px !important; background-color: #0796D8;
+    font-family: 'League Spartan', sans-serif;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    transition: all .5s ease;
+}
+
+.report-button:hover{
+    background-color: #26283E;
+    color: white;
+    /* transform: scale(1.1); */
+}
+
+.download-button{
+    width: 200px !important; background-color: #F7941D;
+    font-family: 'League Spartan', sans-serif;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    transition: all .5s ease;
+}
+
+.download-button:hover{
+    background-color: #A95C00;
+    color: white;
+    transform: scale(1.1);
 }

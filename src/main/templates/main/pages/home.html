@@ -25,14 +25,14 @@
         </h4>
         <br>
         <br>
-        <h4 class="text">Ver último diagnóstico 	
-            
-            <a class="btn text-white" href="consultas/nueva" role="button">
+        {% if current_user.user_identification|get_last_consult %}
+        <h4 class="text">Ver último diagnóstico
+            <a class="btn text-white" href="registros/consulta/{{current_user.user_identification|get_last_consult}}" role="button">
                 <i class="fa-regular fa-eye" style="font-size: xx-large"></i>
             </a>
             {% comment %} <span style="color: #909090; font-size: 15px; font-weight: bold; margin-top: 100px"> </br>Para generar un diagnóstico necesitará a la mano el documento .txt extraído del ultrasonido.</span> {% endcomment %}
         </h4>
-        
+        {%endif%}
     {%endif%}
     </div>
 
@@ -43,8 +43,8 @@
         <div class="container-fluid col-sm" style="padding-top: 20px; font-color: #26283E">
             {% comment %} {% if current_user.userrol == 'médico' %}  {% endcomment %}
             <div class="container-fluid row">
-                <h2 class="mb-4">Ver Reportes</h2>
-                <p style="font-weight: bold; font-size: medium; font-color: #26283E">Reporte mensual </p>
+                <h2 class="mb-4">Más información</h2>
+                <p style="font-weight: bold; font-size: medium; font-color: #26283E">Resumen mensual </p>
             </div>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 <div class="col" style="display: flex;

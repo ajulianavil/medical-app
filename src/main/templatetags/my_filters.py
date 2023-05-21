@@ -124,3 +124,9 @@ def total_anormales(id:int):
                 break
 
     return record_count_anormal
+
+@register.filter
+def get_last_consult(id:int):
+    consulta = Consulta.objects.filter(medConsulta=id).last()
+    if consulta:
+        return consulta

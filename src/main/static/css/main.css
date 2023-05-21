@@ -208,6 +208,7 @@ body {
   background-color: #52CBF5;
   width: 150px;
   font-family: 'League Spartan', sans-serif;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);
   color: #fff;
   padding: 10px;
   border: none;

@@ -15,4 +15,7 @@ urlpatterns = [
     path("reporte_pdf/<int:idreporte_id>", views.reporte_pdf, name="reporte_pdf"),
     path("reporte/graficos/<int:idreporte_id>", views.reporte_graficos, name="reporte_graficos"),
     path('chart-data/<int:idreporte_id>/<str:nombreMedicion>/<str:ga>', views.chart_data_view, name='chart_data'),
+    path("editPacientData/<int:consultaid>", views.editPacientData, name="editPacientData"),
+    path("editReportData/<int:consultaid>", views.editReportData, name="editReportData")
+    
 ]

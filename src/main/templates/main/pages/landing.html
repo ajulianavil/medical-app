@@ -49,11 +49,12 @@
                {% comment %}     <h1>Welcome to My Website</h1>{% endcomment %}
             </div> 
             <img class="welcome" src="{% static 'images/medicApp_full.png' %}" alt="medicAppLogo" />
-
+            
         </div>
         <div style="    display: flex;
         justify-content: space-around;
         align-items: center; padding-top: 20px">
+    {% comment %} </br><span style="color: #909090; font-size: 15px; font-weight: bold; margin-top: 100px">Sistema de diagnóstico inmediato para anomalías del sistema nervioso central fetal</span> {% endcomment %}
             <button type="submit" class="btn btn-primary" onclick="redirectToPage()">Iniciar sesión</button>
         </div>
         <br />
@@ -66,7 +67,9 @@
         <div class="footer-right">
 
             <p class="footer-company-about">
-                <span>Andrea Villalba - Laura Serrano</span>
+                <span>Universidad Industrial de Santander</span> </br>
+                {% comment %} <span>Clínica Foscal Internacional</span> {% endcomment %}
+
             </p>
 
             {% comment %} <div class="footer-icons">

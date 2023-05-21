@@ -3,7 +3,7 @@
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}" />
-<script src="{% static 'js/reporte_script.js' %}"></script>
+<script src="{% static 'js/profile.js' %}"></script>
 {% endblock %}
 
 {% block content %} 
@@ -29,31 +29,33 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="text-right">Perfil</h2>
                     <a href="{% url 'logout' %}">
-                <i class="fa-solid fa-right-from-bracket log-out-icon"></i>
+                        <i class="fa-solid fa-right-from-bracket log-out-icon"></i>
                     </a>
 
                 </div>
-                <form class="report-form">
-
+                <form class="profile-form" id="profile-form" method="POST" action="{% url 'editProfileData' current_user.userid %}">
+                    {% csrf_token %}
                     <div class="row mt-2">
-                        <div class="col-md-6"><label class="labels">Nombres</label><input type="text" class="form-control" placeholder="Nombres" value="{{current_user.user_name}}"></div>
-                        <div class="col-md-6"><label class="labels">Apellidos</label><input type="text" class="form-control" value={{current_user.user_lastname}} placeholder="Apellidos"></div>
-                        <div class="col-md-6"><label class="labels">Cédula</label><input type="text" class="form-control" placeholder="Cédula" value={{current_user.user_identification}}></div>
-                        <div class="col-md-6"><label class="labels">Rol</label><input type="text" class="form-control" placeholder="Rol" value={{current_user.user_role}}></div>
+                        <div class="col-md-6"><label class="labels">Nombres</label><input disabled type="text" name="nombres" class="form-control" placeholder="Nombres" value="{{current_user.user_name}}"></div>
+                        <div class="col-md-6"><label class="labels">Apellidos</label><input disabled type="text" name="apellidos" class="form-control" value={{current_user.user_lastname}} placeholder="Apellidos"></div>
+                        <div class="col-md-6"><label class="labels">Cédula</label><input disabled type="text" name="cedula" class="form-control" placeholder="Cédula" value={{current_user.user_identification}}></div>
+                        <div class="col-md-6"><label class="labels">Rol</label><input disabled type="text" name="rol" class="form-control" placeholder="Rol" value={{current_user.userrol}}></div>
                     </div>
                     <div class="row mt-3">
                         
-                        <div class="col-md-12"><label class="labels">Teléfono</label><input type="text" class="form-control" placeholder="Teléfono" value={{current_user.user_phone}}></div>
-                        <div class="col-md-12"><label class="labels">Dirección de residencia</label><input type="text" class="form-control" placeholder="Dirección" value={{current_user.user_address}}></div>
+                        <div class="col-md-12"><label class="labels">Teléfono</label><input disabled type="text"  name="telefono" class="form-control" placeholder="Teléfono" value={{current_user.user_phone}}></div>
+                        <div class="col-md-12"><label class="labels">Dirección de residencia</label><input disabled type="text" name="direccion" class="form-control" placeholder="Dirección" value={{current_user.user_address}}></div>
                         <div class="col-md-12"><label class="labels">Correo electrónico</label>
-                            <input type="email" class="form-control" placeholder="Correo electrónico" value={{current_user.useremail}}></div>
-                        <div class="col-md-12"><label class="labels">Contraseña</label><input type="text" class="form-control" placeholder="Contraseña" value={{current_user.password}}></div>
+                            <input disabled type="email" class="form-control" placeholder="Correo electrónico" name="email" value={{current_user.useremail}}></div>
+                        <div class="col-md-12"><label class="labels">Contraseña</label><input disabled type="text" name="contraseña" class="form-control" placeholder="Contraseña" value={{current_user.password}}></div>
                     </div>
-                </form>
-                <div class="mt-5 text-center" class="display: flex;
-                justify-content: space-around;"><button class="btn btn-primary profile-button" type="submit">Guardar perfil</button>
+                    <div class="mt-5 text-center" class="display: flex; justify-content: space-around;">
+    
+    <button class="btn btn-primary profile-button" id="editButton" type="button" onclick="editProfile()" style="width: 200px; height: 40px; border-radius: 10px; box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);">Editar perfil</button>
+                        <button class="btn btn-primary profile-button" type="submit" id="sendButton" style="display: None">Guardar cambios</button>
+                    </form>
+                </div>
                 
-            </div>
             </div>
         </div>
     </div>

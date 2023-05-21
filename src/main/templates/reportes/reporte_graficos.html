@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; font-size: 16px;">
+<div class="container">
 
   <div style="margin-right: 100px;">
     <table id="infoTable" class="table table-fixed table-condensed">
@@ -38,7 +38,7 @@
     </table>
   </div>
   <div>
-    <h1>Seleccione una variable para ver su grafica</h1>
+    <h1>Seleccione una variable para ver su gráfica</h1>
     <h1 id="title"></h1>
     <canvas id="myChart"></canvas>
   </div>
@@ -118,7 +118,7 @@
         data[labelIndex] = newData.value_reporte; // Update the value at the specific label index
 
         // Create a new array for the point background colors
-        var pointBackgroundColors = Array(data.length).fill('rgba(54, 162, 235, 0.2)');
+        var pointBackgroundColors = Array(data.length).fill('rgba(7, 150, 216, 0.2)');
         pointBackgroundColors[labelIndex] = 'red'; // Set the background color of the dot
 
         // Create a new array for the point border colors
@@ -149,21 +149,21 @@
     data: {
       labels: [],
       datasets: [{
-        label: 'minimos',
+        label: 'Mínimos',
         data: [],  // Initial default data
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(7, 150, 216, 0.2)',
+        borderColor: 'rgba(7, 150, 216, 1)',
+        borderWidth: 1 
+      },
+      {
+        label: 'Máximos',
+        data: [],  // Initial default data
+        backgroundColor: 'rgba(7, 150, 216, 0.2)',
+        borderColor: 'rgba(7, 150, 216, 1)',
         borderWidth: 1
       },
       {
-        label: 'maximos',
-        data: [],  // Initial default data
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      },
-      {
-        label: 'valor reporte',
+        label: 'Dato reporte',
         data: [],  // Initial default data
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',

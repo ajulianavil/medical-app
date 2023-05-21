@@ -21,7 +21,7 @@ form {
 }
 
 /* Style the submit button */
-button[type="submit"] {
+button[type="submit"], button[type="button"]  {
     background-color: #0796D8;
     color: #fff;
     padding: 20px;
@@ -37,6 +37,8 @@ button[type="submit"] {
     justify-content: center;
     font-family: 'League Spartan', sans-serif;
 }
+
+button[type="button"]
 
 .profile-button:disabled{
     background: #D9D9D9;

@@ -58,6 +58,7 @@ td, th{
     border: 1px solid #d9d9d9;
     font-family: 'League Spartan', sans-serif;
     width: fit-content;
+    font-weight: lighter;
 }
 
 table tr:nth-child(even){background-color: #f2f2f2;}

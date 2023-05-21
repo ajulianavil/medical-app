@@ -57,16 +57,12 @@ def homepage(request):
 
         if userrol == 'médico':
             is_register_complete = Personalsalud.objects.filter(userid=userid).all()
-            print("ES MED", is_register_complete)
             if not is_register_complete:
-                print("ES MED")
                 return redirect('user_data')
             
         if userrol == 'investigador':
             is_register_complete = Usuarioexterno.objects.filter(userid=userid).all()
-            print("ES INV", is_register_complete)
             if not is_register_complete:
-                print("ES inv")
                 return redirect('user_data')
         
         return render(request, 'main/pages/home.html', {'user': user})
@@ -393,8 +389,8 @@ def reportes(request,):
         id_input = request.POST.get('id_input')
         if id_input == '':
             # matching_consultas = Consulta.objects.all()
-            matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-consultaid')
-            
+            matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-fecha_consulta')
+            # -consultaid
             return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
         
         else:
@@ -404,14 +400,14 @@ def reportes(request,):
                 for item in pacient:
                     idpac = item.idpac
                     
-                matching_records = Consulta.objects.filter(idpac=idpac, medConsulta=userced).order_by('-consultaid')
+                matching_records = Consulta.objects.filter(idpac=idpac, medConsulta=userced).order_by('-fecha_consulta')
                 return render(request, 'reportes/reportes.html',  context={"objects": matching_records})
             else:
                 messages.warning(request, f'No se encontraron coincidencias para el paciente de cédula {id_input}')
-                matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-consultaid')
+                matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-fecha_consulta')
                 return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
     else:
-        matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-consultaid')
+        matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-fecha_consulta')
         return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
 def reporte_graficos(request, idreporte_id:int ):
@@ -520,14 +516,14 @@ def reporte_pdf(request, idreporte_id: int):
     section_title_style = ParagraphStyle(
         name='ObservationsTitle',
         fontName='Helvetica-Bold',
-        fontSize=12,
+        fontSize=14,
         textColor='#0279AF'
     )
     
     val_style = ParagraphStyle(
         name='ValuesTitle',
         fontName='Helvetica-Bold',
-        fontSize=10,
+        fontSize=12,
         textColor='#0279AF'
     )
     
@@ -639,7 +635,7 @@ def reporte_pdf(request, idreporte_id: int):
     # SECCION OBSERVACIONES
     elements.append(spacer_section)
     elements.append(spacer_section)
-    elements.append(Paragraph('OBSERVACIONES', section_title_style))
+    elements.append(Paragraph('RESULTADOS', section_title_style))
     
     elements.append(spacer_data)
     elements.append(Paragraph('El feto presenta valores normales en {} de {} mediciones.'.format(diagnostico['count'], diagnostico['num_fields']), text_style))
@@ -650,58 +646,71 @@ def reporte_pdf(request, idreporte_id: int):
     med_data = ["MEDICIÓN", "VALOR", "REFERENCIA"],    
     med_data_table = Table(med_data, style=table_med_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
     
-    diag_data = []
-    for med in diagnostico['normales']:
-        nombre_medicion = my_filters.get_med_name(med)
-        # valor_feto = my_filters.get_field_value(med)
-        valor_feto = "hola"
-        valor_ref = my_filters.get_ref_values(matching_report, med)
-        
-        diag_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
-        
-        diagdata_table = Table(diag_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
+    if len(diagnostico['normales']) == 0:
+        elements.append(Paragraph('El feto no presenta valores normales que correspondan a su edad gestacional.', text_style))
+    else:
+        diag_data = []
+        for med in diagnostico['normales']:
+            nombre_medicion = my_filters.get_med_name(med)
+            # valor_feto = my_filters.get_field_value(med)
+            valor_feto = "hola"
+            valor_ref = my_filters.get_ref_values(matching_report, med)
+            
+            diag_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
+            
+            diagdata_table = Table(diag_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
                 
         # elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
         #                           .format(nombre_medicion, valor_ref), text_style))        
-    elements.append(med_data_table)
-    elements.append(diagdata_table)
+        elements.append(med_data_table)
+        elements.append(diagdata_table)
     
     elements.append(spacer_subsection)
     elements.append(Paragraph('Anormalidades', val_style))
     elements.append(spacer_data)
     
     abnormal_data = []
-    for med in diagnostico['anormales']:
-        nombre_medicion = my_filters.get_med_name(med)
-        # valor_feto = my_filters.get_field_value(med)
-        valor_feto = "hola"
-        valor_ref = my_filters.get_ref_values(matching_report, med)
+    if len(diagnostico['anormales']) == 0:
+        elements.append(Paragraph('El feto no presenta anormalidades', text_style))
         
-        abnormal_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
-        
-        abnormal_data_table = Table(abnormal_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
+    else:
+        for med in diagnostico['anormales']:
+            nombre_medicion = my_filters.get_med_name(med)
+            # valor_feto = my_filters.get_field_value(med)
+            valor_feto = "hola"
+            valor_ref = my_filters.get_ref_values(matching_report, med)
+            
+            abnormal_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
+            
+            abnormal_data_table = Table(abnormal_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
         # elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
         #                           .format(nombre_medicion, valor_ref), text_style))
         # elements.append(spacer_data)
-    elements.append(med_data_table)
-    elements.append(abnormal_data_table)
+        elements.append(med_data_table)
+        elements.append(abnormal_data_table)
     
     elements.append(spacer_subsection)
     elements.append(Paragraph('Conclusiones', val_style))
     elements.append(spacer_data)
     
-    # if diagnostico['anormales'].length == 0:
-    #     elements.append(Paragraph('El feto no presenta anormalidades.', text_style))
-    for med in diagnostico['anormales']:
-        nombre_medicion = my_filters.get_med_name(med)
-        # valor_feto = my_filters.get_field_value(med)
-        valor_feto = "hola"
-        valor_ref = my_filters.get_ref_values(matching_report, med)
-        
-        elements.append(Paragraph('{}: se encuentra fuera del rango {}, lo que puede indicar '
-                                   .format(nombre_medicion, valor_ref), text_style))
-        elements.append(spacer_data)
+    if len(diagnostico['anormales']) == 0:
+        elements.append(Paragraph('El feto está dentro de los rangos normales para su edad gestacional.', text_style))
+    else:
+        for med in diagnostico['anormales']:
+            nombre_medicion = my_filters.get_med_name(med)
+            # valor_feto = my_filters.get_field_value(med)
+            valor_feto = "hola"
+            valor_ref = my_filters.get_ref_values(matching_report, med)
+            
+            elements.append(Paragraph('{}: se encuentra fuera del rango {}, lo que puede indicar '
+                                    .format(nombre_medicion, valor_ref), text_style))
+            elements.append(spacer_data)
     
+    if matching_consulta.txtresults != None:
+        elements.append(spacer_subsection)
+        elements.append(Paragraph('OBSERVACIONES DEL MÉDICO', section_title_style))
+        elements.append(spacer_data)
+        elements.append(Paragraph('{}'.format(matching_consulta.txtresults), text_style))
     
     #Footer
     # Define the page template with the footer
@@ -718,8 +727,34 @@ def reporte_pdf(request, idreporte_id: int):
     buf.seek(0)
     return FileResponse(buf, as_attachment=True, filename='my_pdf.pdf')
 
+def editPacientData(request, consultaid: int):
+    if request.method == 'POST':
+        consulta = Consulta.objects.get(consultaid=consultaid)
+        paciente = Paciente.objects.get(idpac=consulta.idpac.idpac)
+        
+        paciente.nombreuno = request.POST.get('name-uno')
+        paciente.nombredos = request.POST.get('name-dos')
+        paciente.apellido_paterno = request.POST.get('last-uno')
+        paciente.apellido_materno = request.POST.get('last-dos')
+        paciente.numgestacion = request.POST.get('gest')
+        paciente.lmp = request.POST.get('lmp')
+        consulta.motivo_consulta = request.POST.get('motivo')
 
-    def get(self, request, *args, **kwargs):
+        paciente.save()
+        consulta.save()
+        target_url = reverse('registroinfo', args=[consultaid])
+        return HttpResponseRedirect(target_url)
+    
+def editReportData(request, consultaid: int):
+    if request.method == 'POST':
+        consulta = Consulta.objects.get(consultaid=consultaid)
+        consulta.txtresults = request.POST.get('obs')
+        consulta.save()
+
+        target_url = reverse('registroinfo', args=[consultaid])
+        return HttpResponseRedirect(target_url)
+
+def get(self, request, *args, **kwargs):
         parameter = request.GET.get('parameter')
         print('hola ', parameter)
         if parameter == 'example1':
@@ -751,3 +786,4 @@ def reporte_pdf(request, idreporte_id: int):
             }
 
         return JsonResponse(data)
+    

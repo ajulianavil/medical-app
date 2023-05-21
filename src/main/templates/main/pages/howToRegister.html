@@ -27,15 +27,15 @@
 
         .content-body {
             background-size: cover;
-            backgrond-color: #FFFFFF;
-            {% comment %} background-image: url("https://images.unsplash.com/photo-1599045118108-bf9954418b76?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"); {% endcomment %}
-            height: 500px;
+            {% comment %} backgrond-color: #FFFFFF; {% endcomment %}
+            height: 100%;
             width: 100%;
             align-items: center;
             justify-content: center;
             position: relative;
             background-color: white;
             padding: 100px;
+            display: block
         }
 
 
@@ -168,50 +168,38 @@
     </nav>
     <main>
         <div class="all-contant">
-            <div class="content-body">
-                {% comment %} <h1>Welcome to My Website</h1> {% endcomment %}
+
+            <div style="display: block; background-size: cover;
+            {% comment %} backgrond-color: #FFFFFF; {% endcomment %}
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: white;
+            padding: 100px;">
+                {% comment %} <h1 style="font-weight: bold; color: #0796D8;">¿Deseas registrarte?</h1>  {% endcomment %}
                 <h1 style="font-weight: bold; color: #0796D8;">¿Deseas registrarte?</h1> 
+
                 <img  class="aboutUsImg" src="{% static 'images/medicApp_face.png' %}">
 
                 <p style="font-weight: lighter; color: #909090; text-align: center;"> 
                     Los nuevos usuarios sólo pueden ser registrados por un administrador. </p> </br> </br>
-                <p style="font-weight: bold; text-align: center;">Por favor, comunícate con un administrador para crear tu cuenta o contáctanos vía ultrasonido@contacto.com.</p>
+                <p style="font-weight: bold; text-align: center;">Por favor, comunícate con un administrador para crear tu cuenta o contáctanos vía medicapp@contacto.com.</p>
                 <p style="font-weight: light; text-align: center; color: #909090; ">Si ya cuentas con permisos de administrador, por favor <a style="font-weight: bold; text-align: center; color: #0796D8;" href="/login"> inicia sesión </a>para poder realizar un nuevo registro.
-            </div>
-        </div>
+                </div>
+                </div>
         
         <br />
         <br />
-{% comment %} 
-        <div class="image-with-text container">
-            <img class="aboutUsImg" src="https://plus.unsplash.com/premium_photo-1663089212536-09b0aeb06614?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1181&q=80"
-                alt="Ultrasonido">
-            <div class="text info">
-                <h2>Diagnóstico inmediato</h2>
-                <p style="text-align: center"> Médicos de todo el mundo podrán diagnosticar rápida y eficientemente <br>
-                    anomalías del sistema nervioso central fetal en segundos.
-                </p>
 
-            </div>
-        </div>
-        <br />
-        <div class="image-with-text container">
-            <div class="text info">
-                <h2>Repositorio de datos</h2>
-                <p style="text-align: center"> Investigadores y estudiantes de medicina utilizan los datos <br>
-                recopilados de casos reales para correr estudios médicos y <br> estadísticos, sin poner en peligro la privacidad de los pacientes.
-                </p>
-            </div>
-            <img class="aboutUsImg" src="https://plus.unsplash.com/premium_photo-1676325102419-5cbc2210d0e8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                alt="Ultrasonido">
-        </div> {% endcomment %}
     </main>
     <br />
     <br />
     <footer class="footer-distributed">
 
-        {% comment %} <div class="footer-left"> {% endcomment %}
-{% comment %} 
+        {% comment %} <div class="footer-left">
+
             <h3>Company<span>logo</span></h3>
 
             <p class="footer-links">

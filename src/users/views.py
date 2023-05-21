@@ -1,9 +1,11 @@
 from django import forms
 from django.db import IntegrityError
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib import messages
-from main.models import Personalsalud
+from django.urls import reverse
+from main.models import *
 from users.context_processors import current_user
 from users.models import *
 from .forms import PersonalsaludForm, UserRegistrationForm, UsuarioExternoForm
@@ -103,6 +105,27 @@ def profile(request):
 
     return render(request, 'users/profile.html', context= {"user_info":user_info})
 
+def editProfileData(request, userid: int):
+    if request.method == 'POST':
+        usuario = Appuser.objects.get(userid=userid)
+        if usuario.roles == 'investigador':
+            person = Usuarioexterno.objects.get(userid=userid)
+            
+            person.nombresext = request.POST.get('nombres')
+            person.apellidosext = request.POST.get('apellidos')
+            person.telefonoext = request.POST.get('telefono')
+            person.direccionext = request.POST.get('direccion')
+        else:
+            person = Personalsalud.objects.get(userid=userid)
+            person.nombresmed = request.POST.get('nombres')
+            person.apellidosmed = request.POST.get('apellidos')
+            person.telefonomed = request.POST.get('telefono')
+            person.direccionmed = request.POST.get('direccion')
+
+        person.save()
+
+        return render(request, 'users/profile.html')
+
 def user_data(request):
     # user_logged = request.user
     user_logged = current_user(request)
@@ -126,11 +149,9 @@ def user_data(request):
                 print("appuser", appuser)# Fetch the Appuser instance with the desired ID
                 instance.userid = appuser 
                 instance.save()
-                #aqui creo que toca meterle el user id
-                # form.save()
+
                 messages.success(request, 'El registro ha sido finalizado con éxito')
-                # rol = request.GET.get('rol')
-                # form = PersonalsaludForm()
+
                 return render(request, 'users/profile.html', {"rol": rol,})
             except IntegrityError:
                 messages.error(request, 'Ya existe un registro para esta persona.')
