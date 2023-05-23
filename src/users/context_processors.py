@@ -31,6 +31,7 @@ def current_user(request):
             userid = usuario.userid
             userpass = usuario.password
             userrol = usuario.roles
+            superuser = usuario.is_superuser
             
             medico_data = Personalsalud.objects.filter(userid=userid).first()
             investigador_data = Usuarioexterno.objects.filter(userid=userid).first()
@@ -67,6 +68,7 @@ def current_user(request):
             'user_identification': cedula,
             'user_phone': telefono,
             'user_address': direccion,
+            'is_superuser': superuser
             }
             
             forbidden_url_patterns = [

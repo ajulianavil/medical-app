@@ -28,11 +28,14 @@
             <div class="col-6">
               <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_input" name="id_input" oninput="validateNumberInput(this)" maxlength="12" />
             </div>
-            <div class="col-2" style="display: flex;
-            align-items: center;
-            justify-content: space-between; border: none">
+            <div class="col-2" style="display: flex; align-items: center; justify-content: space-between; border: none">
               <button type="submit" class="round-button">
                 <i class="fas fa-search fa-lg"></i>
+              </button>
+            </div>
+            <div class="col" style="display: flex; align-items: center; justify-content: flex-end; border: none">
+              <button type="submit" class="all-button">
+                <i class="fa-regular fa-eye"></i> Ver todo
               </button>
             </div>
             </div>
@@ -80,7 +83,8 @@
     </table>
   </div>
   <div id="pagination"></div>
-  </div>
+</div>
+<div style="height: 100px"></div>
 
   <script>
     var table = document.getElementById("myTable");

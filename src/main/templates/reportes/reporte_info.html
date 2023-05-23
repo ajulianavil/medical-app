@@ -33,7 +33,7 @@
       </div>
     </div>
   </div>
-  <br />
+  <br />   <br />
   <h4 style="font-weight: bold;"> Datos paciente </h4>
   <hr>
   <form class="report-form" id="report-form" method="POST" action="{% url 'editPacientData' consulta.consultaid %}">
@@ -41,23 +41,23 @@
     <div class="row">
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Primer nombre </strong>
-        <input id="med" type="text" name="name-uno"
+        <input id="name-uno" type="text" name="name-uno"
           value="{%if paciente.nombreuno == None%}-{%else%}{{paciente.nombreuno}}{%endif%}" disabled>
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Segundo nombre </strong>
-        <input id="med" type="text" name="name-dos"
+        <input id="name-dos" type="text" name="name-dos"
           value="{%if paciente.nombredos == None%}-{%else%}{{paciente.nombredos}}{%endif%}" disabled>
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Primer apellido </strong>
-        <input id="med" type="text" name="last-uno"
+        <input id="last-uno" type="text" name="last-uno"
           value="{%if paciente.apellido_paterno == None%}-{%else%}{{paciente.apellido_paterno}}{%endif%}"
           disabled>
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Segundo apellido </strong>
-        <input id="med" type="text" name="last-dos"
+        <input id="last-dos" type="text" name="last-dos"
           value="{%if paciente.apellido_materno == None%}-{%else%}{{paciente.apellido_materno}}{%endif%}"
           disabled>
       </div>
@@ -66,41 +66,39 @@
     <div class="row">
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Último periodo menstrual (LMP) </strong>
-        <input id="med" type="text" name="lmp" value="{{paciente.lmp}}" disabled>
+        <input id="lmp" type="text" name="lmp" value="{{paciente.lmp}}" disabled>
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Cédula </strong>
-        <input id="med" type="text" name="cedula" value="{{paciente.cedulapac}}" disabled>
+        <input id="cedula" type="text" name="cedula" value="{{paciente.cedulapac}}" disabled>
       </div>
       <div class="col col-lg-3">
         <strong class="col-md-auto label"> Gestaciones </strong>
-        <input id="med" type="text" name="gest" value="{{paciente.numgestacion}}" style="width: 100px;"
+        <input id="gest" type="text" name="gest" value="{{paciente.numgestacion}}" style="width: 100px;"
           disabled>
       </div>
     </div>
 
     <br />
-    <div class="row" style="
-    display: flex;
-    justify-content: space-between;">
-      <div style="
-      width: fit-content;
-      display: flex;
-      flex-direction: row;">
+      <div style=" width: fit-content; display: flex; flex-direction: row;">
         <div class="col-md-auto">
           <strong class="col-md-auto label"> Motivo consulta </strong>
-          <input id="med" type="text" name="motivo"
-            value="{%if consulta.motivo_consulta == None%}No registra{%else%}{{consulta.motivo_consulta}}{%endif%}"
-            disabled>
+          <input id="motivo" type="text" name="motivo" style="width: 500px"
+            value="{%if consulta.motivo_consulta == None%}No registra{%else%}{{consulta.motivo_consulta}}{%endif%}" disabled>
         </div>
-        {% comment %} <input type="hidden" name="id_consulta" value="{{ consulta.consultaid }}"> {% endcomment %}
       </div>
-      <button class="btn report-button" id="editButton" type="button" style="width: 200px !important" onclick="enableFields()">Editar información</button>
-      <button class="btn report-button" id="sendButton" type="submit" style="width: 200px !important; display: none;" onclick="saveFields()">Guardar información</button>
+
+      <div>
+        {% comment %} <input type="hidden" name="id_consulta" value="{{ consulta.consultaid }}"> {% endcomment %}
+        <button class="btn round-button" type="button" id="cancelInfo" style="display: None;" onclick="onCancelInfo()"> <i class="fa-solid fa-xmark"></i></button>
+        <button class="btn report-button" id="editButton" type="button" style="width: 200px !important" onclick="enableFields()">Editar información</button>
+        <button class="btn report-button" id="sendButton" type="submit" style="width: 200px !important; display: none;" onclick="saveFields()">Guardar información</button>
+      </div>
       
-    </div>
 
   </form>
+  <br />
+  <br />
   <br />
   <div class="row">
     <div class="col">
@@ -186,25 +184,20 @@
         {%endif%}
 
       </br>
-      {% if consulta.txtresults != None %}
       <div id="observaciones">
           <p class="title"> Observaciones del médico </p>
-          <textarea id="obs" name="obs" class="custom-area" rows="4" cols="40" disabled>{{consulta.txtresults}}</textarea>
+          <textarea id="obs" name="obs" class="custom-area" rows="4" cols="40" disabled>{% if consulta.txtresults != None %} {{consulta.txtresults}} {%else%} Nada {%endif%}</textarea>
         </div>
-        {%endif%}
-        {% comment %} </textarea> {% endcomment %}
       </div>
     </div>
   <div class="grid">
     <div class="col-12" style="margin-top: 10px; margin-bottom: 10px">
-      
-        
-        {% comment %} <a href="{% url 'reporte_pdf' consulta.consultaid %}"> Descargar pdf </a> {% endcomment %}
-        <button class="btn report-button" type="button" id="editReport" style="width: 200px !important; float: right; margin-bottom: 20px" onclick="enableReportFields()">Agregar observaciones</button>
-        <button class="btn report-button" type="submit" id="saveReport" style="width: 200px !important; float: right; margin-bottom: 20px; display: None" onclick="saveReport()">Guardar reporte</button>
+        <button class="btn round-button" type="button" id="cancelReport" style="display: None;" onclick="onCancelReport()"> <i class="fa-solid fa-xmark"></i></button>
+        <button class="btn report-button" type="button" id="editReport" onclick="enableReportFields()">Agregar observaciones</button>
+        <button class="btn report-button" type="submit" id="saveReport" style="display: None" onclick="saveReport()">Guardar reporte</button>
     </form>
         <form method="GET" action="{% url 'reporte_pdf' consulta.consultaid %}">
-          <button class="btn download-button" type="submit"
+          <button class="btn download-button" type="submit" id="download_button"
           style="width: 200px !important; float: left; margin-bottom: 20px">Descargar reporte</button>
         </form>
     </div>
@@ -212,14 +205,11 @@
     flex-direction: row-reverse;
     justify-content: flex-end;
     margin-top: 10px; margin-bottom: 10px">
-      <!-- <button class="btn submit-button" type="submit" style="width: 200px !important; background-color: #63AC3D;">Ver
-        análisis completo</button> -->
-      <a class="btn analisis-button" href="/reporte/graficos/{{ consulta.idreporte_id }}" type="submit" 
+      <a class="btn analisis-button" href="/reporte/graficos/{{ consulta.idreporte_id }}" type="submit" id="full_analysis"
        role="button">Ver análisis completo</a>
 
     </div>
   </div>
 </div>
-
 
 {% endblock %}

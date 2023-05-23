@@ -89,22 +89,32 @@ def total_pacientes(id:int):
 
 @register.filter
 def total_fetos(id:int):
-    record_count_normal = 0;
+    total_count = 0
     
     current_month = datetime.datetime.now().month
     consulta_mes = Consulta.objects.filter(fecha_consulta__month=current_month, medConsulta=id)
     for consulta in consulta_mes:
+        record_count_normal = 0;    
         reporte = consulta.idreporte
         diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte)
         
-        for field in diagnostico.get()._meta.fields:
-            if getattr(diagnostico.get(), field.name) == 'Normal':
-                record_count_normal += 1
-                next
-            else:
-                break
+        print("ASDASDASDASDA")
+        for instance in diagnostico:
+            print("INSTANCE")
+            for field in instance._meta.get_fields():
+                if field.name not in ['idfetomediciondiagnostico', 'reporte']:
+                    value = getattr(instance, field.name)
 
-    return record_count_normal
+                    if value == 'Normal':
+                        record_count_normal += 1
+                        next;
+                    else:
+                        break
+            
+            if record_count_normal == 9:
+                total_count += 1
+            
+    return total_count
 
 @register.filter
 def total_anormales(id:int):
@@ -114,15 +124,20 @@ def total_anormales(id:int):
     consulta_mes = Consulta.objects.filter(fecha_consulta__month=current_month, medConsulta=id)
     for consulta in consulta_mes:
         reporte = consulta.idreporte
-        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte)
         
-        for field in diagnostico.get()._meta.fields:
-            if getattr(diagnostico.get(), field.name) == 'Normal':
-                break
-            else:
-                record_count_anormal += 1
-                break
+        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte)
+    
+        for instance in diagnostico:
+            for field in instance._meta.get_fields():
+                if field.name not in ['idfetomediciondiagnostico', 'reporte']:
+                    value = getattr(instance, field.name)
 
+                    if value == 'Normal':
+                        next;
+                    else:
+                        record_count_anormal += 1
+                        break
+                    
     return record_count_anormal
 
 @register.filter

@@ -7,7 +7,8 @@ input[type="text"]{
 .search-formm{
     width: 100%;
 }
-.search .eye-search {
+
+.search {
     color: #0796D8;
     /* color: #fff; */
     padding: 10px;
@@ -85,8 +86,36 @@ table tr:nth-child(even){background-color: #f2f2f2;}
     color: #26283E;
   }
 
+  .all-button{
+    width: 120px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: #0279AF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.5s ease;
+  }
+
+  .all-button:hover{
+    background-color: #26283E;
+
+  }
+  
+  .all-button i {
+    color: white;
+    padding-right: 5px;
+  }
+
   .eye-search{
-    display: inline-block;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+  }
+
+  .re-search{
     padding-left: 0px !important;
     padding-right: 0px !important;
   }
@@ -124,26 +153,62 @@ a:hover{
     }
 
 
-.all-button{
-    width: 120px;
-    height: 40px;
-    border-radius: 10px;
-    background-color: #0279AF;
-    color: white;
+.custom-modal{
+    width: 100%;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    z-index: 1050;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-backdrop {
+  background-color: transparent; /* Set the background color to transparent */
+}
+
+.modal-body{
+  font-family: 'League Spartan', sans-serif;
+}
+
+.modal-title{
+  font-weight: bold;
+}
+
+.close{
+  border: none;
+  border-radius: 5px;
+  background: #919191;
+  color: white;
+  transition: all 0.5s ease;
+}
+
+.close:hover{
+  border: none;
+  border-radius: 5px;
+  background: #585858;
+  color: white;
+}
+
+.yes-button{
+    font-family: 'League Spartan', sans-serif;
+    background-color: #0796D8;
+    color: #fff;
+    padding: 10px;
     border: none;
+    border-radius:5px;
     cursor: pointer;
+    width: 220px;
+    height: 38px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    transition: all 0.5s ease;
-    }
+    justify-content: center;
+}
 
-    .all-button:hover{
-    background-color: #26283E;
-
-    }
-    
-    .all-button i {
-    color: white;
-    padding-right: 5px;
-    }
+.yes-button:hover{
+    background-color: #0279AF;
+    color: #fff;
+}

@@ -23,10 +23,33 @@
 <div class="cont">
     <div class="row">
         <div class="col login-options">
+          {% comment %} Modal {% endcomment %}
+          <div class="modal fade custom-modal" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmationModalLabel">Permisos de administrador</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" >
+                        Los administradores tienen acceso a la creación, desactivación y activación de usuarios, incluídos otros administradores. 
+                        Los administradores deben ser profesionales de
+                        confianza. </br></br>Recuerde que para acceder a las funcionalidades de diagnóstico inmediato y el repositorio NO es
+                        necesario contar con dichos permisos. ¿Está seguro que desea crear un nuevo administrador? 
+                        <span id="modalUserId" style="display: None"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeDModal()" style="font-family: 'League Spartan', sans-serif;">No</button>
+                        <button type="button" class="btn yes-button" onclick="closeModal()">Sí, crear administrador </button>
+                    </div>
+                </div>
+            </div>
+        </div>
           <form class="registro-form" method="POST">
             <h2> Crear nuevo usuario </h2>
             <span style="font-size: 16px;"> Usted está a punto de crear un usuario de tipo </span>
-
             <h5 style="font-size: 16px;
             font-weight: bold;
             margin: 0; color: #0796D8;">{{rol}}* </h5> 
@@ -45,6 +68,13 @@
               {{ form.repassword.errors }}
               <label for="{{ form.repassword.id_for_label }}">{{ form.repassword.label }}</label>
               {{ form.repassword }}
+
+              {% if rol == 'médico' %}
+                <label for="{{ form.subject.id_for_label }}" onclick="showModal()">{{ form.is_superuser.label }}
+                {{ form.is_superuser }}
+                </label>
+              {% endif %}
+
               <input type="hidden" name="roles" value="{{ rol }}">
               <br />
               <div style="display: flex;
@@ -74,4 +104,27 @@
     </div>
 </div>
 
+<script>
+
+function showModal() {
+  var checkbox = document.getElementById("id_is_superuser");
+  if (checkbox.checked){
+    $('#confirmationModal').modal('show');
+  }
+}
+
+function closeDModal(){
+    var checkbox = document.getElementById("id_is_superuser");
+    checkbox.checked = false;
+
+    var confirmationModal = document.querySelector('#confirmationModal');
+    $(confirmationModal).modal('hide');
+}
+
+function closeModal(){
+  var confirmationModal = document.querySelector('#confirmationModal');
+  $(confirmationModal).modal('hide');
+}
+
+</script>
 {% endblock %}
