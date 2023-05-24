@@ -1,5 +1,22 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import CommonPasswordValidator
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+class CustomCommonPasswordValidator(CommonPasswordValidator):
+    def validate(self, password, user=None):
+        print("aquí estoy")
+        super().validate(password, user)
+        if password.lower() in self.passwords:
+            raise ValidationError(
+                _("La contraseña es demasiado común."),
+                code='password_too_common',
+            )
+    def get_help_text(self):
+        return _(
+            "La contraseña es demasiado común. Por favor, elija una contraseña más segura."
+        )
 
 def val_cedulamed(cedulamed):
     if len(str(cedulamed)) < 4:

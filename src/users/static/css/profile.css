@@ -64,6 +64,30 @@ button[type="button"]
     box-shadow: none
 }
 
+.password-button:disabled{
+    background: #D9D9D9;
+}
+
+.password-button {
+    background-color: #26283E !important;
+    box-shadow: none;
+    border: none
+}
+
+.password-button:hover {
+    background-color: #0279AF !important;
+}
+
+.password-button:focus {
+    background: #0279AF;
+    box-shadow: none
+}
+
+.password-button:active {
+    background: #0279AF;
+    box-shadow: none
+}
+
 .back:hover {
     color: #0796D8;
     cursor: pointer
@@ -108,4 +132,30 @@ input[type="number"]::-webkit-outer-spin-button {
 .log-out-icon::before:hover{
     background: #0796D8;
 
+}
+
+
+.round-button{
+    width: 40px !important; 
+    float: right; 
+    margin-bottom: 20px; 
+    margin-right: 20px;
+    font-family: 'League Spartan', sans-serif;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 50% !important;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    background: #E26969 !important;
+    transition: all .5s ease !important;
+}
+
+.round-button:hover{
+    background-color: #ae3131;
+    color: white;
+    /* transform: scale(1.1); */
 }

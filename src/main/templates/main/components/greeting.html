@@ -8,7 +8,7 @@
             <form method="POST" class="search-form" action="{% url 'registros' %}">
                 {% csrf_token %}
                 <div class="col-4">
-                    <h4 class="text">Buscar registro</h4>
+                    <h4 class="text" style="margin-right: 2px">Buscar registro</h4>
                 </div>
                 <div class="row">
                     <div class="col-10">
@@ -34,7 +34,7 @@
             </br><span style="color: #909090; font-size: 15px; font-weight: bold; margin-top: 100px">Sistema de diagnóstico inmediato para anomalías del sistema nervioso central fetal</span>
             </div>
             <img src="{% static 'images/greetings.png' %}" style="width: 125px;
-            transform: translate(-20px, -57px); margin: 0px 10px 0px 10px" alt="Nuevo investigador"> 
+            transform: translate(-25px, -57px); margin: 0px 10px 0px 10px" alt="Nuevo investigador"> 
             {% comment %} <img src="{% static 'images/greetings-inv.png' %}" style="width: 125px;
             transform: translate(-30px, -57px); margin: 0px 10px 0px 10px" alt="Nuevo investigador">  {% endcomment %}
 

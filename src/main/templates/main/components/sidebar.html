@@ -17,7 +17,7 @@
             </div>
             {%endif%}
             {% if current_user.userrol == 'médico'%} 
-            <div class="text-black-50 float-end sidebar-rol">Médico</div>
+            <div class="text-black-50 float-end sidebar-rol">Médico {% if current_user.is_superuser == True %} - Admin {%endif%}</div> 
             <div class="header_img">
                 <a href="/profile">
                     <img src="{% static 'images/medical-avatar.png' %}" alt="" />
@@ -66,6 +66,7 @@
                     <i class="fa-solid fa-database nav_icon"></i>                    
                     <span class="nav_name">Ir al repositorio</span>
                 </a>
+                
                 {% if current_user.is_superuser == True%} 
                 <a href="/usuario/nuevo" class="nav_link">
                     <i class="fa-sharp fa-solid fa-pen-to-square nav_icon"></i>

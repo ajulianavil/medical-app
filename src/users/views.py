@@ -12,6 +12,9 @@ from .forms import PersonalsaludForm, UserRegistrationForm, UsuarioExternoForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from .forms import ContactForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
 
 def contact(request):
     form = ContactForm()
@@ -131,9 +134,7 @@ def editProfileData(request, userid: int):
             if request.POST.get('direccion') != "":
                 person.direccionmed = request.POST.get('direccion')
 
-        print("personaaaaaaaaa", person)
         person.save()
-
         return render(request, 'users/profile.html')
 
 def user_data(request):
@@ -156,7 +157,6 @@ def user_data(request):
             try:
                 instance = form.save(commit=False)
                 appuser = Appuser.objects.get(userid=userid) 
-                print("appuser", appuser)# Fetch the Appuser instance with the desired ID
                 instance.userid = appuser 
                 instance.save()
 
@@ -187,4 +187,29 @@ def user_data(request):
         
         # return render(request, 'users/user_data.html')
 
+@login_required
+def change_password(request):
+    errors = {}
+    
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+            
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Update the session with the new password hash
+            messages.success(request, 'Su contraseña ha sido actualizada exitosamente.')
+            # return redirect('')  # Redirect to the same page after successful password change
+            return render(request, 'users/profile.html')
+        else:
+            errors = form.errors.get_json_data(escape_html=True) if form.errors else {}
+            
+        #     messages.error(request, 'Please correct the errors below.')
+    else:
+        form = PasswordChangeForm(request.user)
+        errors = form.errors.get_json_data(escape_html=True) if form.errors else {}
+        
+        form.errors.clear()  # Clear the form errors
 
+    # return render(request, 'change_password.html', {'form': form})
+    return render(request, 'users/password/password_change.html', {'form': form, 'errors': errors})
+    

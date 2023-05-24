@@ -4,10 +4,19 @@
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}" />
 <script src="{% static 'js/profile.js' %}"></script>
+<script src="{% static 'js/validations.js' %}"></script>
+
 {% endblock %}
 
 {% block content %} 
 <div class="container rounded bg-white mt-5 mb-5" >
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div> 
+    {% endfor %}
+{% endif %}
     <div class="row">
         <div class="col-md-3 border-right">
             <div class="d-flex flex-column align-items-center text-center p-3 py-5">
@@ -36,24 +45,33 @@
                 <form class="profile-form" id="profile-form" method="POST" action="{% url 'editProfileData' current_user.userid %}">
                     {% csrf_token %}
                     <div class="row mt-2">
-                        <div class="col-md-6"><label class="labels">Nombres</label><input disabled type="text" name="nombres" class="form-control" placeholder="Nombres" value="{{current_user.user_name}}"></div>
-                        <div class="col-md-6"><label class="labels">Apellidos</label><input disabled type="text" name="apellidos" class="form-control" value={{current_user.user_lastname}} placeholder="Apellidos"></div>
-                        <div class="col-md-6"><label class="labels">Cédula</label><input disabled type="text" name="cedula" class="form-control" placeholder="Cédula" value={{current_user.user_identification}}></div>
+                        <div class="col-md-6"><label class="labels">Nombres</label><input disabled type="text" name="nombres" id="nombres" class="form-control" placeholder="Nombres" value="{{current_user.user_name}}"></div>
+                        <div class="col-md-6"><label class="labels">Apellidos</label><input disabled type="text" name="apellidos" id="apellidos"  class="form-control" value={{current_user.user_lastname}} placeholder="Apellidos"></div>
+                        <div class="col-md-6"><label class="labels">Cédula</label><input disabled type="text" name="cedula" id="cedula" class="form-control" placeholder="Cédula" value={{current_user.user_identification}}></div>
                         <div class="col-md-6"><label class="labels">Rol</label><input disabled type="text" name="rol" class="form-control" placeholder="Rol" value={{current_user.userrol}}></div>
                     </div>
                     <div class="row mt-3">
                         
-                        <div class="col-md-12"><label class="labels">Teléfono</label><input disabled type="text"  name="telefono" class="form-control" placeholder="Teléfono" value={{current_user.user_phone}}></div>
-                        <div class="col-md-12"><label class="labels">Dirección de residencia</label><input disabled type="text" name="direccion" class="form-control" placeholder="Dirección" value={{current_user.user_address}}></div>
+                        <div class="col-md-12"><label class="labels">Teléfono</label><input disabled type="text" name="telefono" id="telefono" class="form-control" placeholder="Teléfono" value={{current_user.user_phone}} oninput="validateNumberInput(this)" maxlength="12"></div>
+                        <div class="col-md-12"><label class="labels">Dirección de residencia</label><input disabled type="text" name="direccion" id="direccion"  class="form-control" placeholder="Dirección" value={{current_user.user_address}}></div>
                         <div class="col-md-12"><label class="labels">Correo electrónico</label>
-                            <input disabled type="email" class="form-control" placeholder="Correo electrónico" name="email" value={{current_user.useremail}}></div>
-                        <div class="col-md-12"><label class="labels">Contraseña</label><input disabled type="text" name="contraseña" class="form-control" placeholder="Contraseña" value={{current_user.password}}></div>
+                        <input disabled type="email" class="form-control" placeholder="Correo electrónico" name="email" value={{current_user.useremail}}></div>
                     </div>
-                    <div class="mt-5 text-center" class="display: flex; justify-content: space-around;">
+                    <div class="mt-5 text-center" class="display: flex; justify-content: space-around;"> 
     
-    <button class="btn btn-primary profile-button" id="editButton" type="button" onclick="editProfile()" style="width: 200px; height: 40px; border-radius: 10px; box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);">Editar perfil</button>
-                        <button class="btn btn-primary profile-button" type="submit" id="sendButton" style="display: None">Guardar cambios</button>
+                        <div class="row">
+                            <div class="col-6 d-flex justify-content-start">
+                              <button class="btn btn-primary profile-button" id="editButton" type="button" onclick="editProfile()" style="width: 200px; height: 40px; border-radius: 10px; box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);">Editar perfil</button>
+                              <button class="btn round-button" type="button" id="cancelInfo" style="display: None;" onclick="onCancelEdition()"> <i class="fa-solid fa-xmark"></i></button>
+                              
+                              <button class="btn btn-primary profile-button" type="submit" id="sendButton" style="display: none;" onclick="enablePassword()">Guardar cambios</button>
+                            </div>
+                            <div class="col-6 d-flex justify-content-end">
+                              <button class="btn btn-primary password-button" id="passwordButton" type="button" onclick="window.location.href = '{% url 'change_password' %}'" style="width: 200px; height: 40px; border-radius: 10px; box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);"><i class="fa-regular fa-pen-to-square" style="margin-right: 5px"></i>Modificar contraseña</button>
+                            </div>
+                          </div>
                     </form>
+                    
                 </div>
                 
             </div>

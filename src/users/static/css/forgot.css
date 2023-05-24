@@ -67,6 +67,13 @@ button[type="submit"] {
     align-items: center;
     justify-content: center;
     font-family: 'League Spartan', sans-serif;
+    transition: all .5s ease !important;
+
+}
+
+button[type="submit"]:hover{
+    background-color: #0279AF !important;
+    color: white;
 }
 
 input[type="email"], textarea {
@@ -97,3 +104,27 @@ input[type="password"], textarea {
     justify-content: center;
 }
 
+.round-button{
+    width: 40px !important; 
+    float: right; 
+    margin-bottom: 20px; 
+    margin-right: 20px;
+    font-family: 'League Spartan', sans-serif;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 50% !important;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    background: #E26969 !important;
+    transition: all .5s ease !important;
+}
+
+.round-button:hover{
+    background-color: #ae3131 !important;
+    color: white;
+    /* transform: scale(1.1); */
+}

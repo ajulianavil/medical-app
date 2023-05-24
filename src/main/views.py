@@ -890,7 +890,7 @@ def editPacientData(request, consultaid: int):
             paciente.numgestacion = request.POST.get('gest')
         if request.POST.get('lmp') != "":
             paciente.lmp = request.POST.get('lmp')
-            
+
         consulta.motivo_consulta = request.POST.get('motivo')
         
         paciente.save()

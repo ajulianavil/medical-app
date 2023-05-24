@@ -137,10 +137,10 @@ h5{
     max-width: 500px; 
     height: 150px; 
     font-family: 'League Spartan', sans-serif;
-    /* display: grid; 
-    grid-template-columns: auto 100px; */
-    display: flex;
-    flex-wrap: wrap;
+    display: grid; 
+    grid-template-columns: auto 100px;
+    /* display: flex;
+    flex-wrap: wrap; */
   }
 
   .img-fl{
