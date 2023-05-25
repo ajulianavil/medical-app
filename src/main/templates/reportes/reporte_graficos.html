@@ -14,32 +14,39 @@
 <div class="container">
 
   <div style="margin-right: 100px;">
+    <h1> Análisis de reporte </h1>
+
+    <div class="col" style="margin-bottom: 0; font-weight: bold"> <p>Edad gestacional: {{reporte.ga}} semanas</p></div>
+    
     <table id="infoTable" class="table table-fixed table-condensed">
       <thead>
         <tr>
           <th class="col-xs-3">Medición</th>
           <th class="col-xs-3">Dato</th>
-          <th class="col-xs-3">Minimo</th>
+          <th class="col-xs-3">Mínimo</th>
           <th class="col-xs-3">Máximo</th>
-          <th class="col-xs-3">DEV</th>
         </tr>
       </thead>
       <tbody>
-        {% for med in mediciones %}
-        <tr class="clickableRow">
-          <td class="col-xs-3">{{ med }}</td>
-          <td class="col-xs-3">{{reporte.med_1}}</td>
-          <td class="col-xs-3"></td>
-          <td class="col-xs-3"></td>
-          <td class="col-xs-3"></td>
+        {% for key, values in reporte_data.items %}
+          <tr class="clickableRow {% if values.value|floatformat:2 < values.minvalue|floatformat:2 %} lower {% elif  values.value|floatformat:2 > values.maxvalue|floatformat:2 %} higher {% else %} normal {% endif %}">
+          <td class="col-xs-3" style="text-transform: uppercase;">{{ key }}</td>
+          <td class="col-xs-3">{{ values.value }}</td>
+          <td class="col-xs-3">{{ values.minvalue }}</td>
+          <td class="col-xs-3">{{ values.maxvalue }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+    <div class="col cont-leyend">
+      <div class="leyend" style="background-color: rgba(242, 100, 100, 0.5);"></div> <p style="margin-bottom: 0">Superior</p>
+      <div  class="leyend" style="background-color: rgb(249, 199, 79, 0.5); margin-left: 5px"></div> <p style="margin-bottom: 0">Inferior</p>
+      <div  class="leyend" style="background-color: rgba(133, 223, 89, 0.5); margin-left: 5px"></div> <p style="margin-bottom: 0">Normal</p>
+    </div>  
   </div>
   <div>
-    <h1>Seleccione una variable para ver su gráfica</h1>
-    <h1 id="title"></h1>
+    <h2>Seleccione una variable para ver su gráfica</h2>
+    <h2 id="title"></h2>
     <canvas id="myChart"></canvas>
   </div>
 </div>
@@ -56,6 +63,7 @@
     console.log('Row data:', rowData);
     document.getElementById("title").innerHTML = rowData[0];
   });
+
 </script>
 
 <!-- <script>

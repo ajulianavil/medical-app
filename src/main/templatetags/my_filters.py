@@ -46,27 +46,59 @@ def get_ref_values(reporte, medicion):
         tipo_medicion = Tipomedicion.objects.get(nombreMedicion = medicion.upper())
         idMedicion = tipo_medicion.idTipoMedicion
         med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
+        
+        # if medicion == 'efw' and medicion == 'afi':
+        if medicion == 'va' or medicion == 'vp':
+            reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
+            prefixed_attr = medicion + '_1'
+            value = getattr(reporte_value, prefixed_attr)
 
         if idMedicion == 1 or idMedicion == 2 or idMedicion == 7 or idMedicion == 3 or idMedicion == 9:
             return str(med.valormin) + ' - ' + str(med.valorinter)
 
         if idMedicion == 4:
-            return settings.CM_REF
-        
+            return ' < ' + str(settings.CM_REF)
+
         if idMedicion == 5 or idMedicion == 6:
-            if(medicion == 'va'):
-                return 'va'
-            if(medicion == 'vp'):
-                return 'nose'
+            if float(value) < float(settings.VT_MIN):
+                return ' < ' + str(settings.VT_MIN)
             
+            if  float(settings.VT_1) < float(value) < float(settings.VT_2):
+                return  str(settings.VT_1) + ' - ' + str(settings.VT_2)
+            
+            if float(settings.VT_3) < float(value) < float(settings.VT_4):
+                return  str(settings.VT_3) + ' - ' + str(settings.VT_4)
+            
+            if float(value) > float(settings.VT_MAX):
+                return settings.VT_MAX
+                            
         if idMedicion == 8:
             
             return 'aaa'
         
     except Medicion.DoesNotExist:
         med = None
-        return 'Nani'
-    
+        return '(No existen valores de referencia)'
+
+@register.filter
+def get_diagnosis(reporte, medicion):
+    diagnosis = FetoMedicionDiagnostico.objects.get(reporte=reporte)
+    for field in diagnosis._meta.get_fields():
+        if field.name == medicion:
+            field_value = getattr(diagnosis, field.name)
+            return field_value
+
+@register.filter
+def get_diagnosis_conclude(reporte, medicion):
+    diagnosis = FetoMedicionDiagnostico.objects.get(reporte=reporte)
+    for field in diagnosis._meta.get_fields():
+        if field.name == medicion:
+            field_value = getattr(diagnosis, field.name)
+            if field.name == 'bpd_hadlock' or field.name == 'csp':
+                return field_value + ' (' + field.name + ')'
+            else:
+                return field_value
+            
 @register.filter
 def get_pacient_id(id:int):
     pacient = Paciente.objects.filter(idpac=id)
@@ -98,9 +130,7 @@ def total_fetos(id:int):
         reporte = consulta.idreporte
         diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte)
         
-        print("ASDASDASDASDA")
         for instance in diagnostico:
-            print("INSTANCE")
             for field in instance._meta.get_fields():
                 if field.name not in ['idfetomediciondiagnostico', 'reporte']:
                     value = getattr(instance, field.name)

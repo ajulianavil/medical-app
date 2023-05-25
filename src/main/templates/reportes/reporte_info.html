@@ -163,7 +163,7 @@
           {% for item in diagnostico.anormales %}
             <p class="diagnosis"> {{ item|get_med_name }} </p> 
             <span style="display: inline-block; font-size: 16px;">: {{reporte|get_field_value:item }}, 
-              se encuentra fuera del rango {{reporte|get_ref_values:item}} indicando XXXXX
+              se encuentra fuera del rango {{reporte|get_ref_values:item}} indicando {{reporte|get_diagnosis:item }}
             </span> </br>
           {%endfor%} 
         {%endif%}
@@ -178,15 +178,21 @@
         {% if diagnostico.anormales %}
         
           {% for item in diagnostico.anormales %}
-            <span style="display: inline-block; font-size: 16px;">Presenta XXXXX
-            </span> </br>
+            {% comment %} <span style="display: inline-block; font-size: 16px;">Presenta {{reporte|get_diagnosis:item }} {% endcomment %}
+            {% comment %} </span> </br> {% endcomment %}
+            {% if forloop.first %}
+              <span style="display: inline-block; font-size: 16px;">Posible {{ reporte|get_diagnosis_conclude:item }}</span>
+            {% else %}
+              <span>, {{ reporte|get_diagnosis_conclude:item }}</span>
+            {% endif %}
           {%endfor%}
         {%endif%}
 
       </br>
+    </br>
       <div id="observaciones">
           <p class="title"> Observaciones del médico </p>
-          <textarea id="obs" name="obs" class="custom-area" rows="4" cols="40" disabled>{% if consulta.txtresults != None %} {{consulta.txtresults}} {%else%} Nada {%endif%}</textarea>
+          <textarea id="obs" name="obs" class="custom-area" rows="4" cols="40" disabled>{% if consulta.txtresults != None %} {{consulta.txtresults}} {%else%} {%endif%}</textarea>
         </div>
       </div>
     </div>

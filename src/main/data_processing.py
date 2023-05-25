@@ -331,13 +331,9 @@ def comparison(diagnosisData):
                 print("asddsa")
             else:
                 if (float(data["cm"]) > settings.CM_REF):
-                    # valores_anormales.update({'Cisterna Magna (CM)': ['Megacisterno o cisterno alargada', data["cm"], '> 10']})
                     diagnosisResult["cm"] = 'Megacisterno o cisterno alargada'
-                    # print("Megacisterno o cisterno alargada")
                 else:
-                    # valores_normales.update({'Cisterna Magna (CM)':['Normal', data["cm"], '< 10']})
                     diagnosisResult["cm"] = 'Normal'
-                    # print("OK - CM en valores normales")
         
         if key == 5 or key == 6: #VP or VA
             if data["vp"] == None or data["va"] == None:

@@ -410,11 +410,49 @@ def reportes(request,):
         matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-fecha_consulta')
         return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
-def reporte_graficos(request, idreporte_id:int ):
+def reporte_graficos(request, idreporte_id:int):
     matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
-    print('matching_report')
-    mediciones = get_mediciones().keys()
-    return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones})
+    mediciones = get_mediciones()
+    
+    mediciones_dict = {
+        'hc_hadlock': 1,
+        'bpd_hadlock': 2,
+        'csp': 3,
+        'cm': 4,
+        'vp': 5,
+        'va': 6,
+        'cereb_hill': 7,
+        'afi': 8,
+        'efw': 9
+    }
+    
+    reporte_data = {}
+
+    for med, med_id in mediciones_dict.items():
+        if med_id != 8:
+            medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+            
+            column_mapping = {
+                'hc_hadlock': 'hc_hadlock_1',
+                'bpd_hadlock': 'bpd_hadlock_1',
+                'csp': 'csp_1',
+                'cm': 'cm_1',
+                'vp': 'vp_1',
+                'va': 'va_1',
+                'cereb_hill': 'cereb_hill_1',
+                'afi': 'afi',
+                'efw': 'efw',
+            }
+
+            # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
+            if med not in reporte_data:
+                reporte_data[med] = {
+                    'value': getattr(matching_report, column_mapping.get(med, med)),
+                    'minvalue': medvalue.valormin,
+                    'maxvalue': medvalue.valorinter,
+                }
+    
+    return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones, "reporte_data": reporte_data})
 
 def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str):
     mediciones = get_mediciones()

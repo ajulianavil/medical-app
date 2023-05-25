@@ -20,5 +20,5 @@ def get_matching_consulta(consulta_id):
 
 
 def get_mediciones():
-    return  {'hc_hadlock': 1, 'bpd_hadlock': 2, 'cereb_hill': 3, 'efw':4, 'csp':5, 'cm':5, 'vp':6, 'va':7, 'afi':8}
+    return  {'hc_hadlock': 1, 'bpd_hadlock': 2, 'cereb_hill': 3, 'efw':4, 'csp':5, 'cm':5, 'vp':6, 'va':7, 'afi':8, 'efw': 9}
 

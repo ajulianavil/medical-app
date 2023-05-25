@@ -1,18 +1,77 @@
 .table tbody tr.highlight td {
-    background-color: #ddd;
+    font-weight: bold;
   }
+
+  table{
+    text-align: center;
+    width: 100%;
+}
+
+th{
+    font-size: 16px !important;
+    color: black;
+    padding: 10px;
+}
+
+
+td{
+  padding: 5px 15px 5px 15px;
+  margin: 5px;  
+}
+
+td, th{
+    /* border: 1px solid rgb(58, 58, 58); */
+    font-family: 'League Spartan', sans-serif;
+    width: fit-content;
+}
 
 .container{
   display: flex; font-size: 16px;
   justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 50px;
 }
 
+.lower{
+  background-color: rgb(249, 199, 79, 0.5);
+}
+
+.higher{
+  background-color: rgba(242, 100, 100, 0.5);
+}
+
+.normal{
+  background-color: rgba(133, 223, 89, 0.5);
+}
+
+.leyend{
+  width: 15px; height: 15px; margin-right: 5px;
+  border-radius: 2px;
+}
+
+.cont-leyend{
+  display: flex;
+  align-items: center;
+  margin: 20px 0px 20px 0px;
+}
 #myChart {
   width: 400px;
   height: 300px;
   background-color: #f5f5f5;
   margin: 10px;
+}
+
+h1{
+  font-family: 'League Spartan', sans-serif;
+  font-weight: bold;
+  color: #0796D8;
+  margin-bottom: 20px;
+}
+
+h2{
+  font-family: 'League Spartan', sans-serif;
+  font-weight: bold;
+  color: #26283E;
 }

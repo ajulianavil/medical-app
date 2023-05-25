@@ -7,7 +7,6 @@
     background-color: #ffffff;
     border-radius: 17px;
     height: 300px;
-    cursor: pointer;
     transition: all 0.5s;
     display: flex;
     align-items: center;
@@ -68,17 +67,14 @@ h5{
 .card-text-button{
     border-radius: 10px;
     border: none;
-    width: 100%;
+    width: 100px;
     height: 50px;
     color: white;
     font-family: 'League Spartan', sans-serif;
     transition: all 0.5s;
-    background-color: #52CBF5; 
-}
-
-.card-text-button:hover{
-    background-color: #26283E;
-    transform: scale(1.05);
+    background-color: #52CBF5;
+    cursor: default;
+    color: white;
 }
 
 /* Agregar_consulta */

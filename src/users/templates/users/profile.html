@@ -46,14 +46,14 @@
                     {% csrf_token %}
                     <div class="row mt-2">
                         <div class="col-md-6"><label class="labels">Nombres</label><input disabled type="text" name="nombres" id="nombres" class="form-control" placeholder="Nombres" value="{{current_user.user_name}}"></div>
-                        <div class="col-md-6"><label class="labels">Apellidos</label><input disabled type="text" name="apellidos" id="apellidos"  class="form-control" value={{current_user.user_lastname}} placeholder="Apellidos"></div>
-                        <div class="col-md-6"><label class="labels">Cédula</label><input disabled type="text" name="cedula" id="cedula" class="form-control" placeholder="Cédula" value={{current_user.user_identification}}></div>
-                        <div class="col-md-6"><label class="labels">Rol</label><input disabled type="text" name="rol" class="form-control" placeholder="Rol" value={{current_user.userrol}}></div>
+                        <div class="col-md-6"><label class="labels">Apellidos</label><input disabled type="text" name="apellidos" id="apellidos"  class="form-control" value="{{current_user.user_lastname}}" placeholder="Apellidos"></div>
+                        <div class="col-md-6"><label class="labels">Cédula</label><input disabled type="text" name="cedula" id="cedula" class="form-control" placeholder="Cédula" value="{{current_user.user_identification}}"></div>
+                        <div class="col-md-6"><label class="labels">Rol</label><input disabled type="text" name="rol" class="form-control" placeholder="Rol" value="{{current_user.userrol}}"></div>
                     </div>
                     <div class="row mt-3">
                         
-                        <div class="col-md-12"><label class="labels">Teléfono</label><input disabled type="text" name="telefono" id="telefono" class="form-control" placeholder="Teléfono" value={{current_user.user_phone}} oninput="validateNumberInput(this)" maxlength="12"></div>
-                        <div class="col-md-12"><label class="labels">Dirección de residencia</label><input disabled type="text" name="direccion" id="direccion"  class="form-control" placeholder="Dirección" value={{current_user.user_address}}></div>
+                        <div class="col-md-12"><label class="labels">Teléfono</label><input disabled type="text" name="telefono" id="telefono" class="form-control" placeholder="Teléfono" value="{{current_user.user_phone}}" oninput="validateNumberInput(this)" maxlength="12"></div>
+                        <div class="col-md-12"><label class="labels">Dirección de residencia</label><input disabled type="text" name="direccion" id="direccion"  class="form-control" placeholder="Dirección" value="{{current_user.user_address}}"></div>
                         <div class="col-md-12"><label class="labels">Correo electrónico</label>
                         <input disabled type="email" class="form-control" placeholder="Correo electrónico" name="email" value={{current_user.useremail}}></div>
                     </div>

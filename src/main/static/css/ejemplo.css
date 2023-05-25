@@ -10,21 +10,6 @@
     max-width: 100%;
     height: 180px;
 }
- 
-/* Style the counter cards */
-/* .card1 {
-    padding: 16px;
-    text-align: center;
-    background-color: #ffffff;
-    border-radius: 17px;
-    height: auto;
-    cursor: pointer;
-    transition: all 0.5s;
-}
-
-.card1:hover{
-    transform: scale(1.05);
-} */
 
 .card_row {
     max-width: 50%;

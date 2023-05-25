@@ -47,11 +47,8 @@
                 <p style="font-weight: bold; font-size: medium; font-color: #26283E">Resumen mensual </p>
             </div>
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                <div class="col" style="display: flex;
-                align-items: center;
-                justify-content: space-around;">
+                <div class="col" style="display: flex; align-items: center; justify-content: space-around;">
                     <div class="card card1">
-                        
                         <div class="card-body">
                             <img src="{% static 'images/people.png' %}" class="img-fl" alt="Nuevo investigador">
                             <h5 class="card-title">
@@ -59,7 +56,6 @@
                             </h5>
                             <button type="button" class="card-text-button" style="background-color: #52CBF5;">
                                 {{ current_user.user_identification|total_pacientes }}
-
                             </button>
                         </div>
                     </div>

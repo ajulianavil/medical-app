@@ -9,12 +9,9 @@ input[type="text"]{
 }
 .search .eye-search {
     color: #0796D8;
-    /* color: #fff; */
-    padding: 10px;
+    padding: 5px;
     border: none;
-    /* border-radius: 10px; */
     cursor: pointer;
-    /* box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19); */
     width: 40px;
     height: 40px;
     display: flex;
@@ -22,13 +19,14 @@ input[type="text"]{
     justify-content: center;
     font-size: x-large;
     border-radius: 50%;
-    transition: 0.3s ease;
+    transition: all 0.3s ease;
 }
+
 .search:hover{
     color: white;
     border-radius: 50%;
     background-color: #0279AF;
-
+    padding: 5px;
 }
 
 label {
@@ -51,7 +49,7 @@ th{
 }
 
 td{
-    padding: 5px 15px 5px 15px;
+    padding: 8px 15px 8px 15px;
 }
 
 td, th{
@@ -79,10 +77,15 @@ table tr:nth-child(even){background-color: #f2f2f2;}
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all 0.5s ease;
   }
   
   .round-button i {
     color: #26283E;
+  }
+
+  .round-button:hover{
+    background-color: #9b9b9b;
   }
 
   .eye-search{
