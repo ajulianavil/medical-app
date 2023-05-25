@@ -6,7 +6,7 @@ from django.views import View
 from main.forms import RepositorioFilterForm
 from users.context_processors import current_user
 from main.forms import CreateUserForm, UploadFileForm
-from main.utils import get_matching_consulta, get_mediciones
+from main.utils import get_matching_consulta, get_mediciones, export_to_csv
 from .data_processing import comparison, process_data
 from .Exceptions.PersonalizedExceptions import MyCustomException
 from datetime import datetime as dt
@@ -305,79 +305,23 @@ def reporteInfo(request, param: int):
     return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnostico": diagnostico})
 
 def repositorio(request):
-    if request.method == 'POST':
-    #     form = RepositorioFilterForm(request.POST)
-    #     if form.is_valid():
-    #         form.filter_results()
-    #         messages.success(request, 'Resultados')
-    #         # rol = request.GET.get('rol')
-    #         form = RepositorioFilterForm()
-    #         print("---------->>>>>>>", form)
-    #         return render(request, 'repositorio/repositorio.html', {"objects": form})
-    #     else:
-    #         messages.error(request, 'Hay un problema.')
-    #         return render(request, 'repositorio/repositorio.html', {"objects": form})
-    # else:
-    #     return render(request, 'repositorio/repositorio.html')
-        # patced_input = request.POST.get('patced_input')
-        # lastname_input = request.POST.get('lastname_input')
-        ga_input = request.POST.get('ga_input') #reporte
-        ga_input_final = request.POST.get('ga_input_final') #reporte
-        state_input = request.POST.get('state_input') #diagnosis
-        med_input = request.POST.get('med_input') #diagnosis
-        diagnosis_input = request.POST.get('diagnosis_input') #diagnosis
-        start_date = request.POST.get('start_date') #consulta
-        end_date = request.POST.get('end_date') #consulta
-        
-        objects_list = []
-        if ga_input == '':
-            # matching_consultas = Consulta.objects.all()
-            matching_consultas = Consulta.objects.all()
+    matching_consultas = Consulta.objects.all()
+    objects_list = []
+    for consulta in matching_consultas:
+        matching_reporte = Reporte.objects.filter(idreporte=consulta.idreporte_id).first()
+        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=consulta.idreporte_id).first()
+        obj = {
+            'reporte': matching_reporte,
+            # 'paciente': matching_paciente,
+            'diagnostico': diagnostico,
+            'ga_reporte': matching_reporte.ga,
+            'report_date': consulta.fecha_consulta,
             
-            for consulta in matching_consultas:
-                consultaid = consulta.consultaid
-                fecha_consulta = consulta.fecha_consulta
-                motivo_consulta = consulta.motivo_consulta
-                txtresults = consulta.txtresults
-                medConsulta = consulta.medConsulta
-                medUltrasonido = consulta.medUltrasonido
-                paciente = consulta.idpac
-                idfeto = consulta.idfeto
-                idreporte = consulta.idreporte
-                
-                matching_paciente = Paciente.objects.filter(idpac=paciente.idpac)
-                matching_reporte = Reporte.objects.filter(idreporte=idreporte.idreporte).first()
-                matching_diagnostico = FetoMedicionDiagnostico.objects.filter(reporte=idreporte.idreporte)
-                
-                # Create a dictionary with the relevant data
-                obj = {
-                    'consulta': matching_consultas,
-                    'paciente': matching_paciente,
-                    'ga_reporte': matching_reporte.ga,
-                    'report_date': fecha_consulta,
-                    
-                }
-                    
-                    # Append the dictionary to the objects list
-                objects_list.append(obj)
-
-            return render(request, 'repositorio/repositorio.html', context={"objects": objects_list})
-        
-        else:
-            pacient = Paciente.objects.filter()
-            print(pacient)
-            if pacient:
-                for item in pacient:
-                    idpac = item.idpac
-                    
-                matching_records = Consulta.objects.filter(idpac=idpac)
-                return render(request, 'reportes/reportes.html',  context={"objects": matching_records})
-            else:
-                messages.warning(request, f'No se encontraron coincidencias para el paciente de cédula')
-                matching_consultas = Consulta.objects.all()
-                return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
-    else:
-        return render(request, 'repositorio/repositorio.html')
+        }
+            
+            # Append the dictionary to the objects list
+        objects_list.append(obj)
+    return render(request, 'repositorio/repositorio.html', context={"objects": objects_list})
 
 
 def reportes(request,):

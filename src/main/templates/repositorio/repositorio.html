@@ -2,8 +2,7 @@
 {% load static %}
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/repositorio.css' %}" />
-    <script src="{% static 'js/reporte_script.js' %}"></script>
-    <script src="{% static 'js/validations.js' %}"></script>
+<script src="{% static 'js/validations.js' %}"></script>
 
 {% endblock %}
 
@@ -27,7 +26,8 @@
       </div> {% endcomment %}
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Rango de edad gestacional (semanas)</strong>
-        {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Desde"> {% endcomment %}
+        {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Desde">
+        {% endcomment %}
         <select id="ga_input" name="ga_input">
           <option value="15">Semana 15</option>
           <option value="16">Semana 16</option>
@@ -56,39 +56,41 @@
           <option value="39">Semana 39</option>
           <option value="40">Semana 40</option>
         </select>
-        {% comment %} <label class="labels" for="{{ form.subject.id_for_label }}">{{ form.ga.label }}</label> {% endcomment %}
+        {% comment %} <label class="labels" for="{{ form.subject.id_for_label }}">{{ form.ga.label }}</label> {%
+        endcomment %}
       </div>
       <div class="col-md-auto">
-      </br>
-      {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Hasta"> {% endcomment %}
-      <select id="ga_input_final" name="ga_input_final">
-        <option value="15">Semana 15</option>
-        <option value="16">Semana 16</option>
-        <option value="17">Semana 17</option>
-        <option value="18">Semana 18</option>
-        <option value="19">Semana 19</option>
-        <option value="20">Semana 20</option>
-        <option value="21">Semana 21</option>
-        <option value="22">Semana 22</option>
-        <option value="23">Semana 23</option>
-        <option value="24">Semana 24</option>
-        <option value="25">Semana 25</option>
-        <option value="26">Semana 26</option>
-        <option value="27">Semana 27</option>
-        <option value="28">Semana 28</option>
-        <option value="29">Semana 29</option>
-        <option value="30">Semana 30</option>
-        <option value="31">Semana 31</option>
-        <option value="32">Semana 32</option>
-        <option value="33">Semana 33</option>
-        <option value="34">Semana 34</option>
-        <option value="35">Semana 35</option>
-        <option value="36">Semana 36</option>
-        <option value="37">Semana 37</option>
-        <option value="38">Semana 38</option>
-        <option value="39">Semana 39</option>
-        <option value="40">Semana 40</option>
-      </select>
+        </br>
+        {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Hasta">
+        {% endcomment %}
+        <select id="ga_input_final" name="ga_input_final">
+          <option value="15">Semana 15</option>
+          <option value="16">Semana 16</option>
+          <option value="17">Semana 17</option>
+          <option value="18">Semana 18</option>
+          <option value="19">Semana 19</option>
+          <option value="20">Semana 20</option>
+          <option value="21">Semana 21</option>
+          <option value="22">Semana 22</option>
+          <option value="23">Semana 23</option>
+          <option value="24">Semana 24</option>
+          <option value="25">Semana 25</option>
+          <option value="26">Semana 26</option>
+          <option value="27">Semana 27</option>
+          <option value="28">Semana 28</option>
+          <option value="29">Semana 29</option>
+          <option value="30">Semana 30</option>
+          <option value="31">Semana 31</option>
+          <option value="32">Semana 32</option>
+          <option value="33">Semana 33</option>
+          <option value="34">Semana 34</option>
+          <option value="35">Semana 35</option>
+          <option value="36">Semana 36</option>
+          <option value="37">Semana 37</option>
+          <option value="38">Semana 38</option>
+          <option value="39">Semana 39</option>
+          <option value="40">Semana 40</option>
+        </select>
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Condición del feto </strong>
@@ -96,14 +98,14 @@
           <option value="sano">Sano</option>
           <option value="anormal">Anormal</option>
         </select>
-        {% comment %} <input type="text"  id="state_input" name="state_input"  class="form-repo"> {% endcomment %}
+        {% comment %} <input type="text" id="state_input" name="state_input" class="form-repo"> {% endcomment %}
       </div>
     </div>
     <br />
     <div class="row">
       <div class="col-md-auto">
-        <strong class="col-md-auto label" > Medición </strong>
-        <select  id="med_input" name="med_input" onchange="updateDiagnosisOptions()">
+        <strong class="col-md-auto label"> Medición </strong>
+        <select id="med_input" name="med_input" onchange="updateDiagnosisOptions()">
           <option value="todas">Todas</option>
           <option value="hc_hadlock">HC_HADLOCK</option>
           <option value="bpd_hadlock">BPD_HADLOCK</option>
@@ -118,7 +120,8 @@
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Diagnóstico </strong>
-        {% comment %} <input type="text" id="diagnosis_input" name="diagnosis_input" value="{{paciente.cedulapac}}" > {% endcomment %}
+        {% comment %} <input type="text" id="diagnosis_input" name="diagnosis_input" value="{{paciente.cedulapac}}">
+        {%endcomment %}
         <select id="diagnosis_input" name="diagnosis_input" onchange="updateMedOptions()">
           <option value="todos">Todos</option>
           <option value="normal">Normal</option>
@@ -144,7 +147,7 @@
 
       </div>
       <div class="col-md-auto">
-      </br>
+        </br>
         <input type="date" id="end_date" name="end_date">
       </div>
       <div class="col-md-auto">
@@ -152,24 +155,24 @@
       </div>
     </div>
   </form>
-  </div>
-  <br>
-  {% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-warning">
-            {{ message }}
-        </div> 
-    {% endfor %}
-  {% endif %}
-  <br>
-  <div class="container">
-  <table>
+</div>
+<br>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-warning">
+  {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+<br>
+<div class="container">
+  <table id="myTable">
     <thead>
       <tr>
         {% comment %} <th style="text-align: center;">Cédula</th>
         <th style="text-align: center;">Apellido</th> {% endcomment %}
         <th style="text-align: center;">GA</th>
-        <th style="text-align: center;">Estado</th>
+        <!-- <th style="text-align: center;">Estado</th>NO SE PUEDE!!!!! -->
         <th style="text-align: center;">Fecha reporte</th>
         <th style="text-align: center;">HC_HADLOCK</th>
         <th style="text-align: center;">Valor</th>
@@ -185,41 +188,168 @@
         <th style="text-align: center;">P95 </th> {% endcomment %}
         <th style="text-align: center;">CM </th>
         <th style="text-align: center;">Valor</th>
-        <th style="text-align: center;">Max </th>
         <th style="text-align: center;">VP </th>
-        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">Valor </th>
         <th style="text-align: center;">VA </th>
-        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">Valor </th>
         <th style="text-align: center;">CEREB_HILL </th>
-        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">Valor </th>
         <th style="text-align: center;">AFI </th>
-        <th style="text-align: center;">Min </th>
-        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">Valor </th>
         <th style="text-align: center;">EFW </th>
-        <th style="text-align: center;">Min </th>
-        <th style="text-align: center;">Max </th>
+        <th style="text-align: center;">Valor </th>
       </tr>
     </thead>
     <tbody>
       {% for obj in objects %}
       <tr>
         <td style="text-align: center;">{{ obj.ga_reporte }}</td>
-        <td style="text-align: center;">{{ obj.paciente.apellido_paterno }}</td>
         <td style="text-align: center;">{{ obj.report_date }}</td>
-        <td style="text-align: center;">{{ obj.consulta.idpac_id }}</td>
-        <td style="text-align: center;">{{ obj.consulta.medUltrasonido }}</td>
-        <td style="text-align: center;">{{ obj.consulta.motivo_consulta }}</td>
-        <td style="text-align: center;">
-          <a href="/registros/consulta/{{ obj.consulta.consultaid }}">
-            <i class="fa-regular fa-eye search"></i>
-          </a>
-        </td>
+        <td style="text-align: center;">{{ obj.diagnostico.hc_hadlock }}</td>
+        <td style="text-align: center;">{{ obj.reporte.hc_hadlock_1 }}</td>
+        <td style="text-align: center;">{{ obj.diagnostico.bpd_hadlock }}</td>
+        <td style="text-align: center;">{{ obj.reporte.bpd_hadlock_1 }}</td>
+        <td style="text-align: center;">{{ obj.diagnostico.csp }}</td>
+        <td style="text-align: center;">{{ obj.reporte.csp_1 }}</td>
+        <td style="text-align: center;">{{ obj.diagnostico.cm }}</td>
+        <td style="text-align: center;">{{ obj.reporte.cm_1 }}</td>
+        <td style="text-align: center;">{{ obj.diagnostico.vp }}</td>
+        <td style="text-align: center;">{{ obj.reporte.vp_1 }}</td>
+        <td style="text-align: center;">{{ obj.diagnostico.va }}</td>
+        <td style="text-align: center;">{{ obj.reporte.va_1 }}</td>
+        <td style="text-align: center;">{{ obj.diagnostico.cereb_hill }}</td>
+        <td style="text-align: center;">{{ obj.reporte.cereb_hill_1 }}</td>
+        <td style="text-align: center;">{{ obj.diagnostico.afi }}</td>
+        <td style="text-align: center;">{{ obj.reporte.afi_1 }}</td>
+        <td style="text-align: center;">{{ obj.diagnostico.efw }}</td>
+        <td style="text-align: center;">{{ obj.reporte.efw }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <div id="pagination"></div>
+  <br />
+  <button id="sendDataButton">Send Data</button>
 </div>
 
+<script>
+  var table = document.getElementById("myTable");
+  var tbody = table.getElementsByTagName("tbody")[0]; // Get the tbody element
+  var rowsPerPage = 10; // Number of rows to display per page
+  var currentPage = 1; // Current page number
+  // Calculate the total number of pages
+  var totalPages = Math.ceil(table.rows.length / rowsPerPage);
+  // Function to display the rows for the current page
+  function displayRows() {
+    var start = (currentPage - 1) * rowsPerPage;
+    var end = start + rowsPerPage;
 
+    // Hide all rows in the tbody
+    for (var i = 0; i < tbody.rows.length; i++) {
+      tbody.rows[i].style.display = "none";
+    }
+
+    // Show the rows for the current page
+    for (var j = start; j < end; j++) {
+      if (tbody.rows[j]) {
+        tbody.rows[j].style.display = "";
+      }
+    }
+  }
+  // Function to generate the pagination links
+  function generatePaginationLinks() {
+    var pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+    // Create previous page link
+    var prevLink = document.createElement("a");
+    prevLink.href = "#";
+    prevLink.textContent = "Anterior";
+    prevLink.addEventListener("click", function (event) {
+      event.preventDefault();
+      if (currentPage > 1) {
+        currentPage--;
+        displayRows();
+      }
+    });
+    pagination.appendChild(prevLink);
+    // Create page number links
+    for (var page = 1; page <= totalPages; page++) {
+      var pageLink = document.createElement("a");
+      pageLink.href = "#";
+      pageLink.textContent = page;
+      pageLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        currentPage = parseInt(event.target.textContent);
+        displayRows();
+      });
+      pagination.appendChild(pageLink);
+    }
+    // Create next page link
+    var nextLink = document.createElement("a");
+    nextLink.href = "#";
+    nextLink.textContent = "Siguiente";
+    nextLink.addEventListener("click", function (event) {
+      event.preventDefault();
+      if (currentPage < totalPages) {
+        currentPage++;
+        displayRows();
+      }
+    });
+    pagination.appendChild(nextLink);
+  }
+  // Display the initial rows and generate pagination links
+  displayRows();
+  generatePaginationLinks();
+</script>
+
+<script>
+  // Get the button element
+  var sendDataButton = document.getElementById('sendDataButton');
+  // Add a click event listener to the button
+  sendDataButton.addEventListener('click', function () {
+    // Get all the rows in the table body
+    var tableBody = document.querySelector('#myTable tbody');
+    var rows = tableBody.getElementsByTagName('tr');
+    // Create an array to store the data
+    var dataArray = [];
+    // Iterate over the rows and extract the data
+    dataArray.push(['GA', 'Fecha reporte', 'HC_HADLOCK', 'Valor', 'BPD_HADLOCK', 'Valor', 'CSP', 'Valor', 'CM', 'Valor', 'VP', 'Valor', 'VA', 'Valor', 'CEREB_HILL', 'Valor', 'AFI', 'Valor', 'EFW', 'Valor',
+    ]);
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      // Create an object to store the row data
+      var rowData = [];
+      // Get the cells in the row
+      var cells = row.getElementsByTagName('td');
+      rowData.push(cells[0].innerText);
+      rowData.push(cells[1].innerText);
+      rowData.push(cells[2].innerText);
+      rowData.push(cells[3].innerText);
+      rowData.push(cells[4].innerText);
+      rowData.push(cells[5].innerText);
+      rowData.push(cells[6].innerText);
+      rowData.push(cells[7].innerText);
+      rowData.push(cells[8].innerText);
+      rowData.push(cells[9].innerText);
+      rowData.push(cells[10].innerText);
+      rowData.push(cells[11].innerText);
+      rowData.push(cells[12].innerText);
+      rowData.push(cells[13].innerText);
+      rowData.push(cells[14].innerText);
+      rowData.push(cells[15].innerText);
+      rowData.push(cells[16].innerText);
+      rowData.push(cells[17].innerText);
+      rowData.push(cells[18].innerText);
+      rowData.push(cells[19].innerText);
+      // Add the row data to the array
+      dataArray.push(rowData);
+    }
+ 
+    let csvContent = "data:text/csv;charset=utf-8,"
+      + dataArray.map(e => e.join(",")).join("\n");
+
+    var encodedUri = encodeURI(csvContent);
+    window.open(encodedUri);
+  });
+</script>
 {% endblock %}
-

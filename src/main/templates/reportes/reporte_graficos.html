@@ -109,13 +109,8 @@
         myChart.data.datasets[1].data = newData.values_max;
         myChart.data.labels = newData.values_ga;
 
-
         // Add the dot at a specific label index
         var labelIndex = newData.values_ga.indexOf(parseInt(newData.ga_reporte));
-        console.log('labels', myChart.data.labels );
-        console.log('ga_reporte',newData.ga_reporte);
-        console.log('labelIndex', newData.values_ga.indexOf(parseInt(newData.ga_reporte)) );
-        console.log('value_reporte', newData.value_reporte );
         // Get the dataset you want to modify
         var datasetIndex = 2;
         var dataset = myChart.data.datasets[datasetIndex];
