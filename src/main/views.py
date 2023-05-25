@@ -754,9 +754,7 @@ def reporte_pdf(request, idreporte_id: int):
     elements.append(spacer_data)
     motivo_consulta_table = Table(motivo_consulta, style=table_style, colWidths=[1.5*inch, 5.5*inch])
     elements.append(motivo_consulta_table)
-    
-    # elements.append(Paragraph('{}.'.format(matching_consulta.motivo_consulta), text_style))
-        
+            
     elements.append(spacer_section)
     elements.append(line_drawing)
         
@@ -781,15 +779,14 @@ def reporte_pdf(request, idreporte_id: int):
         for med in diagnostico['normales']:
             nombre_medicion = my_filters.get_med_name(med)
             # valor_feto = my_filters.get_field_value(med)
-            valor_feto = "hola"
+            valor_feto = my_filters.get_field_value(matching_report, med)
+
             valor_ref = my_filters.get_ref_values(matching_report, med)
             
             diag_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
             
             diagdata_table = Table(diag_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
-                
-        # elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
-        #                           .format(nombre_medicion, valor_ref), text_style))        
+                       
         elements.append(med_data_table)
         elements.append(diagdata_table)
     
@@ -804,16 +801,13 @@ def reporte_pdf(request, idreporte_id: int):
     else:
         for med in diagnostico['anormales']:
             nombre_medicion = my_filters.get_med_name(med)
-            # valor_feto = my_filters.get_field_value(med)
-            valor_feto = "hola"
+            valor_feto = my_filters.get_field_value(matching_report, med)
             valor_ref = my_filters.get_ref_values(matching_report, med)
             
             abnormal_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
             
             abnormal_data_table = Table(abnormal_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
-        # elements.append(Paragraph('{}: El feto presenta un valor de {}, que se encuentra dentro del rango'
-        #                           .format(nombre_medicion, valor_ref), text_style))
-        # elements.append(spacer_data)
+
         elements.append(med_data_table)
         elements.append(abnormal_data_table)
     
@@ -826,12 +820,12 @@ def reporte_pdf(request, idreporte_id: int):
     else:
         for med in diagnostico['anormales']:
             nombre_medicion = my_filters.get_med_name(med)
-            # valor_feto = my_filters.get_field_value(med)
-            valor_feto = "hola"
             valor_ref = my_filters.get_ref_values(matching_report, med)
+            diag = my_filters.get_diagnosis(matching_report, med)
             
-            elements.append(Paragraph('{}: se encuentra fuera del rango {}, lo que puede indicar '
-                                    .format(nombre_medicion, valor_ref), text_style))
+            
+            elements.append(Paragraph('{}: se encuentra fuera del rango {}, lo que puede indicar {}'
+                                    .format(nombre_medicion, valor_ref, diag), text_style))
             elements.append(spacer_data)
     
     if matching_consulta.txtresults != None:
@@ -850,10 +844,10 @@ def reporte_pdf(request, idreporte_id: int):
     # Build the document and render the PDF.
     doc.build(elements)
 
-    # FileResponse sets the Content-Disposition header so that browsers
-    # present the option to save the file.
     buf.seek(0)
-    return FileResponse(buf, as_attachment=True, filename='my_pdf.pdf')
+    filename = 'REPORTE_{}_{}.pdf'.format(datetime.now().strftime('%Y%m%d'), matching_patient.cedulapac)
+
+    return FileResponse(buf, as_attachment=True, filename=filename)
 
 def editPacientData(request, consultaid: int):
     if request.method == 'POST':
