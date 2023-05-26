@@ -18,44 +18,44 @@ function updateDiagnosisOptions() {
         case "hc_hadlock":
             document.getElementById('diagnosis_input').style.display = 'block';
             document.getElementById('diagnosis_label').style.display = 'block';
-            addOption(diagnosisInput, "Macrocefalia", "macrocrania");
-            addOption(diagnosisInput, "Microcefalia", "microcrania");
+            addOption(diagnosisInput, "Macrocrania", "macrocrania");
+            addOption(diagnosisInput, "Microcefalia", "microcefalia");
             addOption(diagnosisInput, "Normal", "normal");
             addOption(diagnosisInput, "---", "todos");
             break;
         case "bpd_hadlock":
-            addOption(diagnosisInput, "Anormalidad por valor superior", "anormal-sup");
-            addOption(diagnosisInput, "Anormalidad por valor inferior", "anormal-inf");
+            addOption(diagnosisInput, "Anormalidad por valor superior", "Anormalidad por valor superior");
+            addOption(diagnosisInput, "Anormalidad por valor inferior", "Anormalidad por valor inferior");
             addOption(diagnosisInput, "Normal", "normal");
             addOption(diagnosisInput, "---", "todos");
             break;
         case "csp":
-            addOption(diagnosisInput, "Anormalidad por valor superior", "anormal-sup");
-            addOption(diagnosisInput, "Anormalidad por valor inferior", "anormal-inf");
+            addOption(diagnosisInput, "Anormalidad por valor superior", "Anormalidad por valor superior");
+            addOption(diagnosisInput, "Anormalidad por valor inferior", "Anormalidad por valor inferior");
             addOption(diagnosisInput, "Normal", "normal");
             addOption(diagnosisInput, "---", "todos");
             break;
         case "cm":
-            addOption(diagnosisInput, "Megacisterno", "megacisterno");
+            addOption(diagnosisInput, "Megacisterno", "Megacisterno o cisterno alargada");
             addOption(diagnosisInput, "Normal", "normal");
             addOption(diagnosisInput, "---", "todos");
             break;
         case "vp":
-            addOption(diagnosisInput, "Ventriculomegalia leve", "ventri-leve");
-            addOption(diagnosisInput, "Ventriculomegalia moderada", "ventri-mod");
-            addOption(diagnosisInput, "Ventriculomegalia severa", "ventri-sev");
+            addOption(diagnosisInput, "Ventriculomegalia leve", "Ventriculomegalia leve");
+            addOption(diagnosisInput, "Ventriculomegalia moderada", "Ventriculomegalia moderada");
+            addOption(diagnosisInput, "Ventriculomegalia severa", "Ventriculomegalia severa");
             addOption(diagnosisInput, "Normal", "normal");
             addOption(diagnosisInput, "---", "todos");
             break;
         case "va":
-            addOption(diagnosisInput, "Ventriculomegalia leve", "ventri-leve");
-            addOption(diagnosisInput, "Ventriculomegalia moderada", "ventri-mod");
-            addOption(diagnosisInput, "Ventriculomegalia severa", "ventri-sev");
+            addOption(diagnosisInput, "Ventriculomegalia leve", "Ventriculomegalia leve");
+            addOption(diagnosisInput, "Ventriculomegalia moderada", "Ventriculomegalia moderada");
+            addOption(diagnosisInput, "Ventriculomegalia severa", "Ventriculomegalia severa");
             addOption(diagnosisInput, "Normal", "normal");
             addOption(diagnosisInput, "---", "todos");
             break;
         case "cereb_hill":
-            addOption(diagnosisInput, "Hipoplasia cereberal", "hipoplasia");
+            addOption(diagnosisInput, "Hipoplasia cereberal", "Hipoplasia cereberal");
             addOption(diagnosisInput, "Normal", "normal");
             addOption(diagnosisInput, "---", "todos");
             break;
@@ -66,9 +66,9 @@ function updateDiagnosisOptions() {
             addOption(diagnosisInput, "---", "todos");
             break;
         case "efw":
-            addOption(diagnosisInput, "Feto grande", "feto-grande");
-            addOption(diagnosisInput, "Feto pequeño", "feto-pequeño");
-            addOption(diagnosisInput, "R.C.I.U", "rciu");
+            addOption(diagnosisInput, "Feto grande", "Feto grande para la edad gestacional");
+            addOption(diagnosisInput, "Feto pequeño", "Feto pequeño para la edad gestacional");
+            addOption(diagnosisInput, "R.C.I.U", "R.C.I.U (Restricción del crecimiento interuterino)");
             addOption(diagnosisInput, "Normal", "normal");
             addOption(diagnosisInput, "---", "todos");
             break;
@@ -78,38 +78,38 @@ function updateDiagnosisOptions() {
 
             addOption(diagnosisInput, "---", "todos");
             addOption(diagnosisInput, "Normal", "normal");
-            addOption(diagnosisInput, "Macrocefalia", "macrocrania");
-            addOption(diagnosisInput, "Microcefalia", "microcrania");
-            addOption(diagnosisInput, "Anormalidad por valor superior", "anormal-sup");
-            addOption(diagnosisInput, "Anormalidad por valor inferior", "anormal-inf");
+            addOption(diagnosisInput, "Macrocrania", "macrocrania");
+            addOption(diagnosisInput, "Microcefalia", "microcefalia");
+            addOption(diagnosisInput, "Anormalidad por valor superior", "Anormalidad por valor superior");
+            addOption(diagnosisInput, "Anormalidad por valor inferior", "Anormalidad por valor inferior");
             addOption(diagnosisInput, "Megacisterno", "megacisterno");
-            addOption(diagnosisInput, "Ventriculomegalia leve", "ventri-leve");
-            addOption(diagnosisInput, "Ventriculomegalia moderada", "ventri-mod");
-            addOption(diagnosisInput, "Ventriculomegalia severa", "ventri-sev");
-            addOption(diagnosisInput, "Hipoplasia cereberal", "hipoplasia");
+            addOption(diagnosisInput, "Ventriculomegalia leve", "Ventriculomegalia leve");
+            addOption(diagnosisInput, "Ventriculomegalia moderada", "Ventriculomegalia moderada");
+            addOption(diagnosisInput, "Ventriculomegalia severa", "Ventriculomegalia severa");
+            addOption(diagnosisInput, "Hipoplasia cereberal", "Hipoplasia cereberal");
             addOption(diagnosisInput, "Oligohidramnios", "oligohidramnios");
             addOption(diagnosisInput, "Polihidramnios", "polihidramnios");
-            addOption(diagnosisInput, "Feto grande", "feto-grande");
-            addOption(diagnosisInput, "Feto pequeño", "feto-pequeño");
-            addOption(diagnosisInput, "R.C.I.U", "rciu");
+            addOption(diagnosisInput, "Feto grande", "Feto grande para la edad gestacional");
+            addOption(diagnosisInput, "Feto pequeño", "Feto pequeño para la edad gestacional");
+            addOption(diagnosisInput, "R.C.I.U", "R.C.I.U (Restricción del crecimiento interuterino)");
             break;
         case "normal":
             addOption(diagnosisInput, "---", "todos");
             addOption(diagnosisInput, "Normal", "normal");
-            addOption(diagnosisInput, "Macrocefalia", "macrocrania");
-            addOption(diagnosisInput, "Microcefalia", "microcrania");
-            addOption(diagnosisInput, "Anormalidad por valor superior", "anormal-sup");
-            addOption(diagnosisInput, "Anormalidad por valor inferior", "anormal-inf");
+            addOption(diagnosisInput, "Macrocrania", "macrocrania");
+            addOption(diagnosisInput, "Microcefalia", "microcefalia");
+            addOption(diagnosisInput, "Anormalidad por valor superior", "Anormalidad por valor superior");
+            addOption(diagnosisInput, "Anormalidad por valor inferior", "Anormalidad por valor inferior");
             addOption(diagnosisInput, "Megacisterno", "megacisterno");
-            addOption(diagnosisInput, "Ventriculomegalia leve", "ventri-leve");
-            addOption(diagnosisInput, "Ventriculomegalia moderada", "ventri-mod");
-            addOption(diagnosisInput, "Ventriculomegalia severa", "ventri-sev");
-            addOption(diagnosisInput, "Hipoplasia cereberal", "hipoplasia");
+            addOption(diagnosisInput, "Ventriculomegalia leve", "Ventriculomegalia leve");
+            addOption(diagnosisInput, "Ventriculomegalia moderada", "Ventriculomegalia moderada");
+            addOption(diagnosisInput, "Ventriculomegalia severa", "Ventriculomegalia severa");
+            addOption(diagnosisInput, "Hipoplasia cereberal", "Hipoplasia cereberal");
             addOption(diagnosisInput, "Oligohidramnios", "oligohidramnios");
             addOption(diagnosisInput, "Polihidramnios", "polihidramnios");
-            addOption(diagnosisInput, "Feto grande", "feto-grande");
-            addOption(diagnosisInput, "Feto pequeño", "feto-pequeño");
-            addOption(diagnosisInput, "R.C.I.U", "rciu");
+            addOption(diagnosisInput, "Feto grande", "Feto grande para la edad gestacional");
+            addOption(diagnosisInput, "Feto pequeño", "Feto pequeño para la edad gestacional");
+            addOption(diagnosisInput, "R.C.I.U", "R.C.I.U (Restricción del crecimiento interuterino)");
             break;
         default:
             addOption(diagnosisInput, "Todos", "todas");
