@@ -13,32 +13,33 @@
       <h2 class="mb-4" style="font-weight: bold; color: #0796D8">Buscar registro</h2>
     </div>
     <div class="input-group input-group-sm"
-        style="padding-top: 0; position: relative; padding-right:100px; padding-left:20px ">
+        style="position: relative; padding: 0 100px 0 100px;">
         <form class="search-formm" method="POST">
           {% csrf_token %}
           <div class="row">
             <div class="col-6">
               <label> Cédula de paciente </label> 
             </div>
-            {% comment %} <div class="col-4">
-              <label> Número de reporte </label> 
-            </div> {% endcomment %}
           </div>
           <div class="row">
             <div class="col-6">
               <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_input" name="id_input" oninput="validateNumberInput(this)" maxlength="12" />
             </div>
-            <div class="col-2" style="display: flex; align-items: center; justify-content: space-between; border: none">
+            <div class="col-1" style="display: flex; align-items: center; justify-content: space-between; border: none">
               <button type="submit" class="round-button">
                 <i class="fas fa-search fa-lg"></i>
               </button>
             </div>
-            <div class="col" style="display: flex; align-items: center; justify-content: flex-end; border: none">
-              <button type="submit" class="all-button">
-                <i class="fa-regular fa-eye"></i> Ver todo
-              </button>
+            
+            <div style="col-5 d-flex justify-content-end"> 
+              <div class="col all-div">
+                <div class="col all-div-inside">
+                  <i class="fa-solid fa-eye all-eye" style=""></i>
+                  <button type="submit" class="all-button"> Ver todos </button>
+                </div>
+              </div>            
             </div>
-            </div>
+          </div>
         </form>
     </div>
     <br>

@@ -2,7 +2,7 @@ input[type="text"]{
     background-color: white;
     height: 40px;
     border-radius: 10px;
-    width: 80%;
+    width: 100%;
 }
 .search-formm{
     width: 100%;
@@ -123,30 +123,44 @@ a{
 
 
 a:hover{
-    color: #26283E
-    }
+color: #26283E
+}
 
+.all-div{
+display: flex; align-items: center; justify-content: flex-end; border: none;
+}
+
+.all-div-inside{
+display: flex; flex-direction: column; align-items: flex-end;
+  padding: 0 100px 0 100px;
+}
+
+.all-eye{
+color: #0796d8; font-size: xx-large; padding: 5px;
+position: relative;
+left: -25px;
+}
 
 .all-button{
-    width: 120px;
-    height: 40px;
-    border-radius: 10px;
-    background-color: #0279AF;
-    color: white;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.5s ease;
-    }
+width: 100px;
+height: 28px;
+border-radius: 5px;
+background-color: #0796D8;
+color: white;
+border: none;
+cursor: pointer;
+display: flex;
+justify-content: center;
+align-items: center;
+transition: all 0.5s ease;
+}
 
-    .all-button:hover{
-    background-color: #26283E;
+.all-button:hover{
+background-color: #26283E;
 
-    }
-    
-    .all-button i {
-    color: white;
-    padding-right: 5px;
-    }
+}
+
+.all-button i {
+color: white;
+padding-right: 5px;
+}
