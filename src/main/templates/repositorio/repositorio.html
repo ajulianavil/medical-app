@@ -28,32 +28,32 @@
       <div class="col-2">
         <strong class="col-md-auto label"> Rango de edad gestacional</strong>
         <select id="ga_input" name="ga_input">
-          <option value="15">Semana 15</option>
-          <option value="16">Semana 16</option>
-          <option value="17">Semana 17</option>
-          <option value="18">Semana 18</option>
-          <option value="19">Semana 19</option>
-          <option value="20">Semana 20</option>
-          <option value="21">Semana 21</option>
-          <option value="22">Semana 22</option>
-          <option value="23">Semana 23</option>
-          <option value="24">Semana 24</option>
-          <option value="25">Semana 25</option>
-          <option value="26">Semana 26</option>
-          <option value="27">Semana 27</option>
-          <option value="28">Semana 28</option>
-          <option value="29">Semana 29</option>
-          <option value="30">Semana 30</option>
-          <option value="31">Semana 31</option>
-          <option value="32">Semana 32</option>
-          <option value="33">Semana 33</option>
-          <option value="34">Semana 34</option>
-          <option value="35">Semana 35</option>
-          <option value="36">Semana 36</option>
-          <option value="37">Semana 37</option>
-          <option value="38">Semana 38</option>
-          <option value="39">Semana 39</option>
-          <option value="40">Semana 40</option>
+          <option value="15"{% if filtros.ga_input == '15' %}selected{% endif %}>Semana 15</option>
+          <option value="16"{% if filtros.ga_input == '16' %}selected{% endif %}>Semana 16</option>
+          <option value="17"{% if filtros.ga_input == '17' %}selected{% endif %}>Semana 17</option>
+          <option value="18"{% if filtros.ga_input == '18' %}selected{% endif %}>Semana 18</option>
+          <option value="19"{% if filtros.ga_input == '19' %}selected{% endif %}>Semana 19</option>
+          <option value="20"{% if filtros.ga_input == '20' %}selected{% endif %}>Semana 20</option>
+          <option value="21"{% if filtros.ga_input == '21' %}selected{% endif %}>Semana 21</option>
+          <option value="22"{% if filtros.ga_input == '22' %}selected{% endif %}>Semana 22</option>
+          <option value="23"{% if filtros.ga_input == '23' %}selected{% endif %}>Semana 23</option>
+          <option value="24"{% if filtros.ga_input == '24' %}selected{% endif %}>Semana 24</option>
+          <option value="25"{% if filtros.ga_input == '25' %}selected{% endif %}>Semana 25</option>
+          <option value="26"{% if filtros.ga_input == '26' %}selected{% endif %}>Semana 26</option>
+          <option value="27"{% if filtros.ga_input == '27' %}selected{% endif %}>Semana 27</option>
+          <option value="28"{% if filtros.ga_input == '28' %}selected{% endif %}>Semana 28</option>
+          <option value="29"{% if filtros.ga_input == '29' %}selected{% endif %}>Semana 29</option>
+          <option value="30"{% if filtros.ga_input == '30' %}selected{% endif %}>Semana 30</option>
+          <option value="31"{% if filtros.ga_input == '31' %}selected{% endif %}>Semana 31</option>
+          <option value="32"{% if filtros.ga_input == '32' %}selected{% endif %}>Semana 32</option>
+          <option value="33"{% if filtros.ga_input == '33' %}selected{% endif %}>Semana 33</option>
+          <option value="34"{% if filtros.ga_input == '34' %}selected{% endif %}>Semana 34</option>
+          <option value="35"{% if filtros.ga_input == '35' %}selected{% endif %}>Semana 35</option>
+          <option value="36"{% if filtros.ga_input == '36' %}selected{% endif %}>Semana 36</option>
+          <option value="37"{% if filtros.ga_input == '37' %}selected{% endif %}>Semana 37</option>
+          <option value="38"{% if filtros.ga_input == '38' %}selected{% endif %}>Semana 38</option>
+          <option value="39"{% if filtros.ga_input == '39' %}selected{% endif %}>Semana 39</option>
+          <option value="40"{% if filtros.ga_input == '40' %}selected{% endif %}>Semana 40</option>
         </select>
         {% comment %} <label class="labels" for="{{ form.subject.id_for_label }}">{{ form.ga.label }}</label> {%endcomment %}
       </div>
@@ -62,32 +62,33 @@
         {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Hasta">
         {% endcomment %}
         <select id="ga_input_final" name="ga_input_final">
-          <option value="15">Semana 15</option>
-          <option value="16">Semana 16</option>
-          <option value="17">Semana 17</option>
-          <option value="18">Semana 18</option>
-          <option value="19">Semana 19</option>
-          <option value="20">Semana 20</option>
-          <option value="21">Semana 21</option>
-          <option value="22">Semana 22</option>
-          <option value="23">Semana 23</option>
-          <option value="24">Semana 24</option>
-          <option value="25">Semana 25</option>
-          <option value="26">Semana 26</option>
-          <option value="27">Semana 27</option>
-          <option value="28">Semana 28</option>
-          <option value="29">Semana 29</option>
-          <option value="30">Semana 30</option>
-          <option value="31">Semana 31</option>
-          <option value="32">Semana 32</option>
-          <option value="33">Semana 33</option>
-          <option value="34">Semana 34</option>
-          <option value="35">Semana 35</option>
-          <option value="36">Semana 36</option>
-          <option value="37">Semana 37</option>
-          <option value="38">Semana 38</option>
-          <option value="39">Semana 39</option>
-          <option value="40" selected>Semana 40</option>
+          <option value="15"{% if filtros.ga_input_final == '15' %}selected{% endif %}>Semana 15</option>
+          <option value="16"{% if filtros.ga_input_final == '16' %}selected{% endif %}>Semana 16</option>
+          <option value="17"{% if filtros.ga_input_final == '17' %}selected{% endif %}>Semana 17</option>
+          <option value="18"{% if filtros.ga_input_final == '18' %}selected{% endif %}>Semana 18</option>
+          <option value="19"{% if filtros.ga_input_final == '19' %}selected{% endif %}>Semana 19</option>
+          <option value="20"{% if filtros.ga_input_final == '20' %}selected{% endif %}>Semana 20</option>
+          <option value="21"{% if filtros.ga_input_final == '21' %}selected{% endif %}>Semana 21</option>
+          <option value="22"{% if filtros.ga_input_final == '22' %}selected{% endif %}>Semana 22</option>
+          <option value="23"{% if filtros.ga_input_final == '23' %}selected{% endif %}>Semana 23</option>
+          <option value="24"{% if filtros.ga_input_final == '24' %}selected{% endif %}>Semana 24</option>
+          <option value="25"{% if filtros.ga_input_final == '25' %}selected{% endif %}>Semana 25</option>
+          <option value="26"{% if filtros.ga_input_final == '26' %}selected{% endif %}>Semana 26</option>
+          <option value="27"{% if filtros.ga_input_final == '27' %}selected{% endif %}>Semana 27</option>
+          <option value="28"{% if filtros.ga_input_final == '28' %}selected{% endif %}>Semana 28</option>
+          <option value="29"{% if filtros.ga_input_final == '29' %}selected{% endif %}>Semana 29</option>
+          <option value="30"{% if filtros.ga_input_final == '30' %}selected{% endif %}>Semana 30</option>
+          <option value="31"{% if filtros.ga_input_final == '31' %}selected{% endif %}>Semana 31</option>
+          <option value="32"{% if filtros.ga_input_final == '32' %}selected{% endif %}>Semana 32</option>
+          <option value="33"{% if filtros.ga_input_final == '33' %}selected{% endif %}>Semana 33</option>
+          <option value="34"{% if filtros.ga_input_final == '34' %}selected{% endif %}>Semana 34</option>
+          <option value="35"{% if filtros.ga_input_final == '35' %}selected{% endif %}>Semana 35</option>
+          <option value="36"{% if filtros.ga_input_final == '36' %}selected{% endif %}>Semana 36</option>
+          <option value="37"{% if filtros.ga_input_final == '37' %}selected{% endif %}>Semana 37</option>
+          <option value="38"{% if filtros.ga_input_final == '38' %}selected{% endif %}>Semana 38</option>
+          <option value="39"{% if filtros.ga_input_final == '39' %}selected{% endif %}>Semana 39</option>
+          <option value="40"{% if filtros.ga_input_final == '40' or not filtros.ga_input_final %}selected{% endif %}>Semana 40</option>
+          <!-- <option value="40" selected>Semana 40</option> -->
         </select> 
       </div>
       <div class="col-1"></div>
@@ -110,16 +111,16 @@
           <span class="tooltip">Use este filtro si desea observar un diagnóstico en específico, para ello seleccione la medición y a continuación un diagnóstico.</span>
         </div>
         <select id="med_input" name="med_input" onchange="updateDiagnosisOptions()">
-          <option value="todas">---</option>
-          <option value="hc_hadlock">HC_HADLOCK</option>
-          <option value="bpd_hadlock">BPD_HADLOCK</option>
-          <option value="csp">CSP</option>
-          <option value="cm">CM</option>
-          <option value="vp">VP</option>
-          <option value="va">VA</option>
-          <option value="cereb_hill">CEREB_HILL</option>
-          <option value="afi">AFI</option>
-          <option value="efw">EFW</option>
+          <option value="todas" {% if not filtros.med_input %}selected{% endif %}>---</option>
+          <option value="hc_hadlock"  {% if filtros.med_input == 'hc_hadlock' %}selected{% endif %}>HC_HADLOCK</option>
+          <option value="bpd_hadlock"   {% if filtros.med_input == 'bpd_hadlock' %}selected{% endif %}>BPD_HADLOCK</option>
+          <option value="csp"   {% if filtros.med_input == 'csp' %}selected{% endif %}>CSP</option>
+          <option value="cm"   {% if filtros.med_input == 'cm' %}selected{% endif %} >CM</option>
+          <option value="vp"  {% if filtros.med_input == 'vp' %}selected{% endif %} >VP</option>
+          <option value="va"   {% if filtros.med_input == 'va' %}selected{% endif %} >VA</option>
+          <option value="cereb_hill"  {% if filtros.med_input == 'cereb_hill' %}selected{% endif %}>CEREB_HILL</option>
+          <option value="afi"  {% if filtros.med_input == 'afi' %}selected{% endif %} >AFI</option>
+          <option value="efw"  {% if filtros.med_input == 'efw' %}selected{% endif %} >EFW</option>
         </select>
       </div>
       <div class="col-4">
@@ -128,10 +129,9 @@
           <i class="fa-solid fa-circle-question" data-tooltip="Seleccione el diagnóstico por el que desee filtrar o elija '---' para eliminar el filtro."></i>
           <span class="tooltip">Seleccione el diagnóstico por el que desee filtrar o elija '---' para eliminar el filtro.</span>
         </div>
-
+        <div id="selectedDiagnosis" data-my-value="{{filtros.diagnosis_input|safe}}"></div>
         <select id="diagnosis_input" name="diagnosis_input" onchange="updateMedOptions()" style="display: none">
           <option value="todos">---</option>
-
         </select>
       </div>
       
@@ -212,7 +212,7 @@
 <button id="sendDataButton">Send Data</button>
 
 <script>
-  
+  updateDiagnosisOptions();
   var select1 = document.getElementById('ga_input');
   var select2 = document.getElementById('ga_input_final');
 
@@ -255,12 +255,18 @@
   lastYearDate.setFullYear(lastYearDate.getFullYear() - 1);
   var formattedDate = lastYearDate.toISOString().split('T')[0];
 
+  var filtros = "{{ filtros|safe }}";
+  var start_date = "{{ filtros.start_date|safe }}";
+  var end_date = "{{ filtros.end_date|safe }}";
+  if(filtros){
+    formattedDate= new Date(start_date).toISOString().split('T')[0];
+     currentDate = new Date(end_date).toISOString().split('T')[0];
+  }
   // Set the default value of the input field
   document.getElementById('start_date').value = formattedDate;
   // Set the default value of the input field
   document.getElementById('end_date').value = currentDate;
   //  ---------- SCRIPT PAGINACION
-
   var table = document.getElementById("myTable");
   var tbody = table.getElementsByTagName("tbody")[0]; // Get the tbody element
   var rowsPerPage = 20; // Number of rows to display per page
@@ -380,4 +386,6 @@
     window.open(encodedUri);
   });
 </script>
+
+
 {% endblock %}

@@ -315,31 +315,36 @@ def repositorio(request):
         diagnosis_input = request.POST.get('diagnosis_input')
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-        
+        filter_kwargs = {}
+        if med_input != "todas":
+            filter_kwargs[med_input] = diagnosis_input
         matching_consultas = Consulta.objects.filter(fecha_consulta__range=(start_date, end_date))
-        
         print("filtro", ga_input, ga_input_final, med_input, diagnosis_input, start_date, end_date)
-        
         for consulta in matching_consultas:
-            
             matching_reporte = Reporte.objects.filter(idreporte=consulta.idreporte_id, ga__range=(ga_input, ga_input_final)).first()
-            
             if matching_reporte is not None:
-                diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=consulta.idreporte_id).first()
-                    
+                diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=consulta.idreporte_id,**filter_kwargs).first()
+                if diagnostico is not None:
                 # if datetime.strptime(start_date, '%Y-%m-%d') < consulta.fecha_consulta < datetime.strptime(end_date, '%Y-%m-%d'):
-                obj = {
-                    'reporte': matching_reporte,
-                    # 'paciente': matching_paciente,
-                    'diagnostico': diagnostico,
-                    'ga_reporte': matching_reporte.ga,
-                    'report_date': consulta.fecha_consulta,
-                }
+                    obj = {
+                        'reporte': matching_reporte,
+                        # 'paciente': matching_paciente,
+                        'diagnostico': diagnostico,
+                        'ga_reporte': matching_reporte.ga,
+                        'report_date': consulta.fecha_consulta,
+                    }
 
+                    objects_list.append(obj)
                 #Append the dictionary to the objects list
-                objects_list.append(obj)
-            
-        return render(request, 'repositorio/repositorio.html', context={"objects": objects_list})
+        
+        filter_kwargs["ga_input"] = ga_input
+        filter_kwargs["ga_input_final"] = ga_input_final
+        filter_kwargs["start_date"] = start_date
+        filter_kwargs["end_date"] = end_date
+        filter_kwargs["med_input"] = med_input
+        filter_kwargs["diagnosis_input"] = diagnosis_input
+        print(filter_kwargs)
+        return render(request, 'repositorio/repositorio.html', context={"objects": objects_list, "filtros": filter_kwargs})
         
     else:
         matching_consultas = Consulta.objects.all()
