@@ -3,6 +3,7 @@
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/repositorio.css' %}" />
 <script src="{% static 'js/validations.js' %}"></script>
+<script src="{% static 'js/repositorio_filter.js' %}"></script>
 
 {% endblock %}
 
@@ -24,10 +25,8 @@
         <strong class="col-md-auto label"> Apellido paciente </strong>
         <input type="text" id="lastname_input" name="lastname_input" class="form-repo">
       </div> {% endcomment %}
-      <div class="col-md-auto">
-        <strong class="col-md-auto label"> Rango de edad gestacional (semanas)</strong>
-        {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Desde">
-        {% endcomment %}
+      <div class="col-2">
+        <strong class="col-md-auto label"> Rango de edad gestacional</strong>
         <select id="ga_input" name="ga_input">
           <option value="15">Semana 15</option>
           <option value="16">Semana 16</option>
@@ -56,10 +55,9 @@
           <option value="39">Semana 39</option>
           <option value="40">Semana 40</option>
         </select>
-        {% comment %} <label class="labels" for="{{ form.subject.id_for_label }}">{{ form.ga.label }}</label> {%
-        endcomment %}
+        {% comment %} <label class="labels" for="{{ form.subject.id_for_label }}">{{ form.ga.label }}</label> {%endcomment %}
       </div>
-      <div class="col-md-auto">
+      <div class="col-2">
         </br>
         {% comment %} <input type="number" max="41" id="ga_input" name="ga_input" class="form-repo" placeholder="Hasta">
         {% endcomment %}
@@ -89,24 +87,30 @@
           <option value="37">Semana 37</option>
           <option value="38">Semana 38</option>
           <option value="39">Semana 39</option>
-          <option value="40">Semana 40</option>
-        </select>
+          <option value="40" selected>Semana 40</option>
+        </select> 
       </div>
-      <div class="col-md-auto">
-        <strong class="col-md-auto label"> Condición del feto </strong>
-        <select id="state_input" name="state_input">
-          <option value="sano">Sano</option>
-          <option value="anormal">Anormal</option>
-        </select>
-        {% comment %} <input type="text" id="state_input" name="state_input" class="form-repo"> {% endcomment %}
+      <div class="col-1"></div>
+      <div class="col-3">
+        <strong class="col-md-auto label"> Fecha de toma de exámen</strong>
+        <input type="date" id="start_date" name="start_date">
+      </div>
+      <div class="col-3">
+        </br>
+        <input type="date" id="end_date" name="end_date">
       </div>
     </div>
     <br />
     <div class="row">
-      <div class="col-md-auto">
-        <strong class="col-md-auto label"> Medición </strong>
+      <div class="col-4">
+        {% comment %} <strong class="col-md-auto label" > Medición </strong> <i class="fa-regular fa-circle-question" > </i> {% endcomment %}
+        <div class="tooltip-container">
+          <strong class="col-md-auto label">Medición</strong>
+          <i class="fa-solid fa-circle-question" data-tooltip="Use este filtro si desea observar un diagnóstico en específico, para ello seleccione la medición que corresponda y a continuación un diagnóstico."></i>
+          <span class="tooltip">Use este filtro si desea observar un diagnóstico en específico, para ello seleccione la medición y a continuación un diagnóstico.</span>
+        </div>
         <select id="med_input" name="med_input" onchange="updateDiagnosisOptions()">
-          <option value="todas">Todas</option>
+          <option value="todas">---</option>
           <option value="hc_hadlock">HC_HADLOCK</option>
           <option value="bpd_hadlock">BPD_HADLOCK</option>
           <option value="csp">CSP</option>
@@ -118,40 +122,21 @@
           <option value="efw">EFW</option>
         </select>
       </div>
-      <div class="col-md-auto">
-        <strong class="col-md-auto label"> Diagnóstico </strong>
-        {% comment %} <input type="text" id="diagnosis_input" name="diagnosis_input" value="{{paciente.cedulapac}}">
-        {%endcomment %}
-        <select id="diagnosis_input" name="diagnosis_input" onchange="updateMedOptions()">
-          <option value="todos">Todos</option>
-          <option value="normal">Normal</option>
-          <option value="macrocrania">Macrocrania</option>
-          <option value="microcrania">Microcrania</option>
-          <option value="anormal-sup">Anormalidad por valor superior</option>
-          <option value="anormal-inf">Anormalidad por valor inferior</option>
-          <option value="hipoplasia">Hipoplasia cereberal</option>
-          <option value="rciu">R.C.I.U</option>
-          <option value="feto-grande">Feto grande</option>
-          <option value="feto-pequeño">Feto pequeño</option>
-          <option value="megacisterno">Megacisterno</option>
-          <option value="ventri-leve">Ventriculomegalia leve</option>
-          <option value="ventri-mod">Ventriculomegalia moderada</option>
-          <option value="ventri-sev">Ventriculomegalia severa</option>
-          <option value="oligohidramnios">Oligohidramnios</option>
-          <option value="polihidramnios">Polihidramnios</option>
+      <div class="col-4">
+        <div class="tooltip-container" style="display: none" id="diagnosis_label">
+          <strong  class="col-md-auto label" > Diagnóstico </strong>
+          <i class="fa-solid fa-circle-question" data-tooltip="Seleccione el diagnóstico por el que desee filtrar o elija '---' para eliminar el filtro."></i>
+          <span class="tooltip">Seleccione el diagnóstico por el que desee filtrar o elija '---' para eliminar el filtro.</span>
+        </div>
+
+        <select id="diagnosis_input" name="diagnosis_input" onchange="updateMedOptions()" style="display: none">
+          <option value="todos">---</option>
+
         </select>
       </div>
+      
       <div class="col-md-auto">
-        <strong class="col-md-auto label"> Fecha de toma de exámen</strong>
-        <input type="date" id="start_date" name="start_date">
-
-      </div>
-      <div class="col-md-auto">
-        </br>
-        <input type="date" id="end_date" name="end_date">
-      </div>
-      <div class="col-md-auto">
-        <button class="btn submit-button" style="width: 60px"> <i class="fa fa-search"></i></button>
+        <button class="btn submit-button" type="submit" style="width: 60px"> <i class="fa fa-search"></i></button>
       </div>
     </div>
   </form>
@@ -172,20 +157,13 @@
         {% comment %} <th style="text-align: center;">Cédula</th>
         <th style="text-align: center;">Apellido</th> {% endcomment %}
         <th style="text-align: center;">GA</th>
-        <!-- <th style="text-align: center;">Estado</th>NO SE PUEDE!!!!! -->
         <th style="text-align: center;">Fecha reporte</th>
         <th style="text-align: center;">HC_HADLOCK</th>
         <th style="text-align: center;">Valor</th>
-        {% comment %} <th style="text-align: center;">P5 </th> {% endcomment %}
-        {% comment %} <th style="text-align: center;">P95 </th> {% endcomment %}
         <th style="text-align: center;">BPD_HADLOCK </th>
         <th style="text-align: center;">Valor</th>
-        {% comment %} <th style="text-align: center;">P5 </th> {% endcomment %}
-        {% comment %} <th style="text-align: center;">P95 </th> {% endcomment %}
         <th style="text-align: center;">CSP </th>
         <th style="text-align: center;">Valor</th>
-        {% comment %} <th style="text-align: center;">P5 </th>
-        <th style="text-align: center;">P95 </th> {% endcomment %}
         <th style="text-align: center;">CM </th>
         <th style="text-align: center;">Valor</th>
         <th style="text-align: center;">VP </th>
@@ -227,15 +205,65 @@
       {% endfor %}
     </tbody>
   </table>
-  <div id="pagination"></div>
-  <br />
-  <button id="sendDataButton">Send Data</button>
 </div>
+<br />
+<br />
+<div id="pagination"></div>
+<button id="sendDataButton">Send Data</button>
 
 <script>
+  
+  var select1 = document.getElementById('ga_input');
+  var select2 = document.getElementById('ga_input_final');
+
+  // Add event listener to select1
+  select1.addEventListener('change', function() {
+    var selectedValue = parseInt(select1.value);
+
+    // Hide options in select2 based on selectedValue
+    for (var i = 0; i < select2.options.length; i++) {
+      var optionValue = parseInt(select2.options[i].value);
+
+      if (optionValue < selectedValue) {
+        select2.options[i].style.display = 'none';
+      } else {
+        select2.options[i].style.display = 'block';
+      }
+    }
+  });
+
+  // Add event listener to select2
+  select2.addEventListener('change', function() {
+    var selectedValue = parseInt(select2.value);
+
+    // Hide options in select1 based on selectedValue
+    for (var i = 0; i < select1.options.length; i++) {
+      var optionValue = parseInt(select1.options[i].value);
+
+      if (optionValue > selectedValue) {
+        select1.options[i].style.display = 'none';
+      } else {
+        select1.options[i].style.display = 'block';
+      }
+    }
+  });
+  // ----------- SCRIPT - FECHAS
+  // Get the current date
+  var currentDate = new Date().toISOString().split('T')[0];
+  var lastYearDate = new Date();
+
+  lastYearDate.setFullYear(lastYearDate.getFullYear() - 1);
+  var formattedDate = lastYearDate.toISOString().split('T')[0];
+
+  // Set the default value of the input field
+  document.getElementById('start_date').value = formattedDate;
+  // Set the default value of the input field
+  document.getElementById('end_date').value = currentDate;
+  //  ---------- SCRIPT PAGINACION
+
   var table = document.getElementById("myTable");
   var tbody = table.getElementsByTagName("tbody")[0]; // Get the tbody element
-  var rowsPerPage = 10; // Number of rows to display per page
+  var rowsPerPage = 20; // Number of rows to display per page
   var currentPage = 1; // Current page number
   // Calculate the total number of pages
   var totalPages = Math.ceil(table.rows.length / rowsPerPage);

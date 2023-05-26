@@ -6,7 +6,8 @@ from django.views import View
 from main.forms import RepositorioFilterForm
 from users.context_processors import current_user
 from main.forms import CreateUserForm, UploadFileForm
-from main.utils import get_matching_consulta, get_mediciones, export_to_csv
+# from main.utils import get_matching_consulta, get_mediciones, export_to_csv
+from main.utils import get_matching_consulta, get_mediciones
 from .data_processing import comparison, process_data
 from .Exceptions.PersonalizedExceptions import MyCustomException
 from datetime import datetime as dt
@@ -305,23 +306,58 @@ def reporteInfo(request, param: int):
     return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnostico": diagnostico})
 
 def repositorio(request):
-    matching_consultas = Consulta.objects.all()
     objects_list = []
-    for consulta in matching_consultas:
-        matching_reporte = Reporte.objects.filter(idreporte=consulta.idreporte_id).first()
-        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=consulta.idreporte_id).first()
-        obj = {
-            'reporte': matching_reporte,
-            # 'paciente': matching_paciente,
-            'diagnostico': diagnostico,
-            'ga_reporte': matching_reporte.ga,
-            'report_date': consulta.fecha_consulta,
+
+    if request.method == 'POST':
+        ga_input = request.POST.get('ga_input')
+        ga_input_final = request.POST.get('ga_input_final')
+        med_input = request.POST.get('med_input')
+        diagnosis_input = request.POST.get('diagnosis_input')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        
+        matching_consultas = Consulta.objects.filter(fecha_consulta__range=(start_date, end_date))
+        
+        print("filtro", ga_input, ga_input_final, med_input, diagnosis_input, start_date, end_date)
+        
+        for consulta in matching_consultas:
             
-        }
+            matching_reporte = Reporte.objects.filter(idreporte=consulta.idreporte_id, ga__range=(ga_input, ga_input_final)).first()
+            
+            if matching_reporte is not None:
+                diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=consulta.idreporte_id).first()
+                    
+                # if datetime.strptime(start_date, '%Y-%m-%d') < consulta.fecha_consulta < datetime.strptime(end_date, '%Y-%m-%d'):
+                obj = {
+                    'reporte': matching_reporte,
+                    # 'paciente': matching_paciente,
+                    'diagnostico': diagnostico,
+                    'ga_reporte': matching_reporte.ga,
+                    'report_date': consulta.fecha_consulta,
+                }
+
+                #Append the dictionary to the objects list
+                objects_list.append(obj)
+            
+        return render(request, 'repositorio/repositorio.html', context={"objects": objects_list})
+        
+    else:
+        matching_consultas = Consulta.objects.all()
+        
+        for consulta in matching_consultas:
+            matching_reporte = Reporte.objects.filter(idreporte=consulta.idreporte_id).first()
+            diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=consulta.idreporte_id).first()
+            obj = {
+                'reporte': matching_reporte,
+                'diagnostico': diagnostico,
+                'ga_reporte': matching_reporte.ga,
+                'report_date': consulta.fecha_consulta,  
+            }
             
             # Append the dictionary to the objects list
-        objects_list.append(obj)
-    return render(request, 'repositorio/repositorio.html', context={"objects": objects_list})
+            objects_list.append(obj)
+
+        return render(request, 'repositorio/repositorio.html', context={"objects": objects_list})
 
 
 def reportes(request,):
