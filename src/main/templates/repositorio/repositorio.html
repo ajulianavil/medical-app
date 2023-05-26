@@ -13,7 +13,7 @@
 <h1 style="font-weight: bold; color: #0796D8">Repositorio</h1>
 <p style="font-weight: bold;">Por favor, ingrese sus datos de interés para filtrar la búsqueda.</p>
 
-<div class="box container " style="height: 100%; margin-bottom:20px">
+<div class="box container" style="height: 100%; margin-bottom:20px">
   <form class="report-form" method="POST">
     {% csrf_token %}
     <div class="row">
@@ -91,9 +91,13 @@
           <!-- <option value="40" selected>Semana 40</option> -->
         </select> 
       </div>
-      <div class="col-1"></div>
+      {% comment %} <div style="width: 100px"></div> {% endcomment %}
       <div class="col-3">
-        <strong class="col-md-auto label"> Fecha de toma de exámen</strong>
+        <div class="tooltip-container-right">
+          <strong class="col-md-auto label"> Fecha de toma de exámen</strong>
+          <i class="fa-solid fa-circle-question" data-tooltip="Por defecto se filtra por los reportes del último año."></i>
+          <span class="tooltip-right">Por defecto se filtra por los reportes del último año.</span>
+        </div>
         <input type="date" id="start_date" name="start_date">
       </div>
       <div class="col-3">
@@ -136,10 +140,18 @@
       </div>
       
       <div class="col-md-auto">
-        <button class="btn submit-button" type="submit" style="width: 60px"> <i class="fa fa-search"></i></button>
+        <button class="btn search-button" type="submit" style="width: 60px"> <i class="fa fa-search"></i></button>
       </div>
+
+    </form>
+      <div class="col all-div">
+        <div class="col all-div-inside">
+          <i class="fa-solid fa-eye all-eye" style=""></i>
+          <button type="button" class="all-button" onclick="window.location.href='{% url 'repositorio' %}'"> Ver todos </button>
+        </div>
+      </div>
+      
     </div>
-  </form>
 </div>
 <br>
 {% if messages %}
@@ -150,6 +162,8 @@
 {% endfor %}
 {% endif %}
 <br>
+
+
 <div class="container">
   <table id="myTable">
     <thead>
@@ -206,11 +220,15 @@
     </tbody>
   </table>
 </div>
-<br />
-<br />
-<div id="pagination"></div>
-<button id="sendDataButton">Send Data</button>
 
+
+<br />
+<br />
+<div>
+  <button id="sendDataButton" class="btn download-button" style="width: 200px !important; float: left; margin-bottom: 20px">Descargar .CSV</button>
+  <div id="pagination"></div>
+</div>
+{% comment %} <div style="height: 100px"></div> {% endcomment %}
 <script>
   updateDiagnosisOptions();
   var select1 = document.getElementById('ga_input');
