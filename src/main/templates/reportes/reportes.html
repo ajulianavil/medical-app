@@ -9,35 +9,57 @@
 {% block content %}
 
   <div>
-    <div class="container-fluid row" style="padding-top: 30px">
-      <h2 class="mb-4" style="font-weight: bold; color: #0796D8">Buscar registro</h2>
+    <div class="container-fluid row" style="padding-top: 50px">
+      <h1 class="mb-4" style="font-weight: bold; color: #0796D8">Buscar registro</h1>
+      <p style="font-weight: bold;">Aquí podrá acceder a los registros de sus pacientes.</p> 
+
+      {% comment %} <div class="col-6" style="width: auto;">
+      </div>
+      <div class="col-6" style="width: auto;">
+        <div class="tooltip-container">
+          <i class="fa-solid fa-circle-question" style="font-size: large; position: absolute; top: -10px;"></i>
+          <span class="tooltip">Por defecto se muestran los registros del último año.</span>
+        </div>
+      </div> {% endcomment %}
     </div>
-    <div class="input-group input-group-sm"
-        style="position: relative; padding: 0 100px 0 100px;">
-        <form class="search-formm" method="POST">
+    <div class="input-group input-group-sm" style="position: relative; padding: 0 100px 0 100px;">
+        <form id="search-form" class="search-formm" method="POST">
           {% csrf_token %}
-          <div class="row">
-            <div class="col-6">
-              <label> Cédula de paciente </label> 
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6">
-              <input type="text" class="form-control" placeholder="Cédula de paciente" id="id_input" name="id_input" oninput="validateNumberInput(this)" maxlength="12" />
-            </div>
-            <div class="col-1" style="display: flex; align-items: center; justify-content: space-between; border: none">
-              <button type="submit" class="round-button">
-                <i class="fas fa-search fa-lg"></i>
-              </button>
-            </div>
-            
-            <div style="col-5 d-flex justify-content-end"> 
-              <div class="col all-div">
-                <div class="col all-div-inside">
-                  <i class="fa-solid fa-eye all-eye" style=""></i>
-                  <button type="submit" class="all-button"> Ver todos </button>
+          <div class="mid-container">
+
+            <div class="left-div">
+              <div class="row">
+                <div class="col">
+                  <div style="display: inline-block;">
+                    <label> Cédula de paciente </label> 
+                  </div>
+                  <div style="display: inline-block;">
+                    <div class="tooltip-container">
+                      <i class="fa-solid fa-circle-question" data-tooltip="Al aplicar este filtro se muestran todas las coincidencias, sin importar el año."></i>
+                      <span class="tooltip">Al aplicar este filtro se muestran todas las coincidencias, sin importar el año.</span>
+                    </div>
+                  </div>
                 </div>
-              </div>            
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div style="display: inline-block;">
+                    <input type="text" class="form-control" placeholder=" " id="id_input" name="id_input" oninput="validateNumberInput(this)" maxlength="12" />
+                  </div>
+                  <div style="display: inline-block;">
+                    <button type="submit" class="round-button">
+                      <i class="fas fa-search fa-lg"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="right-div">
+              <div class="tooltip-container">
+                <i class="fa-solid fa-eye all-eye" onclick="submitForm()"></i>  
+                <span class="tooltip">Ver los registros del último mes.</span>
+              </div>
             </div>
           </div>
         </form>
@@ -52,12 +74,14 @@
     {% endif %}
     <br>
     <div class="container">
+      <p style="color: #B0B0B0">Por defecto se muestran las consultas del último mes, pero puede filtrar la información de cualquier paciente sin importar la fecha.</p>
+
     <table id="myTable">
       <thead>
         <tr>
           <th style="text-align: center;">Fecha consulta</th>
           <th style="text-align: center;">Cédula paciente</th>
-          <th style="text-align: center;">Médico encargado</th>
+          <th style="text-align: center;">Embarazo</th>
           <th style="text-align: center;">Motivo de consulta</th>
           <th style="text-align: center;">Ver reporte</th>
         </tr>
@@ -66,12 +90,12 @@
         {% for consulta in objects %}
         <tr>
           <td style="text-align: center;">{{ consulta.fecha_consulta }}</td>
-          <td style="text-align: center;">{{ consulta.idpac_id|get_pacient_id }}</td>
-          <td style="text-align: center;">{{ consulta.medUltrasonido }}</td>
+          <td style="text-align: center; font-weight: bold;"><a href="/consultas/historial/{{ consulta.idpac_id}}">{{ consulta.idpac_id|get_pacient_id }}</a></td>
+          <td style="text-align: center;">Embarazo 1</td>
           <td style="text-align: center;">{{ consulta.motivo_consulta }}</td>
           <td style="text-align: center;">
             <a href="/registros/consulta/{{ consulta }}" class="eye-search">
-              <i class="fa-regular fa-eye search"></i>
+              <i class="fa-solid fa-eye search"></i>
             </a>
           </td>
         </tr>
@@ -164,7 +188,9 @@ function generatePaginationLinks() {
 displayRows();
 generatePaginationLinks();
 
-    
+function submitForm() {
+  document.getElementById('search-form').submit();
+}
   </script>
 
 {% endblock %}

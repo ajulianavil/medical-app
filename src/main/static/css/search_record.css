@@ -1,15 +1,19 @@
 input[type="text"]{
-    background-color: white;
-    height: 40px;
-    border-radius: 10px;
-    width: 100%;
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  border: none;
+  width: 100%;
+  font-family: 'League Spartan', sans-serif;
+  padding: 2px 10px 2px 10px;
+  height: 28px;
 }
+
 .search-formm{
     width: 100%;
 }
-.search .eye-search {
+
+.search {
     color: #0796D8;
-    padding: 5px;
     border: none;
     cursor: pointer;
     width: 40px;
@@ -22,11 +26,24 @@ input[type="text"]{
     transition: all 0.3s ease;
 }
 
+.eye-search{
+  display: inline-block;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
 .search:hover{
-    color: white;
+    /* color: white;
     border-radius: 50%;
     background-color: #0279AF;
-    padding: 5px;
+    padding: 5px; */
+    color: #232539;
+    transform: scale(1.05);
+}
+
+.fa-circle-question{
+  color: #0796D8;
+
 }
 
 label {
@@ -62,13 +79,33 @@ td, th{
 table tr:nth-child(even){background-color: #f2f2f2;}
 
 .container{
-    display: flex;
+  display: block;
+    /* display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
+}
+
+.mid-container {
+  display: flex;
+  justify-content: center; /* Clears any floats within the container */
+}
+
+.left-div, .right-div {
+  flex: 0 0 auto; /* Allows divs to shrink to fit content */
+  margin: 0 10px; /* Adjust the margin between the divs as per your preference */
+}
+
+.left-div{
+  background-color: white; border-radius: 10px; padding: 10px 20px;
+}
+
+.right-div{
+  display: flex;
+  align-items: center;
 }
 
 .round-button {
-    width: 40px;
+    width: 60px;
     height: 40px;
     border-radius: 10px;
     background-color: #ccc;
@@ -78,6 +115,7 @@ table tr:nth-child(even){background-color: #f2f2f2;}
     justify-content: center;
     align-items: center;
     transition: all 0.5s ease;
+    margin-left: 10px;
   }
   
   .round-button i {
@@ -86,12 +124,7 @@ table tr:nth-child(even){background-color: #f2f2f2;}
 
   .round-button:hover{
     background-color: #9b9b9b;
-  }
-
-  .eye-search{
-    display: inline-block;
-    padding-left: 0px !important;
-    padding-right: 0px !important;
+    transform: scale(1.05);
   }
 
   #pagination{
@@ -126,19 +159,19 @@ a:hover{
 color: #26283E
 }
 
-.all-div{
-display: flex; align-items: center; justify-content: flex-end; border: none;
-}
 
 .all-div-inside{
 display: flex; flex-direction: column; align-items: flex-end;
-  padding: 0 100px 0 100px;
+  /* padding: 0 100px 0 100px; */
 }
 
 .all-eye{
-color: #0796d8; font-size: xx-large; padding: 5px;
-position: relative;
-left: -25px;
+color: #0796d8; font-size: xx-large; padding: 5px; transition: all 0.5s ease; cursor: pointer;
+}
+
+.all-eye:hover{
+  color: #0279AF;
+  transform: scale(1.05);
 }
 
 .all-button{
@@ -163,4 +196,36 @@ background-color: #26283E;
 .all-button i {
 color: white;
 padding-right: 5px;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  font-family: 'League Spartan', sans-serif;
+  visibility: hidden;
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  min-width: 220px;
+  max-width: 400px;
+  background-color: #26283E;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.2s;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
 }

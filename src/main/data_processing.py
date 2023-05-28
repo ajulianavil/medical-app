@@ -42,6 +42,7 @@ def process_data(file):
     afi_sum = None
     med_name = None
     med_lastname = None
+    
     count = 0
     for row_bytes in file_readed:
         row = row_bytes.decode("utf-8") 
@@ -179,7 +180,12 @@ def process_data(file):
             afi = line.strip().split("|")
             afi = afi[:-1]
             afi_sum = afi[4].split("=")[1].split(" ")[0]
-    
+        if ('COMMENT' in line):
+            try:
+                comments = line.strip().split('"')[1]    
+            except:
+                comments = None
+            
     reporte_info = {
         'efw': EFW,
         'edb': CLINICAL_EDC,
@@ -211,7 +217,7 @@ def process_data(file):
         'afi': afi_sum
     }
     
-    return insert_paciente, reporte_info, convertedDate, med_name, med_lastname
+    return insert_paciente, reporte_info, convertedDate, med_name, med_lastname, comments
 
     
 def ConvertDateTime(studydate, studytime):

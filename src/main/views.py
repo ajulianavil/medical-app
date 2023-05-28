@@ -10,7 +10,7 @@ from main.forms import CreateUserForm, UploadFileForm
 from main.utils import get_matching_consulta, get_mediciones
 from .data_processing import comparison, process_data
 from .Exceptions.PersonalizedExceptions import MyCustomException
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 from django.http import  JsonResponse
 from main.models import *
 from main.serializers import *
@@ -31,6 +31,7 @@ from datetime import datetime
 from django.templatetags.static import static
 from reportlab.lib.colors import Color
 import json
+import math
 
 from chartjs.views.lines import BaseLineChartView
 # Create your views here.
@@ -79,8 +80,9 @@ def consultas(request, personal: str):
         template_name='main/consultas.html',
         context={"objects": matching_consultas}
         )
-
+#, embValue=None
 def agregar_consulta(request):
+    print("ALOALOALO")
     if request.method == 'POST':
         storage = messages.get_messages(request)
         storage.used = True
@@ -132,6 +134,7 @@ def agregar_consulta(request):
         fullDate = processedData[2]
         med_name = processedData[3]
         med_lastname = processedData[4]
+        comments = processedData[5]
 
         if med_name == None or med_lastname == None:
             full_medName = None
@@ -200,6 +203,7 @@ def agregar_consulta(request):
             user_logged = current_user(request)
             info = list(user_logged.values())
             userid = info[0]['userid']
+            userced = info[0]['user_identification']
             
             med_consult = (Personalsalud.objects.filter(userid=userid)).first()
             if med_consult:
@@ -210,7 +214,8 @@ def agregar_consulta(request):
                 'idpac': onpatient,
                 'idreporte': last_report,
                 'medUltrasonido': full_medName, #OJO, sólo se guardará la primera vez porque esto es un constraint unique. (TODO: MEJORAR LÓGICA)
-                'medConsulta': med
+                'medConsulta': med,
+                'txtresults': comments
             }
             
             consulta_serializer = ConsultaSerializer(data=consulta_info)
@@ -269,10 +274,15 @@ def agregar_consulta(request):
                     context={"form": form}
                 )
                     
-        target_url = reverse('registroinfo', args=[last_consulta])
-
-        # Redirect to the target view
-        return HttpResponseRedirect(target_url)
+        consulta_count = Consulta.objects.filter(idpac=onpatient, medConsulta=userced).count()
+        print("LAST LAAAAAAAAAAAAAAASSSSSSSSSSTTTTTTTTTTTTTT", last_consulta)
+        if consulta_count > 1:
+            return redirect('paciente_existe', idpac=onpatient, consultaid=last_consulta)
+        
+        else:
+            target_url = reverse('registroinfo', args=[last_consulta])
+            # Redirect to the target view
+            return HttpResponseRedirect(target_url)
 
     else:
         form = UploadFileForm()
@@ -282,8 +292,61 @@ def agregar_consulta(request):
         context={"form": form}
     )
 
-def reporteInfo(request, param: int):
+def paciente_existe(request, idpac, consultaid):
+    print("Estoy aquí")
+    if request.method == 'POST':
+        user_logged = current_user(request)
+        info = list(user_logged.values())
+        userced = info[0]['user_identification']
+        print("Estoy aquí POST")
+        last_consulta = request.POST.get('consulta')
+        embarazo = request.POST.get('option')
+        print("embarazo", embarazo)
+        
+        target_url = reverse('registroinfo', args=[last_consulta])
+            # Redirect to the target view
+        return HttpResponseRedirect(target_url)
+    else:
+        embarazos = [1, 2]
+        paciente = Paciente.objects.get(idpac = idpac)
+        last_consulta_meses = 0
+        last_consulta_dias = 0
+        try:
+            consulta = Consulta.objects.filter(idpac = idpac, medConsulta=userced).order_by('-consultaid').reverse()[1]
+            today = datetime.now().date()
+            last_consulta = ((today - consulta.fecha_consulta.date()).days)/30
+            last_consulta_meses = math.floor(last_consulta)  # Retrieves the whole number part
+            last_consulta_dias = math.floor((last_consulta - last_consulta_meses)*30)
+        except:
+            consulta = None
+        
+        return render(request, 'reportes/paciente_existe.html', context={"embarazos": embarazos, "paciente": paciente, "last_consulta": (last_consulta_meses, last_consulta_dias), "consulta": consultaid})
 
+def historial_paciente(request, idpac):
+    embarazos = [1, 2]
+    paciente = Paciente.objects.get(idpac=idpac)
+    consulta = Consulta.objects.filter(idpac=idpac).last()
+    return render(request, 'consultas/historial_paciente.html', context={"paciente": paciente, "embarazos": embarazos, "consulta": consulta})
+
+def resumen_embarazo(request, idpac):
+    reportes = {
+        "Reporte 1": {
+            "Conclusiones": "Esta es la conclusión del reporte 1.",
+            "Observaciones": "Observaciones reporte 1."
+        },
+        "Reporte 2": {
+            "Conclusiones": "Esta es la conclusión del reporte 2.",
+            "Observaciones": "Observaciones reporte 2."
+        },
+        "Reporte 3": {
+            "Conclusiones": "Esta es la conclusión del reporte 3.",
+            "Observaciones": "Observaciones reporte 3."
+        }
+    }
+    return render(request, 'consultas/resumen_embarazo.html', context={"reportes": reportes})
+
+def reporteInfo(request, param: int):
+    print("AQUIIIIIIIIIIIIIII")
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(param)
 
     normal_columns = []
@@ -369,13 +432,15 @@ def reportes(request,):
     user_logged = current_user(request)
     info = list(user_logged.values())
     userced = info[0]['user_identification']
+    date_end = datetime.now().date()
+    date_init = date_end - timedelta(days=30)
     
     if request.method == 'POST':
         id_input = request.POST.get('id_input')
         if id_input == '':
-            # matching_consultas = Consulta.objects.all()
-            matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-fecha_consulta')
-            # -consultaid
+            # matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-fecha_consulta')
+            matching_consultas = Consulta.objects.filter(medConsulta=userced, fecha_consulta__range=(date_init, date_end)).order_by('-fecha_consulta')
+
             return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
         
         else:
@@ -392,7 +457,7 @@ def reportes(request,):
                 matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-fecha_consulta')
                 return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
     else:
-        matching_consultas = Consulta.objects.filter(medConsulta=userced).order_by('-fecha_consulta')
+        matching_consultas = Consulta.objects.filter(medConsulta=userced, fecha_consulta__range=(date_init, date_end)).order_by('-fecha_consulta')
         return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
 def reporte_graficos(request, idreporte_id:int):
