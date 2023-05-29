@@ -22,6 +22,8 @@
 <div style="text-align: center; padding: 50px;">
     </br>
     <h1 style="font-weight: bold; color: #0796D8">Historial de paciente</h1>
+    <p style="color: #26283E;"> Aquí podrá observar el historial de esta paciente en su consultorio. </p>
+
     </br>
     <div class="mid-container">
         <div class="left-div">
@@ -34,22 +36,22 @@
             <div class="tooltip-container">
                 <input type="radio" name="option" id="option_new" class="radio-input" value="0">
                 <label for="option_new" class="radio-label">
-                    <i class="fa-solid fa-circle-plus"></i> 
+                    <i class="fa-solid fa-circle-plus" onclick="window.location.href='{% url 'consultas/nueva'%}'"></i> 
                 </label>
-              <span class="tooltip">Iniciar un nuevo embarazo</span>
+              <span class="tooltip">Realizar una nueva consulta</span>
             </div>
         </div>
     </div>
     </br>
     <div class="col cont-leyend">
         <div class="leyend" style="background-color: rgba(133, 223, 89, 0.5); margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Embarazo finalizado</p>
-        <div class="leyend" style="background-color: white; margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Embarazo actual</p>
+        <div class="leyend" style="background-color: white; margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Último embarazo registrado</p>
     </div>  
 
     <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
         
         <div class="reports-container">
-            {% for emb in embarazos%}
+            {% for embarazo, consultas_embarazo in embarazo_consultas.items %}
                 <div class="card {% if forloop.last  %} actual {%else%} finalizado {%endif%}" > 
                     <table>
                         <colgroup>
@@ -57,38 +59,40 @@
                             <col>
                         </colgroup>
                         <tr>
-                            <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ emb }} </p></th>
+                            <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ embarazo.numero_embarazo }}  </p></th>
                             <th style="text-align: right">
                                 <div class="tooltip-container">
-                                    <i class="fa-solid fa-eye tab-icon" data-tooltip="Ver resumen de embarazo." onclick="openPopup()"></i>
+                                    <i class="fa-solid fa-eye tab-icon" data-tooltip="Ver resumen de embarazo." onclick="openPopup({{embarazo.id_embarazo}})"></i>
                                     <span class="tooltip">Ver resumen de embarazo.</span>
                                 </div>
                             </th>
                         </tr>
+                        {% for con in consultas_embarazo %}
                         <tr>
-                          <td><i class="fa-solid fa-list" style="color: #909090;" onclick="goToReportPopup()"></i></td>
-                          <td><p style="color: #909090;">{{consulta.fecha_consulta}}</p></td>
-                          <td><p style="color: #909090;">{{consulta.idreporte_id}}</p></td>
-                          <td><p style="color: #909090;">Column 4</td>
+                          <td><i class="fa-solid fa-list" style="color: #909090;" onclick="goToReportPopup({{con.consultaid}})"></i></td>
+                          <td><p style="color: #909090;">{{con.fecha_consulta}}</p></td>
+                          <td><p style="color: #909090;">{{con.consultaid}}</p></td>
+                          {% comment %} <td><p style="color: #909090;">Column 4</td> {% endcomment %}
                         </tr>
+                        {%endfor%}
                     </table>
-                    {% if forloop.last %}
-                    <div class="bottom-corner">
+                    {% comment %} {% if forloop.last %} {% endcomment %}
+                    {% comment %} <div class="bottom-corner">
                         <div class="tooltip-container">
-                            <input type="radio" name="option" id="option{{ emb }}" class="radio-input" value="{{ emb }}">
-                            <label for="option{{ emb }}" class="radio-label">
+                            <input type="radio" name="option" id="option{{ embarazo.id_embarazo }}" class="radio-input" value="{{ embarazo.id_embarazo }}">
+                            <label for="option{{ embarazo.id_embarazo }}" class="radio-label">
                                 <i class="fa-sharp fa-solid fa-circle-check tab-icon" style="font-size: xx-large !important;" data-tooltip="Agregar un reporte a embarazo actual"></i>
                             </label>
                             <span class="tooltip">Agregar un reporte a embarazo actual </span>
                         </div>
                     </div>
-                    {%endif%}
+                    {%endif%} {% endcomment %}
                 </div>
             {%endfor%}
             </div>
     </div>
         <div style="display:flex; justify-content: flex-end">
-            <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px;" onclick="window.location.href='{%url 'registros'%}'">Volver a registros</button>
+            <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px;" onclick="window.location.href='{%url 'registros'%}'">Volver al reporte</button>
         </div>
             {% comment %} </form> {% endcomment %}
 </div>
@@ -104,14 +108,15 @@
       });
     });
 
-    function openPopup() {
-        var a = console.log({{paciente.idpac}})
-        window.open("{% url 'resumen_embarazo' paciente.idpac %}", "Popup Window", "width=500,height=600");
-
+    function openPopup(id_embarazo) {
+        //window.open("{% url 'resumen_embarazo' paciente.idpac %}", "Popup Window", "width=500,height=600");
+        var url = "{% url 'resumen_embarazo' 0 %}".replace('0', id_embarazo);
+        window.open(url, "Popup Window", "width=500,height=600");
       }
 
-    function goToReportPopup(){
-        window.open("{% url 'registroinfo' consulta.consultaid %}", "Popup Window", "width=500,height=600");
+    function goToReportPopup(conid){
+        var url = "{% url 'registroinfo' 0 %}".replace('0', conid);
+        window.open(url, "Popup Window", "width=500,height=600");
     }
 </script>
 {% endblock %}

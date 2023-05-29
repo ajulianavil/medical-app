@@ -1,4 +1,5 @@
 {% load static %}
+{% load my_filters %}
 {% block head %}
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Montserrat:wght@700&display=swap" rel="stylesheet"> 
 
@@ -23,35 +24,27 @@
 
 <div style="text-align: center; padding: 20px;">
     <div class="mid-container">
-        <p style="color: #26283E;">Paciente C.C {{paciente.cedulapac}}</p>
-
-        {% comment %} <form method="POST", enctype="multipart/form-data">
-        {% csrf_token %} {% endcomment %}
-        {% comment %} <div class="right-div">
-            <div class="tooltip-container">
-                <input type="radio" name="option" id="option_new" class="radio-input" value="0">
-                <label for="option_new" class="radio-label">
-                    <i class="fa-solid fa-circle-plus"></i> 
-                </label>
-              <span class="tooltip">Marcar como un nuevo embarazo.</span>
-            </div>
-        </div> {% endcomment %}
+        <p style="font-weight: bold;"> EMBARAZO {{embarazo.numero_embarazo}} </p> 
+        <p style="color: #26283E;">Paciente C.C {{embarazo.idpac_id|get_pacient_id}}</p>
     </div>
     </br>
         <div class="reports-container">
-            {% for reporte, detalles in reportes.items %}
-                <div style="display: block;  align-items: left;">  
-                    <p style="font-weight: bold;"> {{reporte}} <i class="fa-solid fa-eye all-eye"></i></p> </br>  
-                    <p class="init-text"> Conclusiones: </p> </br> <p class="desc-text"> {{detalles.Conclusiones}}</p> </br> </br>
-                    <p class="init-text"> Observaciones del médico: </p> </br> <p class="desc-text"> {{detalles.Observaciones}}</p>
-                    </br></br> </br>
-                </div>
+            {% for consultas_queryset in embarazo_consultas %}
+                {% for consultas in consultas_queryset %}
+                    <div style="display: block;  align-items: left;">  
+                        <p style="font-weight: bold;"> Consulta N° {{consultas.consultaid}} <i class="fa-solid fa-eye all-eye" style="color: #0279AF;" onclick="window.location.href='{% url 'registroinfo' consultas.consultaid %}'"></i></p> </br>  
+                        <p class="init-text"> Fecha de consulta: </p> </br> <p class="desc-text"> {{consultas.fecha_consulta}}</p> </br> </br>
+                        <p class="init-text"> Motivo de consulta: </p> </br> <p class="desc-text"> {{consultas.motivo_consulta}}</p> </br> </br>
+                        <p class="init-text"> Observaciones del médico: </p> </br> <p class="desc-text"> {{consultas.txtresults}}</p>
+                        </br></br> </br>
+                    </div>
+                {%endfor%}
             {%endfor%}
             </div>
     
-        <div style="display:flex; justify-content: flex-end">
+        {% comment %} <div style="display:flex; justify-content: flex-end">
             <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px;" onclick="window.location.href='{%url 'registros'%}'">Volver a registros</button>
-        </div>
+        </div> {% endcomment %}
             {% comment %} </form> {% endcomment %}
 </div>
 

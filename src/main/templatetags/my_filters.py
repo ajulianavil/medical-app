@@ -30,13 +30,28 @@ def get_med_name(item):
     convertidorDeMediciones = {
         'hc_hadlock': 'Circunferencia de la cabeza (HC_HADLOCK)',
         'bpd_hadlock': 'Diámetro biparietal (BPD_HADLOCK)',
-        'cereb_hill' : 'Diámetro transverso del cerebelo',
-        'efw' : 'Peso estimado fetal',
-        'csp': 'Cavum septumpellucidum',
+        'cereb_hill' : 'Diámetro transverso del cerebelo (CEREB_HILL)',
+        'efw' : 'Peso estimado fetal (EFW)',
+        'csp': 'Cavum septumpellucidum (CSP)',
         'cm':'Cisterna Magna (CM)',
         'vp':'Ventrículo posterior (VP)',
         'va':'Ventrículo anterior (VA)',
         'afi':'Indice de líquido amniótico (AFI)',
+    }
+    return convertidorDeMediciones[item]
+
+@register.filter
+def get_med_name_nosiglas(item):
+    convertidorDeMediciones = {
+        'hc_hadlock': 'Circunferencia de la cabeza',
+        'bpd_hadlock': 'Diámetro biparietal',
+        'cereb_hill' : 'Diámetro transverso del cerebelo',
+        'efw' : 'Peso estimado fetal',
+        'csp': 'Cavum septumpellucidum',
+        'cm':'Cisterna Magna',
+        'vp':'Ventrículo posterior',
+        'va':'Ventrículo anterior',
+        'afi':'Indice de líquido amniótico',
     }
     return convertidorDeMediciones[item]
 
@@ -70,11 +85,18 @@ def get_ref_values(reporte, medicion):
                 return  str(settings.VT_3) + ' - ' + str(settings.VT_4)
             
             if float(value) > float(settings.VT_MAX):
-                return settings.VT_MAX
+                return ' > ' + str(settings.VT_MAX)
                             
         if idMedicion == 8:
-            
             return 'aaa'
+            # if float(value) < float(settings.AFI_MIN):
+            #     return ' < ' + str(settings.AFI_MIN)
+            
+            # if  float(settings.AFI_MIN) < float(value) < float(settings.AFI_MAX):
+            #     return  str(settings.AFI_MIN) + ' - ' + str(settings.AFI_MAX)
+            
+            # if float(value) > float(settings.AFI_MAX):
+            #     return   ' > ' + str(settings.AFI_MAX)
         
     except Medicion.DoesNotExist:
         med = None
@@ -109,7 +131,19 @@ def get_pacient_id(id:int):
     else:
         notFount = 'Sin cédula'
         return notFount                  
-    
+
+@register.filter
+def get_numero_embarazo(id_embarazo):
+    print("id", id_embarazo)
+    embarazo = Embarazo.objects.filter(id_embarazo=id_embarazo)
+    if embarazo:
+        for item in embarazo:
+            numero_embarazo = item.numero_embarazo
+        return numero_embarazo
+    else:
+        notFount = '0'
+        return notFount     
+
 @register.filter
 def total_pacientes(id:int):
     record_count = 0;

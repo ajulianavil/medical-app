@@ -1,5 +1,6 @@
 {% extends 'main/layout.html' %}
 {% load static %}
+{% load my_filters %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
@@ -44,13 +45,14 @@
     <p style="color: #26283E; font-weight: bold !important"> La última consulta de esta paciente fue hace: {{last_consulta.0}} meses y {{last_consulta.1}} días</p>
     <div class="col cont-leyend">
         <div class="leyend" style="background-color: rgba(133, 223, 89, 0.5); margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Embarazo finalizado</p>
-        <div class="leyend" style="background-color: white; margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Embarazo actual</p>
+        <div class="leyend" style="background-color: white; margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Último embarazo registrado</p>
     </div>  
 
     <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
         
         <div class="reports-container">
-            {% for emb in embarazos%}
+            {% comment %} {% for emb in embarazos%} {% endcomment %}
+            {% for embarazo, consultas_embarazo in embarazo_consultas.items %}
                 <div class="card {% if forloop.last  %} actual {%else%} finalizado {%endif%}" > 
                     <table>
                         <colgroup>
@@ -58,7 +60,7 @@
                             <col>
                         </colgroup>
                         <tr>
-                            <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ emb.id_embarazo }} </p></th>
+                            <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ embarazo.numero_embarazo }} </p></th>
                             <th style="text-align: right">
                                 <div class="tooltip-container">
                                     <i class="fa-solid fa-eye tab-icon" data-tooltip="Ver resumen de embarazo." onclick="openPopup()"></i>
@@ -71,15 +73,15 @@
                           <td><i class="fa-solid fa-list" style="color: #909090;" onclick="goToReportPopup({{con.consultaid}})"></i></td>
                           <td><p style="color: #909090;">{{ con.fecha_consulta }}</p></td>
                           <td><p style="color: #909090;">{{con.consultaid}}</p></td>
-                          <td><p style="color: #909090;">Column 4</td>
+                          {% comment %} <td><p style="color: #909090;">{{consultas_embarazo}}</td> {% endcomment %}
                         </tr>
                         {%endfor%}
                     </table>
                     {% if forloop.last %}
                     <div class="bottom-corner">
                         <div class="tooltip-container">
-                            <input type="radio" name="option" id="option{{ emb.id_embarazo }}" class="radio-input" value="{{ emb.id_embarazo }}">
-                            <label for="option{{ emb.id_embarazo }}" class="radio-label">
+                            <input type="radio" name="option" id="option{{ embarazo.id_embarazo }}" class="radio-input" value="{{ embarazo.id_embarazo }}">
+                            <label for="option{{ embarazo.id_embarazo }}" class="radio-label">
                                 <i class="fa-sharp fa-solid fa-circle-check tab-icon" style="font-size: xx-large !important;" data-tooltip="Marcar como reporte de este embarazo."></i>
                             </label>
                             <span class="tooltip">Marcar como reporte de este embarazo.</span>
@@ -109,7 +111,7 @@
 
     function openPopup() {
         var a = console.log({{paciente.idpac}})
-        window.open("{% url 'resumen_embarazo' paciente.idpac %}", "Popup Window", "width=500,height=600");
+        window.open("{% url 'resumen_embarazo' paciente.idpac %}", "Popup Window", "width=800,height=600");
 
     }
 

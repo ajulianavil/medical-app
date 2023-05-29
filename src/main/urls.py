@@ -22,5 +22,5 @@ urlpatterns = [
     path("reactivateUser/<str:userid>", views.reactivateUser, name="reactivateUser"),
     path("reporte/paciente_existe/<int:idpac>/<int:consultaid>", views.paciente_existe, name="paciente_existe"),
     path("consultas/historial/<int:idpac>", views.historial_paciente, name="historial_paciente"),
-    path("consultas/resumen/<int:idpac>", views.resumen_embarazo, name="resumen_embarazo")        
+    path("consultas/resumen/<int:id_embarazo>", views.resumen_embarazo, name="resumen_embarazo")        
 ]

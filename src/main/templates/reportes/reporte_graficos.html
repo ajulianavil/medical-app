@@ -11,48 +11,65 @@
 {% endblock %}
 
 {% block content %}
+<div class="container-fluid row" style="padding-top: 30px">
+  <h1 class="mb-4" style="font-weight: bold; color: #0796D8"> Análisis de reporte </h1>
+  <p style="color: #909090; margin: 0px">Paciente C.C {{matching_consulta.idpac_id|get_pacient_id}}</p> 
+  <p style="color: #909090">Embarazo {{matching_consulta.idembarazo_id|get_numero_embarazo}} - Consulta N° {{matching_consulta.consultaid}}</p> 
+
+
+</div>
 <div class="container">
-
-  <div style="margin-right: 100px;">
-    <h1> Análisis de reporte </h1>
-
-    <div class="col" style="margin-bottom: 0; font-weight: bold"> <p>Edad gestacional: {{reporte.ga}} semanas</p></div>
-    
+  
+  <div class="left-div">
+    <div class="col"> <p style="margin: 0px; font-weight: bold; ">Edad gestacional: {{reporte.ga}} semanas</p></div>
+    </br> 
     <table id="infoTable" class="table table-fixed table-condensed">
-      <thead>
+      <thead style="font-align: center; font-weight: medium">
         <tr>
-          <th class="col-xs-3">Medición</th>
-          <th class="col-xs-3">Dato</th>
-          <th class="col-xs-3">Mínimo</th>
-          <th class="col-xs-3">Máximo</th>
+          <th> </th>
+          <th>Dato</th>
+          <th>Mínimo</th>
+          <th>Máximo</th>
         </tr>
       </thead>
       <tbody>
         {% for key, values in reporte_data.items %}
           <tr class="clickableRow {% if values.value|floatformat:2 < values.minvalue|floatformat:2 %} lower {% elif  values.value|floatformat:2 > values.maxvalue|floatformat:2 %} higher {% else %} normal {% endif %}">
-          <td class="col-xs-3" style="text-transform: uppercase;">{{ key }}</td>
-          <td class="col-xs-3">{{ values.value }}</td>
-          <td class="col-xs-3">{{ values.minvalue }}</td>
-          <td class="col-xs-3">{{ values.maxvalue }}</td>
+          <td style="text-align: left !important;">{{ key}}</td> {% comment %}  text-transform: uppercase;  {% endcomment %}
+          <td>{{ values.value }}</td>
+          <td>{{ values.minvalue }}</td>
+          <td>{{ values.maxvalue }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+
     <div class="col cont-leyend">
-      <div class="leyend" style="background-color: rgba(242, 100, 100, 0.5);"></div> <p style="margin-bottom: 0">Superior</p>
-      <div  class="leyend" style="background-color: rgb(249, 199, 79, 0.5); margin-left: 5px"></div> <p style="margin-bottom: 0">Inferior</p>
-      <div  class="leyend" style="background-color: rgba(133, 223, 89, 0.5); margin-left: 5px"></div> <p style="margin-bottom: 0">Normal</p>
+      <div class="leyend" style="background-color: #F4B4B4;"></div> <p style="margin-bottom: 0; font-weight: bold;">Superior</p>
+      <div  class="leyend" style="background-color: #F8DB96; margin-left: 5px"></div> <p style="margin-bottom: 0; font-weight: bold;">Inferior</p>
+      <div  class="leyend" style="background-color: #B9E2A3; margin-left: 5px"></div> <p style="margin-bottom: 0; font-weight: bold;">Normal</p>
     </div>  
+
   </div>
-  <div>
-    <h2>Seleccione una variable para ver su gráfica</h2>
-    <h2 id="title"></h2>
+  <div class="right-div">
+    <div style="flex: 0 0 auto; margin: 0px 20px;">
+      <div class="tooltip-container">
+        <i class="fa-solid fa-circle-question"></i>
+        <span class="tooltip">De click sobre la fila de la tabla que desea graficar.</span>
+      </div>
+      <h4 style="font-weight: bold; color: #26283E; text-align: center; display: inline-block; margin: 0px 10px;">Graficar:</h4>
+      <h4 style="font-weight: medium; color: #26283E; text-align: center; margin: 0; display: inline-block" id="title"></h4>
+    </div>
+    
     <canvas id="myChart"></canvas>
   </div>
+  
+</div>
+<div style="display:flex; justify-content: flex-end; padding: 10px 50px">
+  <button id="submitBtn" class="btn goback-button" style="width: 200px;" onclick="window.location.href='{%url 'registroinfo' matching_consulta.consultaid %}'">Volver a registros</button>
 </div>
 
 <script>
-
   $('#infoTable').on('click', 'tbody tr', function (event) {
     $(this).addClass('highlight').siblings().removeClass('highlight');
 
@@ -64,33 +81,21 @@
     document.getElementById("title").innerHTML = rowData[0];
   });
 
-</script>
-
-<!-- <script>
-  // Write JavaScript code to generate the chart using Chart.js
-  var ctx = document.getElementById('myChart').getContext('2d');
-  var myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-          labels: ['A', 'B', 'C', 'D', 'E'],
-          datasets: [{
-              label: '# of Votes',
-              data: "{{ chart_data|safe }}",  // Use the dynamic chart_data
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1
-          }]
-      },
-      options: {
-          scales: {
-              y: {
-                  beginAtZero: true
-              }
-          }
+  $(document).ready(function() {
+    $('tbody tr').click(function() {
+      $('tbody tr').removeClass('selected selected-lower selected-higher selected-normal'); // Remove all classes from all rows
+      
+      // Check for 'lower', 'higher', or 'normal' class and add corresponding class
+      if ($(this).hasClass('lower')) {
+        $(this).addClass('selected-lower');
+      } else if ($(this).hasClass('higher')) {
+        $(this).addClass('selected-higher');
+      } else if ($(this).hasClass('normal')) {
+        $(this).addClass('selected-normal');
       }
+    });
   });
-</script> -->
-<script>
+
   // Handle row click event
   $('#infoTable').on('click', 'tbody tr', function (event) {
     var row = event.target.closest('tr');
@@ -122,11 +127,11 @@
 
         // Create a new array for the point background colors
         var pointBackgroundColors = Array(data.length).fill('rgba(7, 150, 216, 0.2)');
-        pointBackgroundColors[labelIndex] = 'red'; // Set the background color of the dot
+        pointBackgroundColors[labelIndex] = 'rgba(247, 148, 29, 1)'; // Set the background color of the dot
 
         // Create a new array for the point border colors
         var pointBorderColors = Array(data.length).fill('rgba(54, 162, 235, 1)');
-        pointBorderColors[labelIndex] = 'red'; // Set the border color of the dot
+        pointBorderColors[labelIndex] = 'rgba(247, 148, 29, 1)'; // Set the border color of the dot
 
         // Update the dataset properties
         dataset.data = data;
@@ -154,22 +159,22 @@
       datasets: [{
         label: 'Mínimos',
         data: [],  // Initial default data
-        backgroundColor: 'rgba(7, 150, 216, 0.2)',
+        backgroundColor: 'rgba(7, 150, 216, 0.5)',
         borderColor: 'rgba(7, 150, 216, 1)',
         borderWidth: 1 
       },
       {
         label: 'Máximos',
         data: [],  // Initial default data
-        backgroundColor: 'rgba(7, 150, 216, 0.2)',
-        borderColor: 'rgba(7, 150, 216, 1)',
+        backgroundColor: 'rgba(3, 113, 164, 0.5)',
+        borderColor: 'rgba(3, 113, 164, 1)',
         borderWidth: 1
       },
       {
         label: 'Dato reporte',
         data: [],  // Initial default data
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(247, 148, 29, 0.5)',
+        borderColor: 'rgba(247, 148, 29, 1)',
         borderWidth: 1,
         pointStyle: 'circle',  // Set pointStyle to 'circle'
         pointRadius: 5  // Set the radius of the points

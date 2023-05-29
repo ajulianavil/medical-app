@@ -82,7 +82,6 @@ def consultas(request, personal: str):
         )
 #, embValue=None
 def agregar_consulta(request):
-    print("ALOALOALO")
     if request.method == 'POST':
         storage = messages.get_messages(request)
         storage.used = True
@@ -202,6 +201,7 @@ def agregar_consulta(request):
                 )   
                 
             # ------------------- CREA EL EMBARAZO
+            
             print("idpac", onpatient)
             is_there_embarazo = Embarazo.objects.filter(idpac=onpatient).count()
             print("is_there", is_there_embarazo)
@@ -342,77 +342,86 @@ def agregar_consulta(request):
     )
 
 def paciente_existe(request, idpac, consultaid):
-    print("Estoy aquí")
+    user_logged = current_user(request)
+    info = list(user_logged.values())
+    userced = info[0]['user_identification']
+    
     if request.method == 'POST':
-        user_logged = current_user(request)
-        info = list(user_logged.values())
-        userced = info[0]['user_identification']
         last_consulta = request.POST.get('consulta')
         embarazo_id = request.POST.get('option')
 
         this_consulta = Consulta.objects.get(consultaid=last_consulta)
 
         if embarazo_id:
-            embarazo = Embarazo.objects.get(id_embarazo=int(embarazo_id)) #get_object_or_404(Embarazo, id_embarazo=embarazo_id)
-            this_consulta.idembarazo_id = embarazo.id_embarazo
+            if embarazo_id != '0':
+                embarazo = Embarazo.objects.get(id_embarazo=int(embarazo_id))
+                this_consulta.idembarazo_id = embarazo.id_embarazo
+                
+                this_consulta.save()
+            else:
+                embarazo_info = {
+                    'idpac': idpac,
+                }
+                embarazo_serializer = EmbarazoSerializer(data=embarazo_info)
+                if embarazo_serializer.is_valid():
+                    # try:
+                    embarazo = embarazo_serializer.save()
+                    preg = embarazo.id_embarazo
+                    print("id embarazo", preg)
+                    
+                this_consulta.idembarazo_id = embarazo.id_embarazo
+                
+                this_consulta.save()
 
-        this_consulta.save()
         
         target_url = reverse('registroinfo', args=[last_consulta])
             # Redirect to the target view
         return HttpResponseRedirect(target_url)
     else:
-        consultas = []
-        
         embarazos = Embarazo.objects.filter(idpac = idpac)
+        embarazo_consultas = {}
         if embarazos:
             for embarazo in embarazos:
-                num_emb = embarazo.numero_embarazo
-                print(num_emb)
                 consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo.id_embarazo)
-                
-                for cons in consultas_embarazo:
-                    consultas.append(cons)
-                    
+                embarazo_consultas[embarazo] = list(consultas_embarazo)
+
         paciente = Paciente.objects.get(idpac = idpac)
         last_consulta_meses = 0
         last_consulta_dias = 0
         try:
-            consulta = Consulta.objects.filter(idpac = idpac, medConsulta=userced).order_by('-consultaid').reverse()[1]
+            consulta = Consulta.objects.filter(idpac = idpac, medConsulta=userced).order_by('consultaid').reverse()[1]
             today = datetime.now().date()
             last_consulta = ((today - consulta.fecha_consulta.date()).days)/30
             last_consulta_meses = math.floor(last_consulta)  # Retrieves the whole number part
             last_consulta_dias = math.floor((last_consulta - last_consulta_meses)*30)
         except:
             consulta = None
+            
+        return render(request, 'reportes/paciente_existe.html', context={"paciente": paciente, "last_consulta": (last_consulta_meses, last_consulta_dias), "consulta": consultaid, "embarazo_consultas": embarazo_consultas})
         
-        return render(request, 'reportes/paciente_existe.html', context={"embarazos": embarazos, "paciente": paciente, "last_consulta": (last_consulta_meses, last_consulta_dias), "consulta": consultaid, "consultas_embarazo":consultas})
-
 def historial_paciente(request, idpac):
-    embarazos = [1, 2]
+    embarazos = Embarazo.objects.filter(idpac = idpac)
+    embarazo_consultas = {}
+    if embarazos:
+        for embarazo in embarazos:
+            consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo.id_embarazo)
+            embarazo_consultas[embarazo] = list(consultas_embarazo)
+                
     paciente = Paciente.objects.get(idpac=idpac)
-    consulta = Consulta.objects.filter(idpac=idpac).last()
-    return render(request, 'consultas/historial_paciente.html', context={"paciente": paciente, "embarazos": embarazos, "consulta": consulta})
+    # consulta = Consulta.objects.filter(idpac=idpac).last()
+    return render(request, 'consultas/historial_paciente.html', context={"paciente": paciente, "embarazos": embarazos, "embarazo_consultas": embarazo_consultas})
 
-def resumen_embarazo(request, idpac):
-    reportes = {
-        "Reporte 1": {
-            "Conclusiones": "Esta es la conclusión del reporte 1.",
-            "Observaciones": "Observaciones reporte 1."
-        },
-        "Reporte 2": {
-            "Conclusiones": "Esta es la conclusión del reporte 2.",
-            "Observaciones": "Observaciones reporte 2."
-        },
-        "Reporte 3": {
-            "Conclusiones": "Esta es la conclusión del reporte 3.",
-            "Observaciones": "Observaciones reporte 3."
-        }
-    }
-    return render(request, 'consultas/resumen_embarazo.html', context={"reportes": reportes})
+def resumen_embarazo(request, id_embarazo):
+    embarazo = Embarazo.objects.get(id_embarazo=id_embarazo)
+    embarazo_consultas = []
+    
+    consultas_embarazo = Consulta.objects.filter(idembarazo=id_embarazo)
+    embarazo_consultas.append(consultas_embarazo) 
+    print(embarazo_consultas)
+
+    return render(request, 'consultas/resumen_embarazo.html', context={"embarazo_consultas": embarazo_consultas, "embarazo": embarazo})
 
 def reporteInfo(request, param: int):
-    print("AQUIIIIIIIIIIIIIII")
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(param)
 
     normal_columns = []
@@ -431,7 +440,7 @@ def reporteInfo(request, param: int):
             'normales':normal_columns,
             'anormales':anormales_columns[2:]
         }
-        
+    
     return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnostico": diagnostico})
 
 def repositorio(request):
@@ -528,6 +537,7 @@ def reportes(request,):
 
 def reporte_graficos(request, idreporte_id:int):
     matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
+    matching_consulta = Consulta.objects.get(idreporte=idreporte_id)
     mediciones = get_mediciones()
     
     mediciones_dict = {
@@ -568,7 +578,7 @@ def reporte_graficos(request, idreporte_id:int):
                     'maxvalue': medvalue.valorinter,
                 }
     
-    return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones, "reporte_data": reporte_data})
+    return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones, "reporte_data": reporte_data, "matching_consulta": matching_consulta})
 
 def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str):
     mediciones = get_mediciones()

@@ -48,6 +48,17 @@ p{
     position: relative;
     display: inline-block;
 }
+
+.all-eye{
+  color: #0279AF;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.all-eye{
+  color: #26283E;
+  transform: scale(1.1);
+}
   
 .tooltip {
     font-family: 'League Spartan', sans-serif;

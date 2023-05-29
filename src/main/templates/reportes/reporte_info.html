@@ -79,7 +79,7 @@
       </div>
       <div class="col-md-auto">
         <strong class="col-md-auto label"> Embarazo # </strong>
-        <input id="emb" type="text" name="emb" value="1" style="width: 100px;"
+        <input id="emb" type="text" name="emb" value="{%if consulta.idembarazo_id > 0 %} {{consulta.idembarazo_id|get_numero_embarazo}} {%else%} 1 {%endif%}" style="width: 100px;"
           disabled>
       </div>
     </div>
