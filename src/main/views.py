@@ -149,6 +149,7 @@ def agregar_consulta(request):
         if paciente_serializer.is_valid():
             try:
                 paciente = paciente_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL PACIENTE
+                print("guardé paciente")
             except Exception as e:
                 messages.error(request, f"Error al guardar el paciente: {str(e)}")
                 return render(
@@ -179,10 +180,11 @@ def agregar_consulta(request):
             if reporte_serializer.is_valid():
                 try:
                     reporte = reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
+                    print("guardé reporte")
                     last_report = reporte.idreporte
                 except Exception as e:
                     messages.error(request, f"Error al guardar el reporte: {str(e)}")
-                    paciente.delete()  # Delete the paciente record
+                    # Delete the paciente record
                     return render(
                         request=request,
                         template_name='consultas/agregar_consulta.html',
@@ -192,12 +194,50 @@ def agregar_consulta(request):
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
-                paciente.delete()  # Delete the paciente record
+                # Delete the paciente record
                 return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form}
                 )   
+                
+            # ------------------- CREA EL EMBARAZO
+            print("idpac", onpatient)
+            is_there_embarazo = Embarazo.objects.filter(idpac=onpatient).count()
+            print("is_there", is_there_embarazo)
+            preg = None
+            
+            if is_there_embarazo == 0:
+                print("entré")
+                embarazo_info = {
+                    'idpac': onpatient,
+                }
+                embarazo_serializer = EmbarazoSerializer(data=embarazo_info)
+                if embarazo_serializer.is_valid():
+                    try:
+                        embarazo = embarazo_serializer.save()
+                        preg = embarazo.id_embarazo
+                        print("id embarazo", preg)
+                    except Exception as e:
+                        messages.error(request, f"Error al guardar el embarazo: {str(e)}")
+                        # Delete the paciente record
+                        reporte.delete()   # Delete the reporte record
+                        return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form}
+                        )
+                
+                else:
+                    for error in list(form.errors.values()):
+                        messages.error(request, error)
+                    # Delete the paciente record
+                    reporte.delete()   # Delete the reporte record
+                    return render(
+                        request=request,
+                        template_name='consultas/agregar_consulta.html',
+                        context={"form": form}
+                    )
                 
             # ------------------- CREA LA CONSULTA
             user_logged = current_user(request)
@@ -218,14 +258,20 @@ def agregar_consulta(request):
                 'txtresults': comments
             }
             
+
+            if preg:
+                consulta_info['idembarazo'] = preg
+            
             consulta_serializer = ConsultaSerializer(data=consulta_info)
             if consulta_serializer.is_valid():
                 try:
                     consulta = consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+                    print("Salvó consulta")
                     last_consulta = consulta.consultaid
                 except Exception as e:
                     messages.error(request, f"Error al guardar la consulta: {str(e)}")
-                    paciente.delete()  # Delete the paciente record
+                    print("error consulta")
+                    # Delete the paciente record
                     reporte.delete()   # Delete the reporte record
                     return render(
                         request=request,
@@ -234,9 +280,11 @@ def agregar_consulta(request):
                     )
                 
             else:
+                print("error consulta2")
+                
                 for error in list(form.errors.values()):
                     messages.error(request, error)
-                paciente.delete()  # Delete the paciente record
+                # Delete the paciente record
                 reporte.delete()   # Delete the reporte record
                 return render(
                     request=request,
@@ -254,7 +302,7 @@ def agregar_consulta(request):
                     feto_medicion_diagnostico_serializer.save()
                 except Exception as e:
                     messages.error(request, f"Error al guardar el diagnóstico: {str(e)}")
-                    paciente.delete()  # Delete the paciente record
+                    # Delete the paciente record
                     reporte.delete()   # Delete the reporte record
                     consulta.delete()  # Delete the consulta record
                     return render(
@@ -265,7 +313,7 @@ def agregar_consulta(request):
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
-                paciente.delete()  # Delete the paciente record
+                # Delete the paciente record
                 reporte.delete()   # Delete the reporte record
                 consulta.delete()  # Delete the consulta record
                 return render(
@@ -274,9 +322,10 @@ def agregar_consulta(request):
                     context={"form": form}
                 )
                     
-        consulta_count = Consulta.objects.filter(idpac=onpatient, medConsulta=userced).count()
-        print("LAST LAAAAAAAAAAAAAAASSSSSSSSSSTTTTTTTTTTTTTT", last_consulta)
-        if consulta_count > 1:
+        # consulta_count = Consulta.objects.filter(idpac=onpatient, medConsulta=userced).count()
+        # print("LAST LAAAAAAAAAAAAAAASSSSSSSSSSTTTTTTTTTTTTTT", last_consulta)
+        # if consulta_count > 1:
+        if is_there_embarazo > 0:
             return redirect('paciente_existe', idpac=onpatient, consultaid=last_consulta)
         
         else:
@@ -298,16 +347,33 @@ def paciente_existe(request, idpac, consultaid):
         user_logged = current_user(request)
         info = list(user_logged.values())
         userced = info[0]['user_identification']
-        print("Estoy aquí POST")
         last_consulta = request.POST.get('consulta')
-        embarazo = request.POST.get('option')
-        print("embarazo", embarazo)
+        embarazo_id = request.POST.get('option')
+
+        this_consulta = Consulta.objects.get(consultaid=last_consulta)
+
+        if embarazo_id:
+            embarazo = Embarazo.objects.get(id_embarazo=int(embarazo_id)) #get_object_or_404(Embarazo, id_embarazo=embarazo_id)
+            this_consulta.idembarazo_id = embarazo.id_embarazo
+
+        this_consulta.save()
         
         target_url = reverse('registroinfo', args=[last_consulta])
             # Redirect to the target view
         return HttpResponseRedirect(target_url)
     else:
-        embarazos = [1, 2]
+        consultas = []
+        
+        embarazos = Embarazo.objects.filter(idpac = idpac)
+        if embarazos:
+            for embarazo in embarazos:
+                num_emb = embarazo.numero_embarazo
+                print(num_emb)
+                consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo.id_embarazo)
+                
+                for cons in consultas_embarazo:
+                    consultas.append(cons)
+                    
         paciente = Paciente.objects.get(idpac = idpac)
         last_consulta_meses = 0
         last_consulta_dias = 0
@@ -320,7 +386,7 @@ def paciente_existe(request, idpac, consultaid):
         except:
             consulta = None
         
-        return render(request, 'reportes/paciente_existe.html', context={"embarazos": embarazos, "paciente": paciente, "last_consulta": (last_consulta_meses, last_consulta_dias), "consulta": consultaid})
+        return render(request, 'reportes/paciente_existe.html', context={"embarazos": embarazos, "paciente": paciente, "last_consulta": (last_consulta_meses, last_consulta_dias), "consulta": consultaid, "consultas_embarazo":consultas})
 
 def historial_paciente(request, idpac):
     embarazos = [1, 2]

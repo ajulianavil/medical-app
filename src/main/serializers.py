@@ -28,7 +28,7 @@ class ReporteSerializer(serializers.ModelSerializer):
 class ConsultaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Consulta 
-        fields = ('consultaid', 'fecha_consulta', 'motivo_consulta', 'txtresults', 'medConsulta', 'medUltrasonido', 'idpac', 'idfeto', 'idreporte')
+        fields = ('consultaid', 'fecha_consulta', 'motivo_consulta', 'txtresults', 'medConsulta', 'medUltrasonido', 'idpac', 'idfeto', 'idreporte', 'idembarazo')
         
 class PacienteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,3 +44,8 @@ class FetoMedicionDiagnosticoSerializer(serializers.ModelSerializer):
     class Meta:
         model = FetoMedicionDiagnostico
         fields =  'reporte', 'hc_hadlock', 'bpd_hadlock', 'csp', 'cm', 'vp', 'va', 'cereb_hill', 'efw', 'afi',
+
+class EmbarazoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Embarazo
+        fields = '__all__'

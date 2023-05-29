@@ -124,6 +124,21 @@ class Usuarioexterno(models.Model):
         verbose_name_plural = "UsuariosExternos"
         db_table = "UsuarioExterno"
 
+class Embarazo(models.Model):
+    id_embarazo = models.AutoField( primary_key=True)
+    idpac = models.ForeignKey(Paciente, models.SET_DEFAULT, default="")  # Field name made lowercase.
+    numero_embarazo = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # New pregnancy, increment the count for the patient
+            self.numero_embarazo = Embarazo.objects.filter(idpac=self.idpac).count() + 1
+        super().save(*args, **kwargs)
+        
+    class Meta:
+        db_table = 'Embarazo'
+        verbose_name_plural = 'Embarazos'
+        
 class Consulta(models.Model):
     consultaid = models.AutoField(primary_key=True)
     fecha_consulta = models.DateTimeField()
@@ -134,6 +149,7 @@ class Consulta(models.Model):
     idpac = models.ForeignKey(Paciente, models.SET_DEFAULT, default="")  # Field name made lowercase.
     idfeto = models.IntegerField( blank=True, null=True)  # Field name made lowercase.
     idreporte = models.OneToOneField(Reporte, models.SET_DEFAULT, unique=True, default="")  # Field name made lowercase.
+    idembarazo = models.ForeignKey(Embarazo, models.SET_DEFAULT, default="", null=True)
 
     def __str__ (self):
         return str(self.consultaid)
@@ -186,3 +202,4 @@ class FetoMedicionDiagnostico(models.Model):
     class Meta:
         db_table = 'FetoMedicionDiagnostico'
         verbose_name_plural = "FetoMedicionDiagnostico"
+        

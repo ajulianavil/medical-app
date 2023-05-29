@@ -58,7 +58,7 @@
                             <col>
                         </colgroup>
                         <tr>
-                            <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ emb }} </p></th>
+                            <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ emb.id_embarazo }} </p></th>
                             <th style="text-align: right">
                                 <div class="tooltip-container">
                                     <i class="fa-solid fa-eye tab-icon" data-tooltip="Ver resumen de embarazo." onclick="openPopup()"></i>
@@ -66,18 +66,20 @@
                                 </div>
                             </th>
                         </tr>
+                        {% for con in consultas_embarazo %}
                         <tr>
-                          <td><i class="fa-solid fa-list" style="color: #909090;"></i></td>
-                          <td><p style="color: #909090;">Column 2</p></td>
-                          <td><p style="color: #909090;">Column 3</p></td>
+                          <td><i class="fa-solid fa-list" style="color: #909090;" onclick="goToReportPopup({{con.consultaid}})"></i></td>
+                          <td><p style="color: #909090;">{{ con.fecha_consulta }}</p></td>
+                          <td><p style="color: #909090;">{{con.consultaid}}</p></td>
                           <td><p style="color: #909090;">Column 4</td>
                         </tr>
+                        {%endfor%}
                     </table>
                     {% if forloop.last %}
                     <div class="bottom-corner">
                         <div class="tooltip-container">
-                            <input type="radio" name="option" id="option{{ emb }}" class="radio-input" value="{{ emb }}">
-                            <label for="option{{ emb }}" class="radio-label">
+                            <input type="radio" name="option" id="option{{ emb.id_embarazo }}" class="radio-input" value="{{ emb.id_embarazo }}">
+                            <label for="option{{ emb.id_embarazo }}" class="radio-label">
                                 <i class="fa-sharp fa-solid fa-circle-check tab-icon" style="font-size: xx-large !important;" data-tooltip="Marcar como reporte de este embarazo."></i>
                             </label>
                             <span class="tooltip">Marcar como reporte de este embarazo.</span>
@@ -109,6 +111,11 @@
         var a = console.log({{paciente.idpac}})
         window.open("{% url 'resumen_embarazo' paciente.idpac %}", "Popup Window", "width=500,height=600");
 
-      }
+    }
+
+    function goToReportPopup(conid){
+        var url = "{% url 'registroinfo' 0 %}".replace('0', conid);
+        window.open(url, "Popup Window", "width=500,height=600");
+    }
 </script>
 {% endblock %}
