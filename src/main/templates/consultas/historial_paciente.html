@@ -1,5 +1,6 @@
 {% extends 'main/layout.html' %}
 {% load static %}
+{% load my_filters %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
@@ -27,7 +28,7 @@
     </br>
     <div class="mid-container">
         <div class="left-div">
-            <p style="color: #26283E;">Paciente {{paciente.nombreuno}} {{paciente.apellido_paterno}}</p>
+            <p style="color: #26283E;">Paciente {{paciente.nombreuno}} {{paciente.apellido_paterno}}</p> 
             <p style="color: #26283E;"> Cédula {{paciente.cedulapac}}</p>
         </div>
         {% comment %} <form method="POST", enctype="multipart/form-data">
@@ -38,13 +39,13 @@
                 <label for="option_new" class="radio-label">
                     <i class="fa-solid fa-circle-plus" onclick="window.location.href='{% url 'consultas/nueva'%}'"></i> 
                 </label>
-              <span class="tooltip">Realizar una nueva consulta</span>
+              <span class="tooltip">Realizar una nueva consulta a esta paciente.</span>
             </div>
         </div>
     </div>
     </br>
     <div class="col cont-leyend">
-        <div class="leyend" style="background-color: rgba(133, 223, 89, 0.5); margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Embarazo finalizado</p>
+        <div class="leyend" style="background-color: rgba(133, 223, 89, 0.5); margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Embarazo pasado</p>
         <div class="leyend" style="background-color: white; margin-left: 5px; flex: 0 0 auto; "></div> <p style="margin-bottom: 0">Último embarazo registrado</p>
     </div>  
 
@@ -61,19 +62,20 @@
                         <tr>
                             <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ embarazo.numero_embarazo }}  </p></th>
                             <th style="text-align: right">
-                                <div class="tooltip-container">
+                                <div class="tooltip-left-container">
                                     <i class="fa-solid fa-eye tab-icon" data-tooltip="Ver resumen de embarazo." onclick="openPopup({{embarazo.id_embarazo}})"></i>
-                                    <span class="tooltip">Ver resumen de embarazo.</span>
+                                    <span class="tooltip-left">Ver resumen de embarazo.</span>
                                 </div>
                             </th>
                         </tr>
                         {% for con in consultas_embarazo %}
-                        <tr>
-                          <td><i class="fa-solid fa-list" style="color: #909090;" onclick="goToReportPopup({{con.consultaid}})"></i></td>
-                          <td><p style="color: #909090;">{{con.fecha_consulta}}</p></td>
-                          <td><p style="color: #909090;">{{con.consultaid}}</p></td>
-                          {% comment %} <td><p style="color: #909090;">Column 4</td> {% endcomment %}
-                        </tr>
+                            <tr>
+                                <td><i class="fa-solid fa-eye goto" onclick="goToReportPopup({{con.consultaid}})"></i></td>
+                                <td><p style="color: #909090;">{{con.fecha_consulta}}</p></td>
+                                <td><p style="color: #909090;">{{con.idreporte_id|get_ga}} semanas</p></td>
+                                <td><p style="color: #909090;">{{con.consultaid}}</p></td>
+                                {% comment %} <td><p style="color: #909090;">Column 4</td> {% endcomment %}
+                            </tr>
                         {%endfor%}
                     </table>
                     {% comment %} {% if forloop.last %} {% endcomment %}
@@ -92,7 +94,7 @@
             </div>
     </div>
         <div style="display:flex; justify-content: flex-end">
-            <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px;" onclick="window.location.href='{%url 'registros'%}'">Volver al reporte</button>
+            <button id="submitBtn" class="btn-reg submit-button" onclick="window.location.href='{%url 'registros'%}'">Volver a 'Registros'</button>
         </div>
             {% comment %} </form> {% endcomment %}
 </div>

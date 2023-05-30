@@ -6,7 +6,6 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomCommonPasswordValidator(CommonPasswordValidator):
     def validate(self, password, user=None):
-        print("aquí estoy")
         super().validate(password, user)
         if password.lower() in self.passwords:
             raise ValidationError(

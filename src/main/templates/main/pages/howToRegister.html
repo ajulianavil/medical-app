@@ -11,136 +11,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/landing.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/howto.css' %}" />
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet" type="text/css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Montserrat:wght@700&display=swap" rel="stylesheet"> 
-    <style>
-        .all-contant{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
 
-        .content-body {
-            background-size: cover;
-            {% comment %} backgrond-color: #FFFFFF; {% endcomment %}
-            height: 100%;
-            width: 100%;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            background-color: white;
-            padding: 100px;
-            display: block
-        }
-
-
-        
-        .welcome{
-            position: absolute;
-
-        }
-
-        h1 {
-            font-family: 'League Spartan', sans-serif;  
-            font-size: 48px;
-            font-weight: bold;
-            color: #0796D8;
-            text-align: center;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        h2{
-            font-family: 'League Spartan', sans-serif;
-        }
-
-        p{
-            font-family: 'League Spartan', sans-serif;
-        }
-
-        .image-with-text {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .image-with-text img {
-            width: 500px;
-        }
-
-        .info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 25px;
-        }
-
-        .logo{
-            {% comment %} height: 100px; {% endcomment %}
-            width: 250px;
-        }
-
-        .welcome
-        {
-            width: 80%;
-        }
-
-        .navbar-nav{
-            width: 300px;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            font-family: 'League Spartan', sans-serif;
-            font-weight: bold; 
-        }
-
-        .menuItem{
-            color: #26283E,
-        }
-
-        .menuItem:hover{
-            text-decoration: none;
-        }
-
-        .footer-distributed{
-            background-color: #F1F0F7;
-            box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
-            box-sizing: border-box;
-            width: 100%;
-            font: bold 16px sans-serif;
-            text-align: left;
-            padding: 20px 20px;
-            overflow: hidden;
-        }
-
-        .loginLink{
-            font-family: 'League Spartan', sans-serif;
-            font-weight: bold;
-            color: #26283E;
-            text-align: center;
-            text-decoration: none;
-            transition: color 0.2s ease-in-out;
-        }
-
-        .loginLink:hover{
-            text-decoration: none;
-            color: #0279AF; 
-        }
-
-        .aboutUsImg{
-            display: block;
-            margin: auto;
-            width: 100px;
-            padding-bottom: 20px;
-        }
-
-    </style>
 </head>
 
 <body>
@@ -166,39 +44,19 @@
         <div class="collapse navbar-collapse" id="navbarNav">
         </div>
     </nav>
-    <main>
-        <div class="all-contant">
-
-            <div style="display: block; background-size: cover;
-            {% comment %} backgrond-color: #FFFFFF; {% endcomment %}
-            height: 100%;
-            width: 100%;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            background-color: white;
-            padding: 100px;">
-                {% comment %} <h1 style="font-weight: bold; color: #0796D8;">¿Deseas registrarte?</h1>  {% endcomment %}
-                <h1 style="font-weight: bold; color: #0796D8;">¿Deseas registrarte?</h1> 
-
-                <img  class="aboutUsImg" src="{% static 'images/medicApp_face.png' %}">
-
-                <p style="font-weight: lighter; color: #909090; text-align: center;"> 
-                    Los nuevos usuarios sólo pueden ser registrados por un administrador. </p> </br> </br>
+        <div class="all-content">
+            <div class="centered-content">
+                <h1 style="font-weight: bold; color: #0796D8;">¿Deseas registrarte?</h1>
+                <img class="aboutUsImg" src="{% static 'images/medicApp_face.png' %}">
+                <p style="font-weight: lighter; color: #909090; text-align: center;">Los nuevos usuarios sólo pueden ser registrados por un administrador.</p>
                 <p style="font-weight: bold; text-align: center;">Por favor, comunícate con un administrador para crear tu cuenta o contáctanos vía medicapp@contacto.com.</p>
-                <p style="font-weight: light; text-align: center; color: #909090; ">Si ya cuentas con permisos de administrador, por favor <a style="font-weight: bold; text-align: center; color: #0796D8;" href="/login"> inicia sesión </a>para poder realizar un nuevo registro.
-                </div>
-                </div>
-        
-        <br />
-        <br />
+                <p style="font-weight: light; text-align: center; color: #909090;">Si ya cuentas con permisos de administrador, por favor <a style="font-weight: bold; text-align: center; color: #0796D8;" href="/login">inicia sesión</a> para poder realizar un nuevo registro.</p>
+            </div>
+        </div>
 
-    </main>
-    <br />
-    <br />
-    <footer class="footer-distributed">
+    {% comment %} <footer class="footer-distributed">
 
-        {% comment %} <div class="footer-left">
+        <div class="footer-left">
 
             <h3>Company<span>logo</span></h3>
 
@@ -236,7 +94,7 @@
                 <p><a href="mailto:support@company.com">support@company.com</a></p>
             </div>
 
-        </div> {% endcomment %}
+        </div> 
 
         <div class="footer-right">
 
@@ -251,11 +109,11 @@
                 <a href="#"><i class="fa fa-linkedin"></i></a>
                 <a href="#"><i class="fa fa-github"></i></a>
 
-            </div> {% endcomment %}
+            </div> 
 
         </div>
 
-    </footer>
+    </footer>{% endcomment %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.tutorialzine.com/misc/enhance/v2.js" async=""></script>
 </body>

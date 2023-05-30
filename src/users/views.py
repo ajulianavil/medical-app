@@ -50,7 +50,7 @@ def register(request):
 def custom_logout(request):
     logout(request)
     messages.info(request, "Logged out successfully!")
-    return redirect('/login')
+    return redirect('/landing')
 
 def custom_login(request):
     if request.user.is_authenticated:
@@ -70,15 +70,13 @@ def custom_login(request):
                 username=form.cleaned_data["username"],
                 password=form.cleaned_data["password"],
             )
-            print("user", user)
             if user is not None:
                 login(request, user)
-                messages.success(request, f"¡Bienvenido {user.username}!")
+                # messages.success(request, f"¡Bienvenido {user.username}!")
                 return redirect('/')
 
         else:
             for error in list(form.errors.values()):
-                print("error", error)
                 messages.error(request, error) 
 
     form = AuthenticationForm()

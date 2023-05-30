@@ -24,6 +24,14 @@ def get_field_value(item, field):
         else:
             return None
 
+@register.filter
+def get_ga(id):
+    reporte = Reporte.objects.get(idreporte = id)
+    reporte_ga = reporte.ga
+    if reporte_ga:
+        return reporte_ga
+    else:
+        return '0'
 
 @register.filter
 def get_med_name(item):

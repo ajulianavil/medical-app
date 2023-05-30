@@ -43,6 +43,8 @@
         <div class="collapse navbar-collapse" id="navbarNav">
         </div>
     </nav>
+    {% comment %} <section> {% endcomment %}
+    
     <main>
         <div class="all-contant">
              <div class="content-body">
@@ -55,7 +57,7 @@
         justify-content: space-around;
         align-items: center; padding-top: 20px">
     {% comment %} </br><span style="color: #909090; font-size: 15px; font-weight: bold; margin-top: 100px">Sistema de diagnóstico inmediato para anomalías del sistema nervioso central fetal</span> {% endcomment %}
-            <button type="submit" class="btn btn-primary" onclick="redirectToPage()">Iniciar sesión</button>
+            <button type="submit" class="btn btn-primary" style="font-size: 20px;" onclick="redirectToPage()">Iniciar sesión</button>
         </div>
         <br />
         <br />
@@ -63,12 +65,18 @@
     </main>
     <br />
     <br />
-    <footer class="footer-distributed">
+
+        {% comment %} <div class='air air1'></div>
+        <div class='air air2'></div>
+        <div class='air air3'></div>
+        <div class='air air4'></div>
+      </section> {% endcomment %}
+    {% comment %} <footer class="footer-distributed">
         <div class="footer-right">
 
             <p class="footer-company-about">
                 <span>Universidad Industrial de Santander</span> </br>
-                {% comment %} <span>Clínica Foscal Internacional</span> {% endcomment %}
+                {% comment %} <span>Clínica Foscal Internacional</span> 
 
             </p>
 
@@ -79,11 +87,11 @@
                 <a href="#"><i class="fa fa-linkedin"></i></a>
                 <a href="#"><i class="fa fa-github"></i></a>
 
-            </div> {% endcomment %}
+            </div>
 
         </div>
 
-    </footer>
+    </footer> {% endcomment %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.tutorialzine.com/misc/enhance/v2.js" async=""></script>
 </body>

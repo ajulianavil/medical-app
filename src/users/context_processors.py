@@ -90,7 +90,6 @@ def current_user(request):
         else:
             print("Error no existe el usuario")
         
-        print(user_info)
         return {'current_user': user_info}
     
     else:

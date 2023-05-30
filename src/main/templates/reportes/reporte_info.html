@@ -11,6 +11,13 @@
 <br />
 <br />
 <div class="box container " style="height: 100%; margin-bottom:20px">
+  {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div> 
+    {% endfor %}
+{% endif %}
   <div>
     <div class="row ">
       <div class="col-md-auto ">
