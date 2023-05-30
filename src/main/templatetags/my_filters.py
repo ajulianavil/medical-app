@@ -62,8 +62,10 @@ def get_ref_values(reporte, medicion):
         idMedicion = tipo_medicion.idTipoMedicion
         med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
         
-        # if medicion == 'efw' and medicion == 'afi':
-        if medicion == 'va' or medicion == 'vp':
+        if medicion == 'efw' or medicion == 'afi':
+            reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
+            value = getattr(reporte_value, medicion)
+        else:
             reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
             prefixed_attr = medicion + '_1'
             value = getattr(reporte_value, prefixed_attr)
@@ -88,15 +90,14 @@ def get_ref_values(reporte, medicion):
                 return ' > ' + str(settings.VT_MAX)
                             
         if idMedicion == 8:
-            return 'aaa'
-            # if float(value) < float(settings.AFI_MIN):
-            #     return ' < ' + str(settings.AFI_MIN)
+            if float(value) < float(settings.AFI_MIN):
+                return ' < ' + str(settings.AFI_MIN)
             
-            # if  float(settings.AFI_MIN) < float(value) < float(settings.AFI_MAX):
-            #     return  str(settings.AFI_MIN) + ' - ' + str(settings.AFI_MAX)
+            if  float(settings.AFI_MIN) < float(value) < float(settings.AFI_MAX):
+                return  str(settings.AFI_MIN) + ' - ' + str(settings.AFI_MAX)
             
-            # if float(value) > float(settings.AFI_MAX):
-            #     return   ' > ' + str(settings.AFI_MAX)
+            if float(value) > float(settings.AFI_MAX):
+                return   ' > ' + str(settings.AFI_MAX)
         
     except Medicion.DoesNotExist:
         med = None
