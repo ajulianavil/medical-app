@@ -578,7 +578,7 @@ def reporte_graficos(request, idreporte_id:int):
                     'maxvalue': medvalue.valorinter,
                 }
     
-    return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones, "reporte_data": reporte_data, "matching_consulta": matching_consulta})
+    return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones_dict, "reporte_data": reporte_data, "matching_consulta": matching_consulta})
 
 def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str):
     mediciones = get_mediciones()
