@@ -138,7 +138,7 @@ class Embarazo(models.Model):
     class Meta:
         db_table = 'Embarazo'
         verbose_name_plural = 'Embarazos'
-        
+
 class Consulta(models.Model):
     consultaid = models.AutoField(primary_key=True)
     fecha_consulta = models.DateTimeField()

@@ -1,6 +1,8 @@
 {% extends 'main/layout.html' %}
 {% load static %}
 {% load my_filters %}
+{% load custom_tags %}
+
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/registrar_consulta.css' %}" />
@@ -34,7 +36,14 @@
       </div>
       <div class="col-md-auto ">
         <strong class="col-md-auto label">
-          Médico encargado
+          Médico 
+        </strong>
+        {% get_medico_name consulta.medConsulta_id as medico_name %}
+        <input id="med" type="text" name="date" value="{{medico_name}}" disabled="false">
+      </div>
+      <div class="col-md-auto ">
+        <strong class="col-md-auto label">
+          Ultrasonido hecho por
         </strong>
         <input id="med" type="text" name="date" value="{{consulta.medUltrasonido}}" disabled="false">
       </div>

@@ -377,7 +377,8 @@ def paciente_existe(request, idpac, consultaid):
         last_consulta_meses = 0
         last_consulta_dias = 0
         try:
-            consulta = Consulta.objects.filter(idpac = idpac, medConsulta=userced).order_by('consultaid').reverse()[1]
+            #, medConsulta=userced
+            consulta = Consulta.objects.filter(idpac = idpac).order_by('consultaid').reverse()[1]
             today = datetime.now().date()
             last_consulta = ((today - consulta.fecha_consulta.date()).days)/30
             last_consulta_meses = math.floor(last_consulta)  # Retrieves the whole number part
@@ -471,7 +472,9 @@ def repositorio(request):
         return render(request, 'repositorio/repositorio.html', context={"objects": objects_list, "filtros": filter_kwargs})
         
     else:
-        matching_consultas = Consulta.objects.all()
+        end_date = datetime.now().date()
+        start_date = end_date - timedelta(days=90)
+        matching_consultas = Consulta.objects.filter(fecha_consulta__range=(start_date, end_date)).order_by('-fecha_consulta')
         
         for consulta in matching_consultas:
             matching_reporte = Reporte.objects.filter(idreporte=consulta.idreporte_id).first()
@@ -846,6 +849,10 @@ def reporte_pdf(request, idreporte_id: int):
     # Information
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
 
+    medico = Personalsalud.objects.get(cedulamed=matching_consulta.medConsulta_id)
+    first_name = medico.nombresmed.split(' ')[0] if ' ' in medico.nombresmed else medico.nombresmed
+    last_name = medico.apellidosmed.split(' ')[0] if ' ' in medico.apellidosmed else medico.apellidosmed
+    full_name = f'{first_name} {last_name}'
     normal_columns = []
     anormales_columns = []
 
@@ -905,7 +912,7 @@ def reporte_pdf(request, idreporte_id: int):
     elements.append(spacer_section)
     
     patient_data = [
-    ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{matching_consulta.medUltrasonido}"],
+    ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{full_name}"],
     ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{matching_report.edb}"],
     ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{matching_report.ga} semanas"],
     ["Peso fetal:",  f"{matching_report.efw} gr", "Último periodo menstrual:", f"{matching_patient.lmp}"],
@@ -1028,10 +1035,10 @@ def editPacientData(request, consultaid: int):
             paciente.apellido_paterno = request.POST.get('last-uno')
         if request.POST.get('last-dos') != "":
             paciente.apellido_materno = request.POST.get('last-dos')
-        if request.POST.get('gest') != "":
-            paciente.numgestacion = request.POST.get('gest')
-        if request.POST.get('lmp') != "":
-            paciente.lmp = request.POST.get('lmp')
+        # if request.POST.get('gest') != "":
+        #     paciente.numgestacion = request.POST.get('gest')
+        # if request.POST.get('lmp') != "":
+        #     paciente.lmp = request.POST.get('lmp')
 
         consulta.motivo_consulta = request.POST.get('motivo')
         

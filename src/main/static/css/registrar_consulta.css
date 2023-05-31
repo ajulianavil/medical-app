@@ -87,8 +87,27 @@ input[type="text"]:focus {
     font-weight: bold;
     padding: 3px 0px 3px 10px;
     width: 100%;
-    color: #26283E
+    color: #26283E;
+    overflow: auto
 }
+
+.custom-area::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+  }
+  
+  .custom-area::-webkit-scrollbar-track {
+    background: #ffffff; /* Color of the track */
+  }
+  
+  .custom-area::-webkit-scrollbar-thumb {
+    background-color: #888888; /* Color of the thumb */
+    border-radius: 4px; /* Rounded corners of the thumb */
+  }
+  
+  .custom-area::-webkit-scrollbar-thumb:hover {
+    background-color: #555555; /* Color of the thumb on hover */
+  }
+  
 
 #description {
     border-radius: 15px;

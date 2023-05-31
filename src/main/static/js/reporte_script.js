@@ -7,6 +7,7 @@ var initialLmp
 var initialGestations
 var Initialmotive
 
+
 document.addEventListener('DOMContentLoaded', function() {
     // Store the initial value of the textarea when enabling report fields
     initialObsValue = document.getElementById("obs").value
@@ -17,7 +18,17 @@ document.addEventListener('DOMContentLoaded', function() {
     initialLmp = document.getElementById("lmp").value
     initialGestations = document.getElementById("gest").value
     Initialmotive = document.getElementById("motivo").value
+
+    const textarea = document.getElementById('obs');
+    textarea.addEventListener('input', function() {
+        console.log("aaaaaaaaaa")
+        if (this.value.length > 999) {
+          this.value = this.value.slice(0, 999); // Truncate the text to 1000 characters
+        }
+      });
 });
+
+
 
 function enableFields(){
     var fullAnalysisButton = document.getElementById('full_analysis');
@@ -26,7 +37,7 @@ function enableFields(){
     var fields = form.getElementsByTagName('input');
 
     for (var i = 0; i < fields.length; i++) {
-        if (fields[i].name === "cedula") {
+        if (fields[i].name === "cedula" || fields[i].name === "emb" || fields[i].name === "gest" || fields[i].name === "lmp") {
             continue;
         }
     fields[i].disabled = false;

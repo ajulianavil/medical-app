@@ -158,7 +158,7 @@ def user_data(request):
                 instance.userid = appuser 
                 instance.save()
 
-                messages.success(request, 'El registro ha sido finalizado con éxito')
+                messages.success(request, 'El registro ha sido finalizado. Por seguridad, recuerde cambiar aquí su contraseña.')
 
                 return render(request, 'users/profile.html', {"rol": rol,})
             except IntegrityError:

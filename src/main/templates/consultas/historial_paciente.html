@@ -1,6 +1,8 @@
 {% extends 'main/layout.html' %}
 {% load static %}
 {% load my_filters %}
+{% load custom_tags %}
+
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
@@ -23,7 +25,7 @@
 <div style="text-align: center; padding: 50px;">
     </br>
     <h1 style="font-weight: bold; color: #0796D8">Historial de paciente</h1>
-    <p style="color: #26283E;"> Aquí podrá observar el historial de esta paciente en su consultorio. </p>
+    <p style="color: #26283E;"> Aquí podrá observar el historial de esta paciente. </p>
 
     </br>
     <div class="mid-container">
@@ -68,12 +70,20 @@
                                 </div>
                             </th>
                         </tr>
+                        <tr>
+                            <td> Ver </td>
+                            <td> Fecha consulta</td>
+                            <td>Edad gestacional</td>
+                            <td>Médico encargado </td>
+                            {% comment %} <td><p style="color: #909090;">{{consultas_embarazo}}</td> {% endcomment %}
+                        </tr>
                         {% for con in consultas_embarazo %}
                             <tr>
                                 <td><i class="fa-solid fa-eye goto" onclick="goToReportPopup({{con.consultaid}})"></i></td>
                                 <td><p style="color: #909090;">{{con.fecha_consulta}}</p></td>
                                 <td><p style="color: #909090;">{{con.idreporte_id|get_ga}} semanas</p></td>
-                                <td><p style="color: #909090;">{{con.consultaid}}</p></td>
+                                {% get_medico_name con.medConsulta_id as medico_name %}
+                                <td><p style="color: #909090;">{{medico_name}}</p></td>
                                 {% comment %} <td><p style="color: #909090;">Column 4</td> {% endcomment %}
                             </tr>
                         {%endfor%}
