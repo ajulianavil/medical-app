@@ -26,7 +26,7 @@ def get_field_value(item, field):
 
 @register.filter
 def get_ga(id):
-    reporte = Reporte.objects.get(idreporte = id)
+    reporte = Reporte.objects.get(consultaid = id)
     reporte_ga = reporte.ga
     if reporte_ga:
         return reporte_ga
@@ -170,8 +170,10 @@ def total_fetos(id:int):
     consulta_mes = Consulta.objects.filter(fecha_consulta__month=current_month, medConsulta=id)
     for consulta in consulta_mes:
         record_count_normal = 0;    
-        reporte = consulta.idreporte
-        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte)
+        print(consulta)
+        # reporte = consulta.idreporte
+        reporte = Reporte.objects.filter(consultaid = consulta.consultaid).first()
+        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte.idreporte)
         
         for instance in diagnostico:
             for field in instance._meta.get_fields():

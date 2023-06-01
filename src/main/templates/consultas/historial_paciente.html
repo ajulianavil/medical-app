@@ -81,7 +81,7 @@
                             <tr>
                                 <td><i class="fa-solid fa-eye goto" onclick="goToReportPopup({{con.consultaid}})"></i></td>
                                 <td><p style="color: #909090;">{{con.fecha_consulta}}</p></td>
-                                <td><p style="color: #909090;">{{con.idreporte_id|get_ga}} semanas</p></td>
+                                <td><p style="color: #909090;">{{con.consultaid|get_ga}} semanas</p></td>
                                 {% get_medico_name con.medConsulta_id as medico_name %}
                                 <td><p style="color: #909090;">{{medico_name}}</p></td>
                                 {% comment %} <td><p style="color: #909090;">Column 4</td> {% endcomment %}

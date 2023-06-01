@@ -36,41 +36,6 @@ class Personalsalud(models.Model):
         verbose_name_plural = "Personal"
         ordering = ['cedulamed']
 
-class Reporte(models.Model):
-    idreporte = models.AutoField(db_column='idReporte', primary_key=True)  # Field name made lowercase.
-    efw = models.CharField(max_length=100, blank=True, null=True)
-    edb = models.CharField(max_length=100, blank=True, null=True)
-    ga = models.CharField(max_length=100, blank=True, null=True)
-    csp_1 = models.CharField(max_length=50, blank=True, null=True)
-    csp_avg = models.CharField(max_length=50, blank=True, null=True)
-    cm_1 = models.CharField(max_length=50, blank=True, null=True)
-    cm_avg = models.CharField(max_length=50, blank=True, null=True)
-    hc_hadlock_1 = models.CharField(max_length=50, blank=True, null=True)
-    hc_hadlock_avg = models.CharField(max_length=50, blank=True, null=True)
-    hc_hadlock_ga = models.CharField(max_length=50, blank=True, null=True)
-    hc_hadlock_edc = models.CharField(max_length=50, blank=True, null=True)
-    hc_hadlock_dev = models.CharField(max_length=50, blank=True, null=True)
-    bpd_hadlock_1 = models.CharField(max_length=50, blank=True, null=True)
-    bpd_hadlock_avg = models.CharField(max_length=50, blank=True, null=True)
-    bpd_hadlock_ga = models.CharField(max_length=50, blank=True, null=True)
-    bpd_hadlock_edc = models.CharField(max_length=50, blank=True, null=True)
-    bpd_hadlock_dev = models.CharField(max_length=50, blank=True, null=True)
-    cereb_hill_1 = models.CharField(max_length=50, blank=True, null=True)
-    cereb_hill_avg = models.CharField(max_length=50, blank=True, null=True)
-    cereb_hill_ga = models.CharField(max_length=50, blank=True, null=True)
-    cereb_hill_edc = models.CharField(max_length=50, blank=True, null=True)
-    cereb_hill_dev = models.CharField(max_length=50, blank=True, null=True)
-    va_1 = models.CharField(max_length=50, blank=True, null=True)
-    va_avg = models.CharField(max_length=50, blank=True, null=True)
-    vp_1 = models.CharField(max_length=50, blank=True, null=True)
-    vp_avg = models.CharField(max_length=50, blank=True, null=True)
-    ga_days = models.CharField(max_length=100, blank=True, null=True)
-    afi = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        db_table = 'Reporte'
-        verbose_name_plural = "Reportes"
-
 class Paciente(models.Model):
     idpac = models.AutoField(db_column='idPac', primary_key=True)  # Field name made lowercase.
     cedulapac = models.IntegerField(db_column='cedulaPac', blank=True, null=True, validators=[val_cedulapac], unique=True)  # Field name made lowercase.
@@ -85,18 +50,6 @@ class Paciente(models.Model):
     class Meta: 
         verbose_name_plural = "Pacientes"
         db_table = 'Paciente'
-
-class Historiaclinica(models.Model):
-    idhistoriaclinica = models.AutoField(db_column='idHistoriaClinica', primary_key=True)  # Field name made lowercase.
-    antquirurgico = models.TextField(db_column='antQuirurgico', blank=True, null=True)  # Field name made lowercase.
-    antpatologico = models.TextField(db_column='antPatologico', blank=True, null=True)  # Field name made lowercase.
-    antginecologico = models.TextField(db_column='antGinecologico', blank=True, null=True)  # Field name made lowercase.
-    lmp = models.CharField(db_column='LMP', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    idPaciente = models.ForeignKey(Paciente, models.SET_DEFAULT, default="")  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'HistoriaClinica'
-        verbose_name_plural = "Historiales"
 
 class Institucion(models.Model):
     institucionid = models.IntegerField(db_column='institucionId', primary_key=True)  # Field name made lowercase.
@@ -128,16 +81,22 @@ class Embarazo(models.Model):
     id_embarazo = models.AutoField( primary_key=True)
     idpac = models.ForeignKey(Paciente, models.SET_DEFAULT, default="")  # Field name made lowercase.
     numero_embarazo = models.PositiveIntegerField(default=0)
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            # New pregnancy, increment the count for the patient
-            self.numero_embarazo = Embarazo.objects.filter(idpac=self.idpac).count() + 1
-        super().save(*args, **kwargs)
-        
+   
     class Meta:
         db_table = 'Embarazo'
         verbose_name_plural = 'Embarazos'
+
+class Feto(models.Model):
+    idfeto = models.AutoField( primary_key=True)
+    id_embarazo = models.ForeignKey(Embarazo, on_delete=models.CASCADE)
+    posicion_feto = models.CharField( max_length=100, blank=True, null=True)  # Field name made lowercase.
+    
+    def __str__ (self):
+        return str(self.idfeto)
+    
+    class Meta:
+        db_table = 'Feto'
+        verbose_name_plural = 'Fetos'
 
 class Consulta(models.Model):
     consultaid = models.AutoField(primary_key=True)
@@ -147,8 +106,6 @@ class Consulta(models.Model):
     medConsulta = models.ForeignKey(Personalsalud, models.SET_DEFAULT, default="", blank=True, null=True) #ESTO DEBERIA IR ENLAZADO A USER
     medUltrasonido = models.CharField(max_length=200, blank=True, null=True)  # Field name made lowercase.# Field name made lowercase.
     idpac = models.ForeignKey(Paciente, models.SET_DEFAULT, default="")  # Field name made lowercase.
-    idfeto = models.IntegerField( blank=True, null=True)  # Field name made lowercase.
-    idreporte = models.OneToOneField(Reporte, models.SET_DEFAULT, unique=True, default="")  # Field name made lowercase.
     idembarazo = models.ForeignKey(Embarazo, models.SET_DEFAULT, default="", null=True)
 
     def __str__ (self):
@@ -185,6 +142,26 @@ class Medicion(models.Model):
         db_table = 'Medicion'
         verbose_name_plural = "Mediciones"
 
+class Reporte(models.Model):
+    idreporte = models.AutoField(db_column='idReporte', primary_key=True)  # Field name made lowercase.
+    consultaid = models.ForeignKey(Consulta, on_delete=models.CASCADE)
+    fetoid = models.ForeignKey(Feto, on_delete=models.CASCADE, blank=True, null=True)
+    efw = models.CharField(max_length=100, blank=True, null=True)
+    edb = models.CharField(max_length=100, blank=True, null=True)
+    ga = models.CharField(max_length=100, blank=True, null=True)
+    csp_1 = models.CharField(max_length=50, blank=True, null=True)
+    cm_1 = models.CharField(max_length=50, blank=True, null=True)
+    hc_hadlock_1 = models.CharField(max_length=50, blank=True, null=True)
+    bpd_hadlock_1 = models.CharField(max_length=50, blank=True, null=True)
+    cereb_hill_1 = models.CharField(max_length=50, blank=True, null=True)
+    va_1 = models.CharField(max_length=50, blank=True, null=True)
+    vp_1 = models.CharField(max_length=50, blank=True, null=True)
+    ga_days = models.CharField(max_length=100, blank=True, null=True)
+    afi = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        db_table = 'Reporte'
+        verbose_name_plural = "Reportes"
 
 class FetoMedicionDiagnostico(models.Model):
     idfetomediciondiagnostico = models.AutoField( primary_key=True)  # Field name made lowercase.
