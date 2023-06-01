@@ -352,9 +352,11 @@ def temporal_historial(request):
     
     consultas = {
          "Feto 1": {
+            "id": 1,
             "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a la pélvis.",
         },
         "Feto 2": {
+            "id": 2,
             "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a las costillas",
         },
     }

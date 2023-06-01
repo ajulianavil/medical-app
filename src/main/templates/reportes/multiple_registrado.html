@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/multiple_registrado.css' %}"/>
 
     <script src="https://kit.fontawesome.com/5bdb3c603b.js" crossorigin="anonymous"></script>
+    <script src="{% static 'js/multiple_registrado.js' %}"></script>
     {% comment %} <script src="{% static 'js/upload_file.js' %}"></script> {% endcomment %}
 
 {% endblock %}
@@ -41,7 +42,6 @@
         <div class="left-div">
             {% comment %} <p style="color: #26283E;">Para mantener el historial, define si esta consulta hace parte de un embarazo en curso ya registrado, o si es la primera consulta de un nuevo embarazo, márcalo como tal.</p> {% endcomment %}
             <p style="color: #26283E;"> Hemos encontrado consultas pasadas para este embarazo múliple.</p>
-            <p style="color: #26283E;"> Hemos encontrado consultas pasadas para este embarazo múliple.</p>
             <p style="color: #26283E; font-weight: bold;">En la consulta anterior, se identificó cada feto de la siguiente manera:.</p> </br>
         </div>
         <form method="POST", enctype="multipart/form-data">
@@ -72,12 +72,14 @@
                 <div style="display: flex; flex-direction: column;">
                     <div class="card-two" > 
                         <div class="mid-container">
-                            <p> {{detalles.txtresults}} </p>
-                        </div>
-                        <div class="right-div">
-                            <input type="radio" value="1">
-                            <input type="radio" value="2">
-
+                            <div class="left-div">
+                                <p> {{detalles.txtresults}} </p>
+                            </div>
+                            <div class="right-div">
+                                {% for coni, detallesi in consultas.items %}
+                                    Feto {{ detallesi.id }} <input type="radio" name="radioGroup{{con}}" value="{{ detallesi.id }}" onclick="handleRadioButton(this)">
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,50 +92,4 @@
     </form>
 </div>
 
-<script>
-
-    window.addEventListener('DOMContentLoaded', function() {
-        // Get the modal element
-        var modal = document.getElementById('myModal');
-      
-        // Get the close button element
-        var closeBtn = document.getElementsByClassName('close')[0];
-      
-        // Show the modal
-        modal.style.display = 'block';
-      
-        // Close the modal when the close button is clicked
-        closeBtn.addEventListener('click', function() {
-          modal.style.display = 'none';
-        });
-      
-        // Close the modal when the user clicks outside of it
-        window.addEventListener('click', function(event) {
-          if (event.target == modal) {
-            modal.style.display = 'none';
-          }
-        });
-      });
-      
-    const radioButtons = document.querySelectorAll('.radio-input');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    // Add event listener to radio buttons
-    radioButtons.forEach((radioButton) => {
-      radioButton.addEventListener('change', () => {
-        submitBtn.disabled = false; // Enable the button when a radio button is selected
-      });
-    });
-
-    {% comment %} function openPopup() {
-        var a = console.log({{paciente.idpac}})
-        window.open("{% url 'resumen_embarazo' paciente.idpac %}", "Popup Window", "width=800,height=600");
-
-    } {% endcomment %}
-
-    function goToReportPopup(conid){
-        var url = "{% url 'registroinfo' 0 %}".replace('0', conid);
-        window.open(url, "Popup Window", "width=500,height=600");
-    }
-</script>
 {% endblock %}
