@@ -80,7 +80,7 @@ def consultas(request, personal: str):
         template_name='main/consultas.html',
         context={"objects": matching_consultas}
         )
-#, embValue=None
+
 def agregar_consulta(request):
     if request.method == 'POST':
         storage = messages.get_messages(request)
@@ -334,6 +334,31 @@ def agregar_consulta(request):
         template_name='consultas/agregar_consulta.html',
         context={"form": form}
     )
+
+def temporal_embarazo(request):
+    return render(request=request, template_name='consultas/tipo_embarazo.html')
+
+def temporal_historial(request):
+    fetos = {
+         "Feto 1": {
+            "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a la pélvis.",
+            "identificacion": "1"
+        },
+        "Feto 2": {
+            "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a las costillas",
+            "identificacion": "2"
+        },
+    }
+    
+    consultas = {
+         "Feto 1": {
+            "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a la pélvis.",
+        },
+        "Feto 2": {
+            "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a las costillas",
+        },
+    }
+    return render(request=request, template_name='reportes/multiple_registrado.html', context={"fetos": fetos, "consultas": consultas}) 
 
 def paciente_existe(request, idpac, consultaid):
     user_logged = current_user(request)
