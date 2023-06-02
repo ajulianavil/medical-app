@@ -52,14 +52,14 @@
                 {% if current_user.userrol != 'investigador'%} 
                 <a href="/consultas/nueva" class="nav_link">
                     <i class="fa-solid fa-plus nav_icon"></i>
-                    <span class="nav_name">Nuevo diagnóstico</span>
+                    <span class="nav_name">Nuevo consulta</span>
                 </a>
                 {% endif %}
                 {% if current_user.userrol != 'investigador'%} 
                 
                 <a href="/registros" class="nav_link">
                     <i class="fa-solid fa-magnifying-glass nav_icon"></i>
-                    <span class="nav_name">Buscar registro</span>
+                    <span class="nav_name">Buscar consulta</span>
                 </a>
                 {%endif%}
                 <a href="/repositorio" class="nav_link">

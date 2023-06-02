@@ -8,6 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Montserrat:wght@700&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" type="text/css" href="{% static 'main/login.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/registro2.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <title>{% block title %} NeuroApp | Login {% endblock %}</title>
+
 
 </head>
 <div>
@@ -17,23 +20,22 @@
         <div class="login-card">
             <div class="row">
                 {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success">
-                        {{ message }}
-                    </div> 
-                {% endfor %}
-            {% endif %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div> 
+                    {% endfor %}
+                {% endif %}
                 <div class="col login-options">
                     
                     <form class="login-form" method="POST" novalidate>
-                    <h2> Iniciar sesión </h2>
-
+                        <h2> Iniciar sesión </h2>
                         {% csrf_token %}
                         <label for="exampleInputEmail1">Correo electrónico</label>
                         <input type="email" class="form-control" name="username" aria-describedby="emailHelp"
-                            placeholder="Email">
+                            placeholder="Email" required>
                         <label for="exampleInputPassword1">Contraseña</label>
-                        <input type="password" class="form-control" placeholder="Contraseña" name="password">
+                        <input type="password" class="form-control" placeholder="Contraseña" name="password" required>
                         <br />
                         <button type="submit" class="btn btn-primary">Iniciar sesión</button>
                         <br />
@@ -49,4 +51,5 @@
         </div>
     </div>
 </div>
+
 {% endblock body %}

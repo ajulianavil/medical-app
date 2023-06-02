@@ -40,6 +40,7 @@ def current_user(request):
                 cedula = medico_data.cedulamed
                 telefono = medico_data.telefonomed
                 direccion = medico_data.direccionmed
+                institucionid = medico_data.hospitalid_id
 
             elif investigador_data != None:
                 nombre = investigador_data.nombresext
@@ -47,6 +48,7 @@ def current_user(request):
                 cedula = investigador_data.cedulaext
                 telefono = investigador_data.telefonoext
                 direccion = investigador_data.direccionext
+                institucionid = investigador_data.institutionid_id
                                 
             else:
                 print("aun no hay informacion del usuario")
@@ -66,8 +68,11 @@ def current_user(request):
             'user_identification': cedula,
             'user_phone': telefono,
             'user_address': direccion,
-            'is_superuser': superuser
+            'is_superuser': superuser,
+            'institucion': institucionid
             }
+            
+            print(user_info)
             
             forbidden_url_patterns = [
                 r'^/registros$',

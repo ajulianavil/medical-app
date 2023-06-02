@@ -39,6 +39,7 @@
           Médico 
         </strong>
         {% get_medico_name consulta.medConsulta_id as medico_name %}
+        {% get_medico_id consulta.medConsulta_id as medico_id %}
         <input id="med" type="text" name="date" value="{{medico_name}}" disabled="false">
       </div>
       <div class="col-md-auto ">
@@ -112,7 +113,7 @@
       <div>
         {% comment %} <input type="hidden" name="id_consulta" value="{{ consulta.consultaid }}"> {% endcomment %}
         <button class="btn round-button" type="button" id="cancelInfo" style="display: None;" onclick="onCancelInfo()"> <i class="fa-solid fa-xmark"></i></button>
-        <button class="btn report-button" id="editButton" type="button" style="width: 200px !important" onclick="enableFields()">Editar información</button>
+        {% if medico_id == current_user.userid %} <button class="btn report-button" id="editButton" type="button" style="width: 200px !important" onclick="enableFields()">Editar información</button> {%endif%}
         <button class="btn report-button" id="sendButton" type="submit" style="width: 200px !important; display: none;" onclick="saveFields()">Guardar información</button>
       </div>
       
@@ -220,7 +221,7 @@
   <div class="grid">
     <div class="col-12" style="margin-top: 10px; margin-bottom: 10px">
         <button class="btn round-button" type="button" id="cancelReport" style="display: None;" onclick="onCancelReport()"> <i class="fa-solid fa-xmark"></i></button>
-        <button class="btn report-button" type="button" id="editReport" onclick="enableReportFields()">Agregar observaciones</button>
+        {% if medico_id == current_user.userid %} <button class="btn report-button" type="button" id="editReport" onclick="enableReportFields()">Agregar observaciones</button> {%endif%}
         <button class="btn report-button" type="submit" id="saveReport" style="display: None" onclick="saveReport()">Guardar reporte</button>
     </form>
         <form method="GET" action="{% url 'reporte_pdf' consulta.consultaid %}">

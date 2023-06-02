@@ -1,7 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import CommonPasswordValidator
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 class CustomCommonPasswordValidator(CommonPasswordValidator):
@@ -19,18 +18,28 @@ class CustomCommonPasswordValidator(CommonPasswordValidator):
 
 def val_cedulamed(cedulamed):
     if len(str(cedulamed)) < 4:
-        raise ValidationError("El número de identificación debe sere mayor a 4 digitos") 
+        raise ValidationError("El número de identificación debe ser mayor a 4 digitos") 
     if len(str(cedulamed)) > 10:
         raise ValidationError("El número de identificación no puede exceder los 10 dígitos") 
     
 def val_cedulaext(cedulaext):
     if len(str(cedulaext)) < 4:
-        raise ValidationError("El número de identificación debe sere mayor a 4 digitos") 
+        raise ValidationError("El número de identificación debe ser mayor a 4 digitos") 
     if len(str(cedulaext)) > 10:
         raise ValidationError("El número de identificación no puede exceder los 10 dígitos") 
 
 def val_cedulapac(cedulapac):
     if len(str(cedulapac)) < 4:
-        raise ValidationError("El número de identificación debe sere mayor a 4 digitos") 
+        raise ValidationError("El número de identificación debe ser mayor a 4 digitos") 
     if len(str(cedulapac)) > 10:
         raise ValidationError("El número de identificación no puede exceder los 10 dígitos") 
+
+def validate_unique_user_identification(value):
+    from main.models import Personalsalud, Usuarioexterno
+    print("value", value)
+    print("existe salud", Personalsalud.objects.filter(cedulamed=value).exists())
+    print("existe cedulaext", Usuarioexterno.objects.filter(cedulaext=value).exists())
+    
+    if Personalsalud.objects.filter(cedulamed=value).exists() or Usuarioexterno.objects.filter(cedulaext=value).exists():
+        print("entré")
+        raise ValidationError('El usuario con este número de identificación ya posee una cuenta en el sistema.')

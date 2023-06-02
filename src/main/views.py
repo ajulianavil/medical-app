@@ -32,6 +32,8 @@ from django.templatetags.static import static
 from reportlab.lib.colors import Color
 import json
 import math
+from django.db.models import Q
+
 
 from chartjs.views.lines import BaseLineChartView
 # Create your views here.
@@ -509,8 +511,8 @@ def repositorio(request):
         matching_consultas = Consulta.objects.filter(fecha_consulta__range=(start_date, end_date)).order_by('-fecha_consulta')
         
         for consulta in matching_consultas:
-            matching_reporte = Reporte.objects.filter(idreporte=consulta.idreporte_id).first()
-            diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=consulta.idreporte_id).first()
+            matching_reporte = Reporte.objects.filter(consultaid=consulta.consultaid).first()
+            diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=matching_reporte.idreporte).first()
             obj = {
                 'reporte': matching_reporte,
                 'diagnostico': diagnostico,
@@ -646,131 +648,51 @@ def agregar_usuario(request):
         return render(request, 'agregar_usuario/seleccionar_usuario.html')
 
 def ver_usuarios(request):
-    
     if request.method == 'POST':
         all_users = Appuser.objects.all().order_by('-savedate')
-        # id_input = request.POST.get('id_input')
-        email_input = request.POST.get('email_input')
         
-        if email_input == '':
+        email_input = request.POST.get('email_input')
+        cedula_input = request.POST.get('cedula_input')
+        
+        if email_input == '' and cedula_input == '':
             return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
             
         else:
-            usuario = Appuser.objects.get(email=email_input)
-            if usuario:
-                all_users = [usuario] 
+            # usuario = Appuser.objects.get(email=email_input)
+            if cedula_input != '':
+                medico_data = Personalsalud.objects.filter(cedulamed=cedula_input).first()
+                investigador_data = Usuarioexterno.objects.filter(cedulaext=cedula_input).first()
+
+                if medico_data:
+                    all_users = all_users.filter(Q(userid=medico_data.userid_id))
+                    
+                elif investigador_data:
+                    all_users = all_users.filter(Q(userid=investigador_data.userid_id))
+                    
+                else:
+                    messages.warning(request, f'No existe usuario con la cédula {cedula_input}')
+                    return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
+                
+                if email_input != '':
+                    all_users = all_users.filter(Q(email=email_input))
+                    if not all_users.exists():
+                        messages.warning(request, f'No existe usuario con el email {email_input} ni cédula {cedula_input}')
+                        return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
+                    return render(request, 'agregar_usuario/ver_usuarios.html', context={"objects": all_users})
+                
+            else:
+                all_users = all_users.filter(Q(email=email_input))
+                
+            if email_input and not all_users.exists():
+                messages.warning(request, f'No existe usuario con el email {email_input}')
                 return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
             else:
-                messages.warning(request, f'No existe usuario con el email {email_input}')
+                
                 return render(request, 'agregar_usuario/ver_usuarios.html', context={"objects": all_users})
-        # if id_input == '' and email_input == '':
-        #     for user in all_users:
-        #         try:
-        #             personal_salud = Personalsalud.objects.get(userid=user.userid)
-        #             user.userced = personal_salud.cedulamed
-        #         except Personalsalud.DoesNotExist:
-        #             try:
-        #                 usuario_externo = Usuarioexterno.objects.get(userid=user.userid)
-        #                 user.userced = usuario_externo.cedulaext
-        #             except Usuarioexterno.DoesNotExist:
-        #                 user.userced = None
-
-        #     return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
         
-        # else:
-        #     if email_input != '' and id_input == '':
-        #         usuario = Appuser.objects.get(email=email_input)
-                
-        #         user = Personalsalud.objects.get(userid=usuario.userid) or Usuarioexterno.objects.get(userid=usuario.userid)
-        #         userid = 0
-        #         userced = 0
-                
-        #         if user.userid:
-        #             userid = user.userid.userid
-        #             if user.cedulamed:
-        #                 userced = user.cedulamed
-        #             elif user.cedulaext:
-        #                 userced = user.cedulaext
-                
-        #         if userid != 0:
-        #             usuario.userced = userced
-        #             all_users = [usuario] 
-        #             if usuario:
-        #                 return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
-        #             else:
-        #                 messages.warning(request, f'No existe usuario con el correo {email_input}')
-        #                 return render(request, 'agregar_usuario/ver_usuarios.html', context={"objects": all_users})
-                
-        #         else:
-        #             messages.warning(request, f'No existe usuario con el email {email_input}')
-        #             return render(request, 'agregar_usuario/ver_usuarios.html', context={"objects": all_users})
-
-        #     elif email_input == '' and id_input != '':
-        #         user = Personalsalud.objects.get(cedulamed=id_input) or Usuarioexterno.objects.get(cedulaext=id_input)
-        #         userid = 0
-        #         userced = 0
-                
-        #         if user.userid:
-        #             userid = user.userid.userid
-        #             if user.cedulamed:
-        #                 userced = user.cedulamed
-        #             elif user.cedulaext:
-        #                 userced = user.cedulaext
-                
-        #         if userid != 0:
-        #             usuario = Appuser.objects.get(userid=userid)
-        #             usuario.userced = userced
-        #             all_users = [usuario] 
-
-        #             if usuario:
-        #                 return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
-        #             else:
-        #                 messages.warning(request, f'Ocurrió un error al buscar la cédula {id_input}')
-        #                 return render(request, 'agregar_usuario/ver_usuarios.html', context={"objects": all_users})
-                    
-        #         else:
-        #             messages.warning(request, f'No existe usuario con la cédula {id_input}')
-        #             return render(request, 'agregar_usuario/ver_usuarios.html', context={"objects": all_users})
-                
-        #     elif email_input != '' and id_input != '':
-        #         user = Personalsalud.objects.get(cedulamed=id_input) or Usuarioexterno.objects.get(cedulaext=id_input)
-        #         userid = 0
-        #         userced = 0
-                
-        #         if user.userid:
-        #             userid = user.userid.userid
-        #             if user.cedulamed:
-        #                 userced = user.cedulamed
-        #             elif user.cedulaext:
-        #                 userced = user.cedulaext
-                
-        #         if userid != 0:
-        #             usuario = Appuser.objects.get(userid=userid, email=email_input)
-        #             usuario.userced = userced
-        #             all_users = [usuario]  
-                            
-        #             if usuario:
-        #                 return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
-        #             else:
-        #                 messages.warning(request, f'Ocurrió un error al buscar la cédula {id_input} o el correo {email_input}')
-        #                 return render(request, 'agregar_usuario/ver_usuarios.html', context={"objects": all_users})
-                    
-        #         else:
-        #             messages.warning(request, f'No existe usuario con la cédula {id_input} o el correo {email_input}')
-        #             return render(request, 'agregar_usuario/ver_usuarios.html', context={"objects": all_users})
-    
     else:
         all_users = Appuser.objects.all().order_by('-savedate')
-        # for user in all_users:
-        #         try:
-        #             personal_salud = Personalsalud.objects.get(userid=user.userid)
-        #             user.userced = personal_salud.cedulamed
-        #         except Personalsalud.DoesNotExist:
-        #             try:
-        #                 usuario_externo = Usuarioexterno.objects.get(userid=user.userid)
-        #                 user.userced = usuario_externo.cedulaext
-        #             except Usuarioexterno.DoesNotExist:
-        #                 user.userced = None
+
         return render(request, 'agregar_usuario/ver_usuarios.html',  context={"objects": all_users})
 
 def deactivateUser(request, userid):

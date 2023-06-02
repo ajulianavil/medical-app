@@ -45,6 +45,7 @@ table{
     text-align: center;
     border-collapse: collapse;
     width: 100%;
+    white-space: nowrap;
 }
 
 th{
@@ -230,6 +231,16 @@ a:hover{
     justify-content: center;
 }
 
+.container{
+  /* position: relative; */
+  /* overflow-x: auto; */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #9a9a9a #f1f1f1; /* For Firefox */
+
+  /* For WebKit-based browsers */
+  scrollbar-width: thin;
+  scrollbar-color: #9a9a9a #f1f1f1;
+}
 .yes-button:hover{
     background-color: #0279AF;
     color: #fff;
@@ -254,6 +265,11 @@ a:hover{
   align-items: center;
 }
 
+.col {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
 
 .tooltip-container {
   position: relative;

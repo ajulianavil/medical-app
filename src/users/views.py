@@ -49,7 +49,7 @@ def register(request):
 @login_required
 def custom_logout(request):
     logout(request)
-    messages.info(request, "Logged out successfully!")
+    # messages.info(request, "Logged out successfully!")
     return redirect('/landing')
 
 def custom_login(request):
@@ -150,7 +150,10 @@ def user_data(request):
             form = UsuarioExternoForm(request.POST)
         elif userrol == 'médico':
             form = PersonalsaludForm(request.POST)
-            
+        
+        storage = messages.get_messages(request)
+        storage.used = True
+        
         if form.is_valid():
             try:
                 instance = form.save(commit=False)
@@ -169,7 +172,7 @@ def user_data(request):
                 print(f"Errors for field '{field}':")
                 for error in errors:
                     print(f"- {error}")
-            messages.error(request, 'Hay un problema con el formulario.')
+                    messages.error(request, f"{error}")
             rol = request.GET.get('rol')
             return render(request, 'users/user_data.html', {"form": form, "rol": rol})
         

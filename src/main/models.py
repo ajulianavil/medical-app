@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 from users.models import Appuser
-from .validators import val_cedulamed, val_cedulaext, val_cedulapac
+from .validators import val_cedulamed, val_cedulaext, val_cedulapac, validate_unique_user_identification
 # from tinymce.models import HTMLField
 
 # Create your models here.
@@ -20,7 +20,7 @@ class Hospital(models.Model):
         ordering = ['nombrehospital']
 
 class Personalsalud(models.Model):
-    cedulamed = models.IntegerField( primary_key=True,)  # Field name made lowercase.
+    cedulamed = models.IntegerField( primary_key=True, validators=[val_cedulamed, validate_unique_user_identification])  # Field name made lowercase.
     nombresmed = models.CharField( max_length=150)  # Field name made lowercase.
     apellidosmed = models.CharField( max_length=150)  # Field name made lowercase.
     telefonomed = models.CharField(max_length=50,  unique=True)  # Field name made lowercase.
@@ -65,7 +65,7 @@ class Institucion(models.Model):
         db_table = 'Institucion'
 
 class Usuarioexterno(models.Model):
-    cedulaext = models.IntegerField( primary_key=True, validators=[val_cedulaext])  # Field name made lowercase.
+    cedulaext = models.IntegerField( primary_key=True, validators=[val_cedulaext, validate_unique_user_identification])  # Field name made lowercase.
     nombresext = models.CharField( max_length=150, blank=True, null=True)  # Field name made lowercase.
     apellidosext = models.CharField( max_length=150, blank=True, null=True)  # Field name made lowercase.
     telefonoext = models.CharField( max_length=50, blank=True, null=True)  # Field name made lowercase.

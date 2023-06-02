@@ -22,15 +22,15 @@
 <div style="    text-align: center;
 padding: 50px;">
 </br>
-    <h1 style="font-weight: bold; color: #0796D8">Nuevo diagnóstico</h1>
+    <h1 style="font-weight: bold; color: #0796D8">Nueva consulta</h1>
+    <h5 style="font-weight: bold; color: #26283E">Diagnóstico inmediato de anomalías del SNC</h5>
     </br>
     <div style="display: flex; justify-content: space-around;
     align-items: center;">
     <div class="bg-light p-5 text-center" style="border-radius: 15px; width: 60%">
 
-    <p style="font-weight: lighter; color: #909090; margin-bottom: 0px">Este archivo se procesará para generar el diagnóstico.</p>
-    <p style="font-weight: lighter; color: #909090; margin-top:0px">Asegúrese de que el archivo no haya sido manipulado
-        o modificado.
+    <p style="font-weight: lighter; color: #909090; margin-bottom: 0px">Su archivo se procesará para generar el reporte de diagnóstico.</p>
+    
     </p>
 
     <form method="POST", enctype="multipart/form-data">
@@ -39,6 +39,7 @@ padding: 50px;">
         <div class="drop_box">
             <header>
                 <h4>Por favor, cargue el archivo extraído del ultrasonido.</h4>
+                <p style="font-weight: lighter; color: #909090; margin-top:0px">Asegúrese de que el archivo no haya sido manipulado previamente.
             </header>
             <p>Archivos soportados:TEXT</p>
             <input type="file" accept="text/plain" name="file" id="file">
