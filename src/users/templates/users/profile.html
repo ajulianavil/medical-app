@@ -1,5 +1,6 @@
 {% extends 'main/layout.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}" />
@@ -54,6 +55,8 @@
                         
                         <div class="col-md-12"><label class="labels">Teléfono</label><input disabled type="text" name="telefono" id="telefono" class="form-control" placeholder="Teléfono" value="{{current_user.user_phone}}" oninput="validateNumberInput(this)" maxlength="12"></div>
                         <div class="col-md-12"><label class="labels">Dirección de residencia</label><input disabled type="text" name="direccion" id="direccion"  class="form-control" placeholder="Dirección" value="{{current_user.user_address}}"></div>
+                        {% get_info_user current_user.userid as user_info%}
+                        <div class="col-md-12"><label class="labels">Institución a la que está vinculado</label><input disabled type="text" name="institucion" id="institucion"  class="form-control" placeholder="Institución" value="{{user_info.3}}"></div>
                         <div class="col-md-12"><label class="labels">Correo electrónico</label>
                         <input disabled type="email" class="form-control" placeholder="Correo electrónico" name="email" value={{current_user.useremail}}></div>
                     </div>

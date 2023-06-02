@@ -626,6 +626,11 @@ def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str):
 
 def agregar_usuario(request):
     if request.method == "POST":
+        storage = messages.get_messages(request)
+        for message in storage:
+            pass  # Do nothing, simply iterate over the messages
+
+        storage.used = True
         form = CreateUserForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
@@ -634,7 +639,9 @@ def agregar_usuario(request):
             form = CreateUserForm()
             return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
         else:
-            # messages.error(request, errorlist)
+            for error in list(form.errors.values()):
+                messages.error(request, error) 
+
             rol = request.GET.get('rol')
             return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
     else:

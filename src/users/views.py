@@ -58,9 +58,7 @@ def custom_login(request):
 
     if request.method == "POST":
         storage = messages.get_messages(request)
-        storage.used = True
         form = AuthenticationForm(request=request, data=request.POST)
-        storage = messages.get_messages(request)
         for message in storage:
             pass  # Do nothing, simply iterate over the messages
 

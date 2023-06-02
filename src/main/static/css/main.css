@@ -224,3 +224,33 @@ body {
   background-color: #0796D8;
   color: white;
 }
+
+.alert {
+  padding: 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.alert-error{
+  padding: 20px;
+  border: 1px solid #F4B4B4;
+  background-color: #ffd5d5;
+  color: rgb(71, 7, 7) !important;
+}
+
+.alert-danger{
+  padding: 20px;
+  border: 1px solid #F4B4B4;
+  background-color: #ffd5d5;
+  color: rgb(71, 7, 7) !important;
+}
+
+.alert-success{
+  padding: 20px;
+  border: 1px solid #b1f78e;
+
+  background-color: #CFEAC1;
+  color: rgb(7, 71, 18) !important ;
+}

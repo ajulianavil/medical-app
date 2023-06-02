@@ -14,7 +14,7 @@
 
 {% if messages %}
     {% for message in messages %}
-        <div class="alert alert-success">
+        <div class="alert alert-danger">
             {{ message }}
         </div> 
     {% endfor %}
@@ -56,10 +56,10 @@
 
             <div >
               {% csrf_token %}
-              {{ form.non_field_errors }}
+              {% comment %} {{ form.non_field_errors }}
               {{ form.errors }}
 
-              {{ form.email.errors }}
+              {{ form.email.errors }} {% endcomment %}
               <label for="{{ form.subject.id_for_label }}">{{ form.email.label }}</label>
               {{ form.email }}
               {{ form.password.errors }}
