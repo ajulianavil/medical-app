@@ -89,7 +89,7 @@ class Embarazo(models.Model):
 class Feto(models.Model):
     idfeto = models.AutoField( primary_key=True)
     id_embarazo = models.ForeignKey(Embarazo, on_delete=models.CASCADE)
-    posicion_feto = models.CharField( max_length=100, blank=True, null=True)  # Field name made lowercase.
+    posicion_feto = models.CharField( max_length=1000, blank=True, null=True)  # Field name made lowercase.
     
     def __str__ (self):
         return str(self.idfeto)
@@ -102,7 +102,6 @@ class Consulta(models.Model):
     consultaid = models.AutoField(primary_key=True)
     fecha_consulta = models.DateTimeField()
     motivo_consulta = models.CharField(max_length=1000, default='Ultrasonido de control')
-    txtresults = models.CharField( max_length=1000, blank=True, null=True)  # Field name made lowercase.
     medConsulta = models.ForeignKey(Personalsalud, models.SET_DEFAULT, default="", blank=True, null=True) #ESTO DEBERIA IR ENLAZADO A USER
     medUltrasonido = models.CharField(max_length=200, blank=True, null=True)  # Field name made lowercase.# Field name made lowercase.
     idpac = models.ForeignKey(Paciente, models.SET_DEFAULT, default="")  # Field name made lowercase.
@@ -158,6 +157,7 @@ class Reporte(models.Model):
     vp_1 = models.CharField(max_length=50, blank=True, null=True)
     ga_days = models.CharField(max_length=100, blank=True, null=True)
     afi = models.CharField(max_length=50, blank=True, null=True)
+    txtresults = models.CharField( max_length=1000, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         db_table = 'Reporte'

@@ -80,6 +80,14 @@ p{
     display: flex;
     justify-content: center; /* Clears any floats within the container */
 }
+.divreporte {
+  background-color: white;
+  border-radius: 10px;
+  width: 70%;
+  padding: 10px;
+  text-align: start;
+  margin-bottom: 20px;
+}
 
 .left-div, .right-div {
     flex: 0 0 auto; /* Allows divs to shrink to fit content */

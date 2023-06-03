@@ -26,8 +26,8 @@ def get_field_value(item, field):
 
 @register.filter
 def get_ga(id):
-    reporte = Reporte.objects.get(consultaid = id)
-    reporte_ga = reporte.ga
+    reporte = Reporte.objects.filter(consultaid = id).first()
+    reporte_ga = reporte.ga 
     if reporte_ga:
         return reporte_ga
     else:

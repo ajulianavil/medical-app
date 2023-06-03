@@ -1,3 +1,4 @@
+from urllib.parse import urlencode
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -90,7 +91,7 @@ def agregar_consulta(request):
         form = UploadFileForm(request.POST, request.FILES)
         
         try:
-            file = request.FILES['file']
+            file = request.FILES['file1']
         except:
             messages.error(request, 'Por favor seleccione un archivo')
             return render(
@@ -160,7 +161,6 @@ def agregar_consulta(request):
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form}
                 )
-        
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
@@ -177,7 +177,6 @@ def agregar_consulta(request):
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form}
                 )
-
         else:
             # ------------------- CREA EL EMBARAZO
             is_there_embarazo = Embarazo.objects.filter(idpac=onpatient).count()
@@ -261,7 +260,6 @@ def agregar_consulta(request):
             processedDataReport["consultaid"] = last_consulta
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
-                print("================ si entre coño e la madre")
                 try:
                     reporte = reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
                     last_report = reporte.idreporte
@@ -273,7 +271,6 @@ def agregar_consulta(request):
                         template_name='consultas/agregar_consulta.html',
                         context={"form": form}
                     )
-                
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
@@ -316,13 +313,9 @@ def agregar_consulta(request):
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form}
                 )
-                    
-        print('is_there_embarazo')
-        print(is_there_embarazo)
+ 
         if is_there_embarazo > 0:
-            print(is_there_embarazo)
             return redirect('paciente_existe', idpac=onpatient, consultaid=last_consulta)
-        
         else:
             messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
             target_url = reverse('registroinfo', args=[last_consulta])
@@ -331,38 +324,462 @@ def agregar_consulta(request):
 
     else:
         form = UploadFileForm()
+
     return render(
         request=request,
         template_name='consultas/agregar_consulta.html',
         context={"form": form}
     )
 
+
+def agregar_consulta_multiple(request):
+    if request.method == 'POST':
+        processed_data = []
+        file_inputs = [key for key in request.FILES.keys() if key.startswith('file')]
+        # if(len(file_inputs) > 0):
+        try:
+            for file_input in file_inputs:
+                uploaded_file = request.FILES[file_input]
+                # Process the uploaded file as needed
+                processedData = process_data(uploaded_file)
+                processed_data.append(processedData)
+            form = UploadFileForm(request.POST, request.FILES)
+
+            pat_id = processed_data[0][0]['cedulapac']
+            preg = processed_data[0][0]['numgestacion']
+
+            for obj in processed_data:
+                processedDataPat = obj[0]
+                if( pat_id != processedDataPat['cedulapac'] or preg !=processedDataPat['numgestacion']):
+                    messages.error(request, 'Las cedulas no coinciden')
+                    return render(
+                        request=request,
+                        template_name='error/error.html',
+                    )
+                
+            paciente = (Paciente.objects.filter(cedulapac=pat_id)).first()
+            #--------------- SE CREA EL PACIENTE
+            if(not paciente):
+                paciente_serializer = PacienteSerializer(data=processedDataPat)
+                if paciente_serializer.is_valid():
+                    try:
+                        paciente = paciente_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL PACIENTE
+                    except Exception as e:
+                        messages.error(request, f"Error al guardar el paciente: {str(e)}")
+                        return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form, "multiple":'true'}
+                        )
+                else:
+                    for error in list(form.errors.values()):
+                        messages.error(request, error)
+
+            paciente = (Paciente.objects.filter(cedulapac=pat_id)).first()
+            embarazo = (Embarazo.objects.filter(idpac=paciente.idpac, numero_embarazo=preg)).first()
+            if(not embarazo):
+                #--------------- SE CREA EL EMBARAZO
+                embarazo_info = {
+                    'idpac': paciente.idpac,
+                    'numero_embarazo': preg
+                }
+                embarazo_serializer = EmbarazoSerializer(data=embarazo_info)
+                if embarazo_serializer.is_valid():
+                    try:
+                        embarazo = embarazo_serializer.save()
+                        last_embarazo = embarazo.id_embarazo
+                    except Exception as e:
+                        messages.error(request, f"Error al guardar el embarazo: {str(e)}")
+                        # Delete the paciente record
+                        return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form, "multiple":'true'}
+                        )
+                else:
+                    for error in list(form.errors.values()):
+                        messages.error(request, error)
+                    return render(
+                        request=request,
+                        template_name='consultas/agregar_consulta.html',
+                        context={"form": form, "multiple":'true'}
+                    ) 
+                #--------------- SE CREAN LOS FETOS
+                embarazo = (Embarazo.objects.filter(idpac=paciente.idpac, numero_embarazo=preg)).first()
+                fetos_ids = []
+                fetos = []
+                for obj in processed_data:
+                    feto_info = {
+                        'id_embarazo': embarazo.id_embarazo,
+                        'posicion_feto': obj[5]
+                    }
+                    print(feto_info)
+                    print(paciente.idpac)
+                    print(preg)
+                    feto_serializer = FetoSerializer(data=feto_info)
+                    if feto_serializer.is_valid():
+                        try:
+                            feto = feto_serializer.save()
+                            fetos.append(feto)
+                            fetos_ids.append(feto.idfeto)
+                        except Exception as e:
+                            messages.error(request, f"Error al guardar el embarazo: {str(e)}")
+                            # Delete the embarazo record
+                            embarazo.delete()
+                            return render(
+                                request=request,
+                                template_name='consultas/agregar_consulta.html',
+                                context={"form": form, "multiple":'true'}
+                            )
+                    else:
+                        for error in list(form.errors.values()):
+                            print('error',error)
+                            messages.error(request, error)
+                        return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form, "multiple":'true'}
+                        ) 
+
+                #--------------- SE CREA LA CONSULTA
+                last_consulta = None
+                consulta = None
+                fullDate = processed_data[0][2]
+                med_name =  processed_data[0][3]
+                med_lastname =  processed_data[0][4]
+                user_logged = current_user(request)
+                info = list(user_logged.values())
+                userid = info[0]['userid']
+                userced = info[0]['user_identification']
+                
+                med_consult = (Personalsalud.objects.filter(userid=userid)).first()
+                if med_consult:
+                    med = med_consult.cedulamed
+                if med_name == None or med_lastname == None:
+                    full_medName = None
+                else:
+                    full_medName = med_name + " " + med_lastname
+
+                consulta_info = {
+                    'fecha_consulta': fullDate,
+                    'idembarazo': embarazo.id_embarazo,
+                    'idpac': paciente.idpac,
+                    'medUltrasonido': full_medName, #OJO, sólo se guardará la primera vez porque esto es un constraint unique. (TODO: MEJORAR LÓGICA)
+                    'medConsulta': med,
+                }
+                
+                consulta_serializer = ConsultaSerializer(data=consulta_info)
+                if consulta_serializer.is_valid():
+                    try:
+                        consulta = consulta_serializer.save() #----> DESCOMENTAR PARA GUARDAR CONSULTA
+                        last_consulta = consulta.consultaid
+                    except Exception as e:
+                        messages.error(request, f"Error al guardar la consulta: {str(e)}")
+                        # Se borran los fetos recien creados
+                        for f in fetos:
+                            f.delete()
+                        return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form,"multiple":'true'}
+                        )
+                else:
+                    for error in list(form.errors.values()):
+                        messages.error(request, error)
+                    # Se borran los fetos recien creados
+                    for f in fetos:
+                        f.delete()
+                    return render(
+                        request=request,
+                        template_name='consultas/agregar_consulta.html',
+                        context={"form": form,"multiple":'true'}
+                    )
+                #--------------- SE CREAN LOS DOS REPORTES
+                index = 0
+                reportes_ids = []
+                reportes = []
+                
+                for obj in processed_data:
+                    processedDataReport = obj[1]
+                    processedDataReport["consultaid"] = last_consulta
+                    processedDataReport["txtresults"] = obj[5]
+                    processedDataReport["fetoid"] = fetos_ids[index]
+                    index = index + 1
+                    reporte_serializer = ReporteSerializer(data=processedDataReport)
+                    if reporte_serializer.is_valid():
+                        try:
+                            reporte = reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
+                            last_report = reporte.idreporte
+                            reportes.append(reporte)
+                            reportes_ids.append(last_report)
+                        except Exception as e:
+                            messages.error(request, f"Error al guardar el reporte: {str(e)}")
+                            # Delete the consulta record
+                            consulta.delete()  
+                            # Se borran los fetos recien creados
+                            for f in fetos:
+                                f.delete()
+                            return render(
+                                request=request,
+                                template_name='consultas/agregar_consulta.html',
+                                context={"form": form,"multiple":'true'}
+                            )
+                    else:
+                        for error in list(form.errors.values()):
+                            messages.error(request, error)
+                        # Delete the consulta record
+                        consulta.delete()  
+                        # Se borran los fetos recien creados
+                        for f in fetos:
+                            f.delete()
+                        return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form}
+                        )
+                #--------------- SE CREA EL DIAGNOSTICO
+                index = 0
+                for obj in processed_data:
+                    diagnosis = comparison(obj[1])
+                    diagnosis["reporte"] = reportes_ids[index]
+                    index = index + 1
+                    
+                    feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
+                    
+                    if feto_medicion_diagnostico_serializer.is_valid():
+                        try:
+                            feto_medicion_diagnostico_serializer.save()
+                        except Exception as e:
+                            messages.error(request, f"Error al guardar el diagnóstico: {str(e)}")
+                            consulta.delete()  
+                            # Se borran los fetos recien creados
+                            for f in fetos:
+                                f.delete()
+                            # Se borran los reportes recien creados
+                            for r in reportes:
+                                r.delete()    
+                            return render(
+                                request=request,
+                                template_name='consultas/agregar_consulta.html',
+                                context={"form": form,"multiple":'true'}
+                            )
+                    else:
+                        for error in list(form.errors.values()):
+                            messages.error(request, error)
+                        # Se borran los fetos recien creados
+                        for f in fetos:
+                            f.delete()
+                        # Se borran los reportes recien creados
+                        for r in reportes:
+                            r.delete()
+                        return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form,"multiple":'true'}
+                        )
+                messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
+                target_url = reverse('registroinfo', args=[last_consulta])
+                # Redirect to the target view
+                return HttpResponseRedirect(target_url)
+            else:
+                #--- Si existe el embarazo  se manda a la otra vista
+                print('hola')
+                serialized_objects = json.dumps(processed_data)
+                request.session['my_data'] = serialized_objects
+                return redirect('/reportes/temporal/multiple')
+                                           
+
+        except Exception as e:
+            print(str(e))
+            messages.error(request, 'Por favor seleccione un archivo')
+            return render(
+                request=request,
+                template_name='consultas/agregar_consulta.html',
+                context={"form": form, "multiple":'true'}
+            )
+
+    form = UploadFileForm()
+    return render(
+        request=request,
+        template_name='consultas/agregar_consulta.html',
+        context={"form": form, "multiple":'true'}
+    )
+
+
 def temporal_embarazo(request):
     return render(request=request, template_name='consultas/tipo_embarazo.html')
 
 def temporal_historial(request):
-    fetos = {
-         "Feto 1": {
-            "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a la pélvis.",
-            "identificacion": "1"
-        },
-        "Feto 2": {
-            "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a las costillas",
-            "identificacion": "2"
-        },
-    }
+    if request.method == 'POST':
+        serialized_objects = request.session.get('my_data')
+        processed_data = json.loads(serialized_objects)
+        del request.session['my_data']
+
+        form_data = request.POST
+        reportes_fetos_ids = []
+        #--------------- SE GUARDAN LOS IDS DE LOS FETOS SELECCIONADOS
+        for name, value in form_data.items():
+            # Process each feto radio button
+            print('name and value',name,value)
+            if(name != "consulta" and name != "fetos" and name != 'csrfmiddlewaretoken'):
+                print('supuesto feto id',value)
+                reportes_fetos_ids.append(value)
+        pat_id = processed_data[0][0]['cedulapac']
+        preg = processed_data[0][0]['numgestacion']
+        paciente = (Paciente.objects.filter(cedulapac=pat_id)).first()
+        embarazo = (Embarazo.objects.filter(idpac=paciente.idpac, numero_embarazo=preg)).first()
+
+        last_consulta = None
+        #--------------- SE CREA LA CONSULTA
+        consulta = None
+        fullDate = processed_data[0][2]
+        med_name =  processed_data[0][3]
+        med_lastname =  processed_data[0][4]
+        user_logged = current_user(request)
+        info = list(user_logged.values())
+        userid = info[0]['userid']
+        userced = info[0]['user_identification']
+        
+        med_consult = (Personalsalud.objects.filter(userid=userid)).first()
+        if med_consult:
+            med = med_consult.cedulamed
+        if med_name == None or med_lastname == None:
+            full_medName = None
+        else:
+            full_medName = med_name + " " + med_lastname
+
+        consulta_info = {
+            'fecha_consulta': fullDate,
+            'idembarazo': embarazo.id_embarazo,
+            'idpac': paciente.idpac,
+            'medUltrasonido': full_medName, #OJO, sólo se guardará la primera vez porque esto es un constraint unique. (TODO: MEJORAR LÓGICA)
+            'medConsulta': med,
+        }
+        
+        consulta_serializer = ConsultaSerializer(data=consulta_info)
+        if consulta_serializer.is_valid():
+            try:
+                consulta = consulta_serializer.save() 
+                last_consulta = consulta.consultaid
+            except Exception as e:
+                messages.error(request, f"Error al guardar la consulta: {str(e)}")
+                # Se borran los fetos recien creados
+                return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"multiple":'true'}
+                )
+        else:
+            for error in list(consulta_serializer.errors.values()):
+                messages.error(request, error)
+            return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"multiple":'true'}
+                )
+        
+        #--------------- SE CREAN LOS DOS REPORTES
+        index = 0
+        reportes_ids = []
+        reportes = []
+        
+        for obj in processed_data:
+            processedDataReport = obj[1]
+            processedDataReport["consultaid"] = last_consulta
+            processedDataReport["txtresults"] = obj[5]
+            processedDataReport["fetoid"] = reportes_fetos_ids[index]
+            print(processedDataReport)
+            index = index + 1
+            reporte_serializer = ReporteSerializer(data=processedDataReport)
+            if reporte_serializer.is_valid():
+                try:
+                    reporte = reporte_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL REPORTE
+                    last_report = reporte.idreporte
+                    reportes.append(reporte)
+                    reportes_ids.append(last_report)
+                except Exception as e:
+                    messages.error(request, f"Error al guardar el reporte: {str(e)}")
+                    # Delete the consulta record
+                    consulta.delete()  
+                    return render(
+                        request=request,
+                        template_name='consultas/agregar_consulta.html',
+                        context={"multiple":'true'}
+                    )
+
+            else:
+                for error in list(reporte_serializer.errors.values()):
+                    print(error)
+                    messages.error(request, error)
+                # Delete the consulta record
+                consulta.delete()  
+                # Se borran los fetos recien creados
+                return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"multiple":'true'}
+                )
+
+        #--------------- SE CREA EL DIAGNOSTICO
+        index = 0
+        for obj in processed_data:
+            diagnosis = comparison(obj[1])
+            diagnosis["reporte"] = reportes_ids[index]
+            index = index + 1
+            
+            feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
+            
+            if feto_medicion_diagnostico_serializer.is_valid():
+                try:
+                    feto_medicion_diagnostico_serializer.save()
+                except Exception as e:
+                    messages.error(request, f"Error al guardar el diagnóstico: {str(e)}")
+                    consulta.delete()  
+                    # Se borran los reportes recien creados
+                    for r in reportes:
+                        r.delete()    
+                    return render(
+                        request=request,
+                        template_name='consultas/agregar_consulta.html',
+                        context={"multiple":'true'}
+                    )
+
+            else:
+                for error in list(feto_medicion_diagnostico_serializer.errors.values()):
+                    messages.error(request, error)
+                # Se borran los reportes recien creados
+                for r in reportes:
+                    r.delete()
+                return render(
+                    request=request,
+                    template_name='consultas/agregar_consulta.html',
+                    context={"multiple":'true'}
+                )
+
+        messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
+        target_url = reverse('registroinfo', args=[last_consulta])
+        # Redirect to the target view
+        return HttpResponseRedirect(target_url)
+
+    else:
+        serialized_objects = request.session.get('my_data')
+        processed_data = json.loads(serialized_objects)
     
-    consultas = {
-         "Feto 1": {
-            "id": 1,
-            "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a la pélvis.",
-        },
-        "Feto 2": {
-            "id": 2,
-            "txtresults": "Gemelares creciendo en P35, no se encuenrtan anormalidades. Feto posicionado en la zona más cercana a las costillas",
-        },
-    }
-    return render(request=request, template_name='reportes/multiple_registrado.html', context={"fetos": fetos, "consultas": consultas}) 
+        pat_id = processed_data[0][0]['cedulapac']
+        preg = processed_data[0][0]['numgestacion']
+    
+        paciente = (Paciente.objects.filter(cedulapac=pat_id)).first()
+        embarazo = (Embarazo.objects.filter(idpac=paciente.idpac, numero_embarazo=preg)).first()
+        fetosExistentes = (Feto.objects.filter(id_embarazo=embarazo.id_embarazo))
+
+        reportes = []
+        for r in processed_data:
+            reporte = {
+                "txtresults": r[5]
+            }
+            reportes.append(reporte)
+    
+        return render(request=request, template_name='reportes/multiple_registrado.html', context={"fetos": fetosExistentes, "reportes": reportes}) 
 
 def paciente_existe(request, idpac, consultaid):
     user_logged = current_user(request)
@@ -445,16 +862,17 @@ def resumen_embarazo(request, id_embarazo):
 
 def reporteInfo(request, param: int):
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(param)
-
     normal_columns = []
     anormales_columns = []
-
-    for field in matching_result_info.get()._meta.fields:
-        if getattr(matching_result_info.get(), field.name) == 'Normal':
-            normal_columns.append(field.name)
-        else:
-            anormales_columns.append(field.name)
-
+    for diagnostico in matching_result_info:
+        for field in diagnostico._meta.fields:
+            if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
+                print('field', field)
+                print('field', field.name)
+                if getattr(diagnostico, field.name) == 'Normal':
+                    normal_columns.append(field.name)
+                else:
+                    anormales_columns.append(field.name)
     diagnostico = { 
             'form': matching_result_info,
             'num_fields': len(normal_columns) + len(anormales_columns[2:]), 
@@ -462,7 +880,6 @@ def reporteInfo(request, param: int):
             'normales':normal_columns,
             'anormales':anormales_columns[2:]
         }
-    
     return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnostico": diagnostico})
 
 def repositorio(request):

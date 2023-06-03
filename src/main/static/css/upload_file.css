@@ -1,15 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'League Spartan', sans-serif;
+  font-family: "League Spartan", sans-serif;
 }
 
-h4{
-    font-family: 'League Spartan', sans-serif;
+h4 {
+  font-family: "League Spartan", sans-serif;
 }
 
 .container {
@@ -33,7 +33,6 @@ h4{
 .card h3 {
   font-size: 22px;
   font-weight: 600;
-
 }
 
 .drop_box {
@@ -50,8 +49,8 @@ h4{
 .drop_box h4 {
   font-size: 16px;
   font-weight: bold;
-  font-family: 'League Spartan', sans-serif;
-  color: #26283E
+  font-family: "League Spartan", sans-serif;
+  color: #26283e;
 }
 
 .drop_box p {
@@ -59,13 +58,13 @@ h4{
   margin-bottom: 20px;
   font-size: 12px;
   color: #a3a3a3;
-  font-family: 'League Spartan', sans-serif;
-  color: #909090
+  font-family: "League Spartan", sans-serif;
+  color: #909090;
 }
 
 .btn {
   text-decoration: none;
-  background-color: #0796D8;
+  background-color: #0796d8;
   color: #ffffff;
   padding: 10px 20px;
   border: none;
@@ -73,9 +72,9 @@ h4{
   transition: 0.3s;
 }
 
-.btn:hover{
+.btn:hover {
   text-decoration: none;
-  background-color: #0279AF;
+  background-color: #0279af;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -90,3 +89,8 @@ h4{
   border-radius: 4px;
 }
 
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

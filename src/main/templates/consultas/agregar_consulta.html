@@ -42,7 +42,16 @@ padding: 50px;">
                 <p style="font-weight: lighter; color: #909090; margin-top:0px">Asegúrese de que el archivo no haya sido manipulado previamente.
             </header>
             <p>Archivos soportados:TEXT</p>
-            <input type="file" accept="text/plain" name="file" id="file">
+            <div class="inputContainer" id="inputContainer">
+                <!-- Existing input elements -->
+                <input type="file" accept="text/plain" name="file1" id="file1">
+                {% if multiple %}
+                <input type="file" accept="text/plain" name="file2" id="file2">
+                {% endif %}
+            </div>
+            <br/>
+            <button class="btn" type="button" onclick="addInput()">Add Input</button>
+            
         </div>
         <br>
         <br>
@@ -52,4 +61,19 @@ padding: 50px;">
   </div>
 </div>
 </div>
+
+<script>
+    function addInput() {
+        var inputContainer = document.getElementById("inputContainer");
+        var inputCount = inputContainer.getElementsByTagName("input").length;
+        
+        var newInput = document.createElement("input");
+        newInput.type = "file";
+        newInput.accept = "text/plain";
+        newInput.name = "file" + (inputCount + 1);
+        newInput.id = "file" + (inputCount + 1);
+        
+        inputContainer.appendChild(newInput);
+    }
+</script>
 {% endblock %}

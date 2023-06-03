@@ -2,7 +2,6 @@ from django.urls import path, include
 from . import views
 urlpatterns = [
     path("", views.homepage, name="homepage"),
-    path("consultas/nueva", views.agregar_consulta, name="consultas/nueva"),
     path("landing", views.landing, name="landing"),
     path("aboutUs", views.aboutUs, name="aboutUs"),
     path("howToRegister", views.howToRegister, name="howToRegister"),
@@ -23,6 +22,8 @@ urlpatterns = [
     path("reporte/paciente_existe/<int:idpac>/<int:consultaid>", views.paciente_existe, name="paciente_existe"),
     path("consultas/historial/<int:idpac>", views.historial_paciente, name="historial_paciente"),
     path("consultas/resumen/<int:id_embarazo>", views.resumen_embarazo, name="resumen_embarazo"),
-    path("consultas/temporal/embarazo", views.temporal_embarazo, name="temporal_embarazo"),
+    path("consultas/nueva", views.temporal_embarazo, name="consultas/nueva"),
+    path("consultas/nueva/unico", views.agregar_consulta, name="consultas/nueva/unico"),
+    path("consultas/nueva/multiple", views.agregar_consulta_multiple, name="consultas/nueva/multiple"),
     path("reportes/temporal/multiple", views.temporal_historial, name="temporal_historial")
 ]

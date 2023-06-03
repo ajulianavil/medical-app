@@ -44,51 +44,45 @@
             <p style="color: #26283E;"> Hemos encontrado consultas pasadas para este embarazo múliple.</p>
             <p style="color: #26283E; font-weight: bold;">En la consulta anterior, se identificó cada feto de la siguiente manera:.</p> </br>
         </div>
-        <form method="POST", enctype="multipart/form-data">
+    </div>
+    <form method="POST", enctype="multipart/form-data">
         {% csrf_token %}
-    </div>
     
-    <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
-        <div class="reports-container">
-            {% comment %} {% for emb in embarazos%} {% endcomment %}
-            {% for feto, detalles in fetos.items %}
-                <div style="display: flex; flex-direction: column;">
-                    <div><h4 style="font-weight: bold; color: #0796D8"> Feto {{detalles.identificacion }}</h4></div>
-                    <div class="card" > 
-                        <p> {{detalles.txtresults}} </p>
-                    </div>
-                </div>
-            {%endfor%}
+        <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
+            <div class="reports-container">
+                {% comment %} {% for emb in embarazos%} {% endcomment %}
+                {% for feto in fetos %}
+                    <div style="display: flex; flex-direction: column;">
+                        <div><h4 style="font-weight: bold; color: #0796D8"> Feto {{feto.idfeto }}</h4></div>
+                        <div class="card" > 
+                            <p> {{feto.posicion_feto}} </p>
+                        </div>
+                    </div> 
+                {%endfor%}
+            </div>
         </div>
-    </div>
 
-    </br>
-    <p style="color: #26283E;"> A continuación verá los datos de su nueva consulta, por favor asocie los fetos según corresponda.</p>
-    </br>
+        </br>
+        <p style="color: #26283E;"> A continuación verá los datos de su nueva consulta, por favor asocie los fetos según corresponda.</p>
+        </br>
 
-    <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
-        <div class="reports-container-two">
-            {% for con, detalles in consultas.items %}
-                <div style="display: flex; flex-direction: column;">
-                    <div class="card-two" > 
-                        <div class="mid-container">
-                            <div class="left-div">
-                                <p> {{detalles.txtresults}} </p>
-                            </div>
-                            <div class="right-div">
-                                {% for coni, detallesi in consultas.items %}
-                                    Feto {{ detallesi.id }} <input type="radio" name="radioGroup{{con}}" value="{{ detallesi.id }}" onclick="handleRadioButton(this)">
+        <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
+            <div>
+                {% for reporte in reportes %}
+                        <div class="divreporte">
+                                <p> {{reporte.txtresults}} </p>
+                            <div >
+                                {% for feto in fetos %}
+                                    Feto {{feto.idfeto }} <input type="radio" name="{{ forloop.parentloop.counter }}" value="{{ feto.idfeto }}" onclick="handleRadioButton(this)">
                                 {% endfor %}
                             </div>
                         </div>
-                    </div>
-                </div>
-            {%endfor%}
+                {%endfor%}
+            </div>
         </div>
-    </div>
-
         <input type="hidden" name="consulta" value="{{ consulta }}">
-        <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px; "type="submit" disabled>Continuar a reporte</button>
+        <input type="hidden" name="fetos" value="{{ fetos }}">
+        <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px; "type="submit" >Continuar a reporte</button>
     </form>
 </div>
 
