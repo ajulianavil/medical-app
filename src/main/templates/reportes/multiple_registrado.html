@@ -63,18 +63,24 @@
         </div>
 
         </br>
-        <p style="color: #26283E;"> A continuación verá los datos de su nueva consulta, por favor asocie los fetos según corresponda.</p>
+        <p style="color: #26283E; font-weight: bold;"> A continuación verá los datos de su nueva consulta, por favor asocie los fetos según corresponda.</p>
         </br>
 
         <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
-            <div>
+            <div class="reports-container-two">
                 {% for reporte in reportes %}
-                        <div class="divreporte">
-                                <p> {{reporte.txtresults}} </p>
-                            <div >
-                                {% for feto in fetos %}
-                                    Feto {{feto.idfeto }} <input type="radio" name="{{ forloop.parentloop.counter }}" value="{{ feto.idfeto }}" onclick="handleRadioButton(this)">
-                                {% endfor %}
+                        <div style="display: flex; flex-direction: column;">
+                            <div class="card-two" > 
+                                <div class="mid-container">
+                                    <div class="left-div">
+                                        <p> {{reporte.txtresults}} </p>
+                                    </div>
+                                    <div class="right-div">
+                                        {% for feto in fetos %}
+                                            Feto {{feto.idfeto }} <input type="radio" name="{{ forloop.parentloop.counter }}" value="{{ feto.idfeto }}" onclick="handleRadioButton(this)">
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                 {%endfor%}
@@ -82,7 +88,7 @@
         </div>
         <input type="hidden" name="consulta" value="{{ consulta }}">
         <input type="hidden" name="fetos" value="{{ fetos }}">
-        <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px; "type="submit" >Continuar a reporte</button>
+        <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px; "type="submit" disabled>Continuar a reporte</button>
     </form>
 </div>
 

@@ -93,4 +93,42 @@ h4 {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: center;
+}
+
+.mid-container {
+  display: flex;
+  justify-content: center; /* Clears any floats within the container */
+}
+
+.left-div, .right-div {
+  gap: 10px;
+  display: flex;
+  flex: 0 0 auto; /* Allows divs to shrink to fit content */
+  margin: 0 10px; /* Adjust the margin between the divs as per your preference */
+}
+
+.left-div{
+  flex-direction: column;
+}
+
+.right-div{
+  align-items: center;
+  justify-content: space-around;
+}
+
+.input{
+  margin: 10px;
+}
+
+.add-file{
+  font-size: xx-large;
+  color:#0796d8;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.add-file:hover{
+  color:#0279af;
+  transform: scale(1.05);
 }

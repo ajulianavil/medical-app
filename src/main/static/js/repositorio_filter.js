@@ -36,7 +36,7 @@ function updateDiagnosisOptions() {
             addOption(diagnosisInput, "---", "todos");
             break;
         case "cm":
-            addOption(diagnosisInput, "Megacisterno", "Megacisterno o cisterno alargada");
+            addOption(diagnosisInput, "Megacisterna", "Megacisterna o cisterno alargada");
             addOption(diagnosisInput, "Normal", "Normal");
             addOption(diagnosisInput, "---", "todos");
             break;
@@ -82,7 +82,7 @@ function updateDiagnosisOptions() {
             addOption(diagnosisInput, "Microcefalia", "Microcefalia");
             addOption(diagnosisInput, "Anormalidad por valor superior", "Anormalidad por valor superior");
             addOption(diagnosisInput, "Anormalidad por valor inferior", "Anormalidad por valor inferior");
-            addOption(diagnosisInput, "Megacisterno", "Megacisterno");
+            addOption(diagnosisInput, "Megacisterna", "Megacisterna");
             addOption(diagnosisInput, "Ventriculomegalia leve", "Ventriculomegalia leve");
             addOption(diagnosisInput, "Ventriculomegalia moderada", "Ventriculomegalia moderada");
             addOption(diagnosisInput, "Ventriculomegalia severa", "Ventriculomegalia severa");
@@ -100,7 +100,7 @@ function updateDiagnosisOptions() {
             addOption(diagnosisInput, "Microcefalia", "Microcefalia");
             addOption(diagnosisInput, "Anormalidad por valor superior", "Anormalidad por valor superior");
             addOption(diagnosisInput, "Anormalidad por valor inferior", "Anormalidad por valor inferior");
-            addOption(diagnosisInput, "Megacisterno", "Megacisterno");
+            addOption(diagnosisInput, "Megacisterna", "Megacisterna");
             addOption(diagnosisInput, "Ventriculomegalia leve", "Ventriculomegalia leve");
             addOption(diagnosisInput, "Ventriculomegalia moderada", "Ventriculomegalia moderada");
             addOption(diagnosisInput, "Ventriculomegalia severa", "Ventriculomegalia severa");

@@ -1,28 +1,30 @@
+var cardRadioButtonMap = new Map();
+
 function handleRadioButton(radioButton) {
 
-  console.log("si acmbio");
+  var cardContainer = radioButton.closest('.card-two');
+  var radioButtons = cardContainer.querySelectorAll('.right-div input[type="radio"]');
+  //var totalCards = document.querySelectorAll('.card-two').length;
 
+  var cardIndex = Array.from(document.querySelectorAll('.card-two')).indexOf(cardContainer);
+  var radioButtonIndex = Array.from(radioButtons).indexOf(radioButton);
 
-  // var cardContainer = radioButton.closest('.card-two');
-  // var radioButtons = cardContainer.querySelectorAll('.right-div input[type="radio"]');
-  // var totalCards = document.querySelectorAll('.card-two').length;
+  if (isRadioButtonIndexValid(radioButtonIndex)) {
+    return;
+    radioButton.checked = false; 
+  } else {
+    console.log("here")
+    cardRadioButtonMap.set(cardIndex, radioButtonIndex);
+  }
 
-  // // Get the index of the clicked radio button within its card
-  // var radioButtonIndex = Array.from(radioButtons).indexOf(radioButton);
+  console.log('Card Index:', cardIndex);
+  console.log('Radio Button Index:', radioButtonIndex);
+  
+  console.log(cardRadioButtonMap)
 
-  // // Calculate the index of the corresponding radio button on the second card
-  // var correspondingCardIndex = (Array.from(document.querySelectorAll('.card-two')).indexOf(cardContainer) + 1) % totalCards;
-  // var correspondingCard = document.querySelectorAll('.card-two')[correspondingCardIndex];
-  // var correspondingRadioButtons = correspondingCard.querySelectorAll('.right-div input[type="radio"]');
-  // var correspondingRadioButtonIndex = (radioButtonIndex + 1) % correspondingRadioButtons.length;
+}
 
-  // // Find the corresponding radio button on the second card
-  // var correspondingRadioButton = correspondingRadioButtons[correspondingRadioButtonIndex];
-
-  // // Check or uncheck the corresponding radio button based on the clicked radio button's status
-  // if (radioButton.checked && correspondingRadioButton) {
-  //   correspondingRadioButton.checked = true;
-  // } else if (!radioButton.checked && correspondingRadioButton) {
-  //   correspondingRadioButton.checked = false;
-  // }
+function isRadioButtonIndexValid(radioButtonIndex) {
+  // Check if the radioButtonIndex is already present in the map for the given cardIndex
+  return cardRadioButtonMap.has(radioButtonIndex);
 }
