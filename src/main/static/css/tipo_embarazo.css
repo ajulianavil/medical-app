@@ -8,6 +8,7 @@
     background-image: url("/static/images/fetal.jpg");
     background-size: cover;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    margin: 30px 0px 10px 0px;
     transition: transform .5s ease;
 }
 
@@ -23,6 +24,7 @@
     background-size: cover;
     border-radius:50px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    margin: 30px 0px 10px 0px;
     transition: transform .5s ease;
 }
 

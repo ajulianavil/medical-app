@@ -42,7 +42,7 @@
         <div class="left-div">
             {% comment %} <p style="color: #26283E;">Para mantener el historial, define si esta consulta hace parte de un embarazo en curso ya registrado, o si es la primera consulta de un nuevo embarazo, márcalo como tal.</p> {% endcomment %}
             <p style="color: #26283E;"> Hemos encontrado consultas pasadas para este embarazo múliple.</p>
-            <p style="color: #26283E; font-weight: bold;">En la consulta anterior, se identificó cada feto de la siguiente manera:.</p> </br>
+            <p style="color: #26283E; font-weight: bold;">En la primera consulta, se identificó cada feto por su posición de la siguiente manera:.</p> </br>
         </div>
     </div>
     <form method="POST", enctype="multipart/form-data">
@@ -63,7 +63,7 @@
         </div>
 
         </br>
-        <p style="color: #26283E; font-weight: bold;"> A continuación verá los datos de su nueva consulta, por favor asocie los fetos según corresponda.</p>
+        <p style="color: #26283E; font-weight: bold;"> A continuación verá los datos de su nueva consulta, por favor verifique las posiciones de cada feto y asocielos según corresponda.</p>
         </br>
 
         <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
@@ -88,7 +88,7 @@
         </div>
         <input type="hidden" name="consulta" value="{{ consulta }}">
         <input type="hidden" name="fetos" value="{{ fetos }}">
-        <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px; "type="submit" disabled>Continuar a reporte</button>
+        <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px; "type="submit">Continuar a reporte</button>
     </form>
 </div>
 

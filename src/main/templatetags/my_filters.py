@@ -78,34 +78,46 @@ def get_ref_values(reporte, medicion):
             prefixed_attr = medicion + '_1'
             value = getattr(reporte_value, prefixed_attr)
 
-        if idMedicion == 1 or idMedicion == 2 or idMedicion == 7 or idMedicion == 3 or idMedicion == 9:
-            return str(med.valormin) + ' - ' + str(med.valorinter)
+        if idMedicion == 1 or idMedicion == 2 or idMedicion == 3 or idMedicion == 9:
+            if float(med.valormin) < float(value) < float(med.valorinter):
+                return ' en el rango ' + str(med.valormin) + ' - ' + str(med.valorinter)
+            else:
+                return ' fuera del rango ' + str(med.valormin) + ' - ' + str(med.valorinter)
+        
+        if idMedicion == 7:
+            if float(med.valormin) < float(value):
+                return ' en el rango > ' + str(med.valormin)
+            else:
+                return ' en del rango < ' + str(med.valormin)
 
         if idMedicion == 4:
-            return ' < ' + str(settings.CM_REF)
+            if float(settings.CM_REF) < float(value):
+                return ' fuera del rango < ' + str(settings.CM_REF)
+            else:
+                return ' en el rango < ' + str(settings.CM_REF)
 
         if idMedicion == 5 or idMedicion == 6:
             if float(value) < float(settings.VT_MIN):
-                return ' < ' + str(settings.VT_MIN)
+                return ' en el rango < ' + str(settings.VT_MIN)
             
             if  float(settings.VT_1) < float(value) < float(settings.VT_2):
-                return  str(settings.VT_1) + ' - ' + str(settings.VT_2)
+                return ' en el rango ' + str(settings.VT_1) + ' - ' + str(settings.VT_2)
             
             if float(settings.VT_3) < float(value) < float(settings.VT_4):
-                return  str(settings.VT_3) + ' - ' + str(settings.VT_4)
+                return ' en el rango ' + str(settings.VT_3) + ' - ' + str(settings.VT_4)
             
             if float(value) > float(settings.VT_MAX):
-                return ' > ' + str(settings.VT_MAX)
+                return ' en el rango > ' + str(settings.VT_MAX)
                             
         if idMedicion == 8:
             if float(value) < float(settings.AFI_MIN):
-                return ' < ' + str(settings.AFI_MIN)
+                return ' en el rango < ' + str(settings.AFI_MIN)
             
             if  float(settings.AFI_MIN) < float(value) < float(settings.AFI_MAX):
-                return  str(settings.AFI_MIN) + ' - ' + str(settings.AFI_MAX)
+                return  ' en el rango ' + str(settings.AFI_MIN) + ' - ' + str(settings.AFI_MAX)
             
             if float(value) > float(settings.AFI_MAX):
-                return   ' > ' + str(settings.AFI_MAX)
+                return   ' en el rango > ' + str(settings.AFI_MAX)
         
     except Medicion.DoesNotExist:
         med = None
@@ -125,7 +137,7 @@ def get_diagnosis_conclude(reporte, medicion):
     for field in diagnosis._meta.get_fields():
         if field.name == medicion:
             field_value = getattr(diagnosis, field.name)
-            if field.name == 'bpd_hadlock' or field.name == 'csp':
+            if field.name == 'bpd_hadlock' or field.name == 'csp' or field.name == 'vp' or field.name == 'va':
                 return field_value + ' (' + field.name + ')'
             else:
                 return field_value
@@ -169,25 +181,25 @@ def total_fetos(id:int):
     current_month = datetime.datetime.now().month
     consulta_mes = Consulta.objects.filter(fecha_consulta__month=current_month, medConsulta=id)
     for consulta in consulta_mes:
-        record_count_normal = 0;    
-        print(consulta)
-        # reporte = consulta.idreporte
-        reporte = Reporte.objects.filter(consultaid = consulta.consultaid).first()
-        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte.idreporte)
-        
-        for instance in diagnostico:
-            for field in instance._meta.get_fields():
-                if field.name not in ['idfetomediciondiagnostico', 'reporte']:
-                    value = getattr(instance, field.name)
+        record_count_normal = 0;  
+        reporte = Reporte.objects.filter(consultaid = consulta.consultaid)
 
-                    if value == 'Normal':
-                        record_count_normal += 1
-                        next;
-                    else:
-                        break
+        for r in reporte:
+            diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = r.idreporte)
             
-            if record_count_normal == 9:
-                total_count += 1
+            for instance in diagnostico:
+                for field in instance._meta.get_fields():
+                    if field.name not in ['idfetomediciondiagnostico', 'reporte']:
+                        value = getattr(instance, field.name)
+
+                        if value == 'Normal':
+                            record_count_normal += 1
+                            next;
+                        else:
+                            break
+                
+                if record_count_normal == 9:
+                    total_count += 1
             
     return total_count
 
@@ -197,21 +209,23 @@ def total_anormales(id:int):
     
     current_month = datetime.datetime.now().month
     consulta_mes = Consulta.objects.filter(fecha_consulta__month=current_month, medConsulta=id)
-    for consulta in consulta_mes:
-        reporte = consulta.idreporte
-        
-        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte)
     
-        for instance in diagnostico:
-            for field in instance._meta.get_fields():
-                if field.name not in ['idfetomediciondiagnostico', 'reporte']:
-                    value = getattr(instance, field.name)
+    for consulta in consulta_mes:
+        reporte = Reporte.objects.filter(consultaid = consulta.consultaid)
 
-                    if value == 'Normal':
-                        next;
-                    else:
-                        record_count_anormal += 1
-                        break
+        for r in reporte:
+            diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = r.idreporte)
+        
+            for instance in diagnostico:
+                for field in instance._meta.get_fields():
+                    if field.name not in ['idfetomediciondiagnostico', 'reporte']:
+                        value = getattr(instance, field.name)
+
+                        if value == 'Normal':
+                            next;
+                        else:
+                            record_count_anormal += 1
+                            break
                     
     return record_count_anormal
 

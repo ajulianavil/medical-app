@@ -74,7 +74,7 @@
               </div>
               <div class="col" style="display: flex; align-items: center;">
                 <label style="padding-right: 10px">Cédula</label> 
-                <input type="text" class="form-control" placeholder="Filtrar por cédula" id="cedula_input" name="cedula_input" />
+                <input type="text" class="form-control" placeholder="Filtrar por cédula" id="cedula_input" name="cedula_input" oninput="validateNumberInput(this)" />
               </div>
               <button type="submit" class="round-button">
                 <i class="fas fa-search fa-lg"></i>

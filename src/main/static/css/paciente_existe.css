@@ -351,3 +351,7 @@ table{
   border-collapse: separate;
   border-spacing: 0 10px; 
 }
+
+tr{
+  border: 1px solid #26283E;
+}

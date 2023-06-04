@@ -20,11 +20,13 @@
 </div>
 {% endfor %}
 {% endif %}
-<div class="toggleReport container">
-  <a href="#" onclick="toggleAnterior()">Anterior</a>
-  <p id="currentIndex" class="currentIndex"> 1/{{reporte|length}}</p>
-  <a href="#" onclick="toggleSiguiente()">Siguiente</a>
-</div>
+{% if reporte|length > 1%}
+  <div class="toggleReport toggle-container">
+    <a href="#" onclick="toggleAnterior()" class="toggle-link"><i class="fa-solid fa-arrow-left"></i> Anterior</a>
+    <p id="currentIndex" class="currentIndex"> 1 de {{reporte|length}}</p>
+    <a href="#" onclick="toggleSiguiente()" class="toggle-link">Siguiente <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+{%endif%}
 
 <div class="box container " style="height: 100%; margin-bottom:20px">
   {% for r in reporte %}
@@ -99,15 +101,15 @@
           <input id="cedula" type="text" name="cedula" value="{{paciente.cedulapac}}" disabled>
         </div>
         <div class="col-md-auto">
-          <strong class="col-md-auto label"> Gestaciones </strong>
+          <strong class="col-md-auto label"> Embarazo </strong>
           <input id="gest" type="text" name="gest" value="{{paciente.numgestacion}}" style="width: 100px;"
             disabled>
         </div>
-        <div class="col-md-auto">
+        {% comment %} <div class="col-md-auto">
           <strong class="col-md-auto label"> Embarazo # </strong>
           <input id="emb" type="text" name="emb" value="{%if consulta.idembarazo_id > 0 %} {{consulta.idembarazo_id|get_numero_embarazo}} {%else%} 1 {%endif%}" style="width: 100px;"
             disabled>
-        </div>
+        </div> {% endcomment %}
       </div>
   
       <br />
@@ -178,7 +180,7 @@
             {% for item in diagnostico.normales %}
               <p class="diagnosis"> {{ item|get_med_name }} </p> 
               <span style="display: inline-block; font-size: 16px;">:  {{r|get_field_value:item }}, 
-                se encuentra en el rango {{r|get_ref_values:item}} </span> </br>
+                se encuentra {{r|get_ref_values:item}} </span> </br>
             {%endfor%}
           {%endif%}
 
@@ -192,7 +194,7 @@
             {% for item in diagnostico.anormales %}
               <p class="diagnosis"> {{ item|get_med_name }} </p> 
               <span style="display: inline-block; font-size: 16px;">: {{r|get_field_value:item }}, 
-                se encuentra fuera del rango {{r|get_ref_values:item}} indicando {{r|get_diagnosis:item }}
+                se encuentra {{r|get_ref_values:item}} indicando {{r|get_diagnosis:item }}
               </span> </br>
             {%endfor%} 
           {%endif%}
@@ -257,6 +259,7 @@
       objects[currentIndex].style.display = "none";
       currentIndex = (currentIndex - 1) % objects.length;
       objects[currentIndex].style.display = "block";
+      objects[currentIndex].classList.add("transition-effect");
       document.getElementById("currentIndex").textContent =  (currentIndex+1) + "/" + "{{reporte|length}}";
     }
   }
@@ -265,6 +268,7 @@
     objects[currentIndex].style.display = "none";
     currentIndex = (currentIndex + 1) % objects.length;
     objects[currentIndex].style.display = "block";
+    objects[currentIndex].classList.add("transition-effect");
     document.getElementById("currentIndex").textContent =  (currentIndex+1) + "/" + "{{reporte|length}}";
     }
   }

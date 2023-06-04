@@ -1,5 +1,5 @@
 from django import template
-from main.models import Personalsalud, Usuarioexterno, Hospital, Institucion
+from main.models import Personalsalud, Usuarioexterno, Hospital, Institucion, Embarazo, Feto, Consulta, Reporte, FetoMedicionDiagnostico
 from users.models import Appuser
 
 register = template.Library()
@@ -46,5 +46,47 @@ def get_info_user(userid):
     else:
         return '----'
 
-# @register.simple_tag
-# def get_info_user(userid):
+@register.simple_tag
+def get_embarazo(embarazoid):
+    numero_embarazo = None
+    embarazo = Embarazo.objects.get(id_embarazo = embarazoid)
+    numero_embarazo = embarazo.numero_embarazo
+    multiple = Feto.objects.filter(id_embarazo = embarazoid).count()
+    
+    if multiple > 0:
+        is_multiple = f'Múltiple - {multiple}'
+    else:
+        is_multiple = 'Único'
+    return numero_embarazo, is_multiple
+
+@register.simple_tag
+def get_estado(consultaid):
+
+    reportes = Reporte.objects.filter(consultaid = consultaid)
+    
+    record_count_normal = 0
+    record_count_anormal = 0
+    for reporte in reportes:
+        diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte.idreporte)
+        
+        for instance in diagnostico:
+            print("aqupi", instance)
+            for field in instance._meta.get_fields():
+                print("entré")
+                if field.name not in ['idfetomediciondiagnostico', 'reporte']:
+                    value = getattr(instance, field.name)
+
+                    if value == 'Normal':
+                        record_count_normal += 1
+                        next;
+                    else:
+                        record_count_anormal += 1
+                        break;
+    
+    if record_count_anormal > 0:
+        estado = 'Con anormalidades'
+    else:
+        estado = 'En rangos normales'
+    return estado
+    
+            
