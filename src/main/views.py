@@ -212,7 +212,6 @@ def agregar_consulta(request):
             else:
                 #------- Si existe el embarazo obtenemos su id
                 last_embarazo = Embarazo.objects.filter(idpac=onpatient, numero_embarazo = preg).first().id_embarazo
-
             # ------------------- CREA LA CONSULTA
             user_logged = current_user(request)
             info = list(user_logged.values())
@@ -226,10 +225,8 @@ def agregar_consulta(request):
             consulta_info = {
                 'fecha_consulta': fullDate,
                 'idpac': onpatient,
-                # 'idreporte': last_report,
                 'medUltrasonido': full_medName, #OJO, sólo se guardará la primera vez porque esto es un constraint unique. (TODO: MEJORAR LÓGICA)
                 'medConsulta': med,
-                'txtresults': comments
             }
             if last_embarazo:
                 consulta_info['idembarazo'] = last_embarazo
@@ -258,6 +255,7 @@ def agregar_consulta(request):
 
             # ---------------- CREA EL REPORTE
             processedDataReport["consultaid"] = last_consulta
+            processedDataReport["txtresults"] = comments
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
                 try:
@@ -281,12 +279,9 @@ def agregar_consulta(request):
                     context={"form": form}
                 )   
                 
-            
-                
             # -------------------- CREA DIAGNOSTICO
             diagnosis = comparison(processedDataReport)
             diagnosis["reporte"] = last_report
-            
             feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
             
             if feto_medicion_diagnostico_serializer.is_valid():
@@ -313,14 +308,11 @@ def agregar_consulta(request):
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form}
                 )
- 
-        if is_there_embarazo > 0:
-            return redirect('paciente_existe', idpac=onpatient, consultaid=last_consulta)
-        else:
-            messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
-            target_url = reverse('registroinfo', args=[last_consulta])
-            # Redirect to the target view
-            return HttpResponseRedirect(target_url)
+
+        messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
+        target_url = reverse('registroinfo', args=[last_consulta])
+        # Redirect to the target view
+        return HttpResponseRedirect(target_url)
 
     else:
         form = UploadFileForm()
@@ -413,9 +405,6 @@ def agregar_consulta_multiple(request):
                         'id_embarazo': embarazo.id_embarazo,
                         'posicion_feto': obj[5]
                     }
-                    print(feto_info)
-                    print(paciente.idpac)
-                    print(preg)
                     feto_serializer = FetoSerializer(data=feto_info)
                     if feto_serializer.is_valid():
                         try:
@@ -583,7 +572,6 @@ def agregar_consulta_multiple(request):
                 return HttpResponseRedirect(target_url)
             else:
                 #--- Si existe el embarazo  se manda a la otra vista
-                print('hola')
                 serialized_objects = json.dumps(processed_data)
                 request.session['my_data'] = serialized_objects
                 return redirect('/reportes/temporal/multiple')
@@ -867,18 +855,16 @@ def reporteInfo(request, param: int):
     for diagnostico in matching_result_info:
         for field in diagnostico._meta.fields:
             if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
-                print('field', field)
-                print('field', field.name)
                 if getattr(diagnostico, field.name) == 'Normal':
                     normal_columns.append(field.name)
                 else:
                     anormales_columns.append(field.name)
     diagnostico = { 
             'form': matching_result_info,
-            'num_fields': len(normal_columns) + len(anormales_columns[2:]), 
+            'num_fields': len(normal_columns) + len(anormales_columns), 
             'count': len(normal_columns),
             'normales':normal_columns,
-            'anormales':anormales_columns[2:]
+            'anormales':anormales_columns
         }
     return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnostico": diagnostico})
 
