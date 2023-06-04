@@ -45,3 +45,6 @@ def get_info_user(userid):
         return cedula, telefono, direccion, institucion  # Replace 'name' with the actual field you want to retrieve
     else:
         return '----'
+
+# @register.simple_tag
+# def get_info_user(userid):
