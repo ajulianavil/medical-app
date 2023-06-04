@@ -132,6 +132,14 @@ def agregar_consulta(request):
                 context={"form": form}
             )
         
+        if processedDataReport["ga"] > '40' or processedDataReport["ga"] < 14:
+            messages.error(request, f"Este sistema sólo soporta diagnósticos de la semana 15 a la semana 40 de gestación.")
+            return render(
+            request=request,
+            template_name='consultas/agregar_consulta.html',
+            context={"form": form}
+        )
+        
         #--------------------------------------------- DATOS GENERALES
         fullDate = processedData[2]
         med_name = processedData[3]
@@ -258,6 +266,7 @@ def agregar_consulta(request):
             # ---------------- CREA EL REPORTE
             processedDataReport["consultaid"] = last_consulta
             processedDataReport["txtresults"] = comments
+            
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
                 try:
@@ -284,6 +293,7 @@ def agregar_consulta(request):
             # -------------------- CREA DIAGNOSTICO
             diagnosis = comparison(processedDataReport)
             diagnosis["reporte"] = last_report
+            print("=========================", diagnosis)
             feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
             
             if feto_medicion_diagnostico_serializer.is_valid():
@@ -300,8 +310,9 @@ def agregar_consulta(request):
                         context={"form": form}
                     )
             else:
-                for error in list(form.errors.values()):                    
-                    messages.error(request, error)
+                for error in list(form.errors.values()):  
+                    print("AQUÍ SE TOTEA", error)                  
+                    messages.error(request, f"El sistema no cuenta con los datos para esta edad gestacional")
                 # Delete the paciente record
                 reporte.delete()   # Delete the reporte record
                 consulta.delete()  # Delete the consulta record
@@ -328,6 +339,9 @@ def agregar_consulta(request):
 
 def agregar_consulta_multiple(request):
     if request.method == 'POST':
+        storage = messages.get_messages(request)
+        storage.used = True
+        
         processed_data = []
         file_inputs = [key for key in request.FILES.keys() if key.startswith('file')]
         if(len(file_inputs) < 2):
@@ -499,6 +513,15 @@ def agregar_consulta_multiple(request):
                     
                     for obj in processed_data:
                         processedDataReport = obj[1]
+                        
+                        if processedDataReport["ga"] > '40' or processedDataReport["ga"] < 14:
+                            messages.error(request, f"Este sistema sólo soporta diagnósticos de la semana 15 a la semana 40 de gestación.")
+                            return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form}
+                        )
+            
                         processedDataReport["consultaid"] = last_consulta
                         processedDataReport["txtresults"] = obj[5]
                         processedDataReport["fetoid"] = fetos_ids[index]
@@ -855,10 +878,13 @@ def resumen_embarazo(request, id_embarazo):
     consultas_embarazo = Consulta.objects.filter(idembarazo=id_embarazo)
     consulta_ids = consultas_embarazo.values_list('consultaid', flat=True)
     
-    reportes_embarazo = Reporte.objects.filter(consultaid__in=consulta_ids)
-    
-    for consulta, reporte in zip(consultas_embarazo, reportes_embarazo):        
-            embarazo_consultas.append((consulta, reporte))
+    # reportes_embarazo = Reporte.objects.filter(consultaid__in=consulta_ids)
+    for id in consulta_ids:
+        for consulta in consultas_embarazo:
+            print("---------------", consulta, id)
+            reportes_embarazo = Reporte.objects.filter(consultaid=id)
+            print ("reportes", reportes_embarazo)
+            embarazo_consultas.append((consulta, reportes_embarazo))
 
     return render(request, 'consultas/resumen_embarazo.html', context={"embarazo_consultas": embarazo_consultas, "embarazo": embarazo})
 
@@ -994,28 +1020,28 @@ def reporte_graficos(request, consultaid:int):
     reporte_data = {}
 
     for med, med_id in mediciones_dict.items():
-        if med_id != 8:
-            medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
-            
-            column_mapping = {
-                'hc_hadlock': 'hc_hadlock_1',
-                'bpd_hadlock': 'bpd_hadlock_1',
-                'csp': 'csp_1',
-                'cm': 'cm_1',
-                'vp': 'vp_1',
-                'va': 'va_1',
-                'cereb_hill': 'cereb_hill_1',
-                'afi': 'afi',
-                'efw': 'efw',
-            }
+        # if med_id != 8:
+        medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+        
+        column_mapping = {
+            'hc_hadlock': 'hc_hadlock_1',
+            'bpd_hadlock': 'bpd_hadlock_1',
+            'csp': 'csp_1',
+            'cm': 'cm_1',
+            'vp': 'vp_1',
+            'va': 'va_1',
+            'cereb_hill': 'cereb_hill_1',
+            'afi': 'afi',
+            'efw': 'efw',
+        }
 
-            # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
-            if med not in reporte_data:
-                reporte_data[med] = {
-                    'value': getattr(matching_report, column_mapping.get(med, med)),
-                    'minvalue': medvalue.valormin,
-                    'maxvalue': medvalue.valorinter,
-                }
+        # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
+        if med not in reporte_data:
+            reporte_data[med] = {
+                'value': getattr(matching_report, column_mapping.get(med, med)),
+                'minvalue': medvalue.valormin,
+                'maxvalue': medvalue.valorinter,
+            }
     
     return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones_dict, "reporte_data": reporte_data, "matching_consulta": matching_consulta})
 

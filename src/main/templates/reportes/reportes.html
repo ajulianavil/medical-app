@@ -1,6 +1,7 @@
 {% extends 'main/layout.html' %}
 {% load static %}
 {% load my_filters %}
+{% load custom_tags %}
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/search_record.css' %}" />
@@ -82,6 +83,8 @@
           <th style="text-align: center;">Fecha consulta</th>
           <th style="text-align: center;">Cédula paciente</th>
           <th style="text-align: center;">Embarazo</th>
+          <th style="text-align: center;">Tipo de embarazo</th>
+          <th style="text-align: center;">Estado</th>
           <th style="text-align: center;">Motivo de consulta</th>
           <th style="text-align: center;">Ver reporte</th>
         </tr>
@@ -91,7 +94,11 @@
         <tr>
           <td style="text-align: center;">{{ consulta.fecha_consulta }}</td>
           <td style="text-align: center; font-weight: bold;"><a href="/consultas/historial/{{ consulta.idpac_id}}">{{ consulta.idpac_id|get_pacient_id }}</a></td>
-          <td style="text-align: center;">Embarazo 1</td>
+          {% get_embarazo consulta.idembarazo_id as embarazo%}
+          <td style="text-align: center;">Embarazo {{embarazo.0}}</td>
+          <td style="text-align: center;">Embarazo {{embarazo.1}}</td>
+          {% get_estado consulta.consultaid as con%}
+          <td style="text-align: center;">{{con}}</td>
           <td style="text-align: center;">{{ consulta.motivo_consulta }}</td>
           <td style="text-align: center;">
             <a href="/registros/consulta/{{ consulta }}" class="eye-search">

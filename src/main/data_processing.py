@@ -16,28 +16,12 @@ def process_data(file):
     CLINICAL_EDC = None
     ga_weeks = None
     csp_1 = None
-    csp_avg = None
     cm_1 = None
-    cm_avg = None
     hc_hadlock_1 = None
-    hc_hadlock_avg = None
-    hc_hadlock_ga = None
-    hc_hadlock_edc = None
-    hc_hadlock_dev = None
     bpd_hadlock_1 = None
-    bpd_hadlock_avg = None
-    bpd_hadlock_ga = None
-    bpd_hadlock_edc = None
-    bpd_hadlock_dev = None
     cereb_hill_1 = None
-    cereb_hill_avg = None
-    cereb_hill_ga = None
-    cereb_hill_edc = None
-    cereb_hill_dev = None
     va_1 = None
-    va_avg = None
     vp_1 = None
-    vp_avg = None
     ga_days = None
     afi_sum = None
     med_name = None
@@ -119,63 +103,38 @@ def process_data(file):
             CEREB_HILL = CEREB_HILL[:-1]
             cereb_hill_1 = CEREB_HILL[0].split("=")[1].split(" ")[0] #1
             cereb_hill_1 = np.round((float(cereb_hill_1)*10), decimals=2) #To mm
-            cereb_hill_avg = CEREB_HILL[1].split("=")[1].split(" ")[0] #1
-            cereb_hill_avg = np.round((float(cereb_hill_avg)*10), decimals=2) #To mm
-            cereb_hill_ga_weeks  = CEREB_HILL[2].split("=")[1].split(" ")[0]
-            cereb_hill_ga_days = CEREB_HILL[2].split("=")[1].split(" ")[1]
-            cereb_hill_ga  = cereb_hill_ga_weeks+" "+cereb_hill_ga_days                
-            cereb_hill_edc = CEREB_HILL[3].split("=")[1].split(" ")[0] #1
-            cereb_hill_dev = CEREB_HILL[4].split("=")[1].split(" ")[0][:-1] #1
         # BIPARIETAL DIAMETER Diametro Biparietal (Distancia en milímetros entre ambos huesos parietales de la cabeza del bebé)
         if ('BPD_HADLOCK' in line):
             BPD_HADLOCK = line.strip().split("|")
             BPD_HADLOCK = BPD_HADLOCK[:-1]
             bpd_hadlock_1 = BPD_HADLOCK[0].split("=")[1].split(" ")[0] #1
             bpd_hadlock_1 = np.round((float(bpd_hadlock_1)*10), decimals=2) #To mm
-            bpd_hadlock_avg = BPD_HADLOCK[1].split("=")[1].split(" ")[0] #1
-            bpd_hadlock_avg = np.round((float(bpd_hadlock_avg)*10), decimals=2) #To mm
-            bpd_hadlock_ga_weeks  = BPD_HADLOCK[2].split("=")[1].split(" ")[0] 
-            bpd_hadlock_ga_days = BPD_HADLOCK[2].split("=")[1].split(" ")[1] 
-            bpd_hadlock_ga  = bpd_hadlock_ga_weeks+" "+bpd_hadlock_ga_days                
-            bpd_hadlock_edc = BPD_HADLOCK[3].split("=")[1].split(" ")[0] #1
-            bpd_hadlock_dev = BPD_HADLOCK[4].split("=")[1].split(" ")[0][:-1] #1
         # CISTERNA MAGNA
         if ('CM' in line):
             CM = line.strip().split("|")
             CM = CM[:-1]
             cm_1 = CM[0].split("=")[1].split(" ")[0] #1
-            cm_avg = CM[1].split("=")[1].split(" ")[0] #1
         # CAVUM SEPTI PELLUCIDI
         if ('CSP' in line):
             CSP = line.strip().split("|")
             CSP = CSP[:-1]
             csp_1 = CSP[0].split("=")[1].split(" ")[0] #1
-            csp_avg = CSP[1].split("=")[1].split(" ")[0] #2
         # HEAD CIRCUMFERENCE
         if ('HC_HADLOCK' in line):
             HC_HADLOCK = line.strip().split("|")
             HC_HADLOCK = HC_HADLOCK[:-1]
             hc_hadlock_1 = HC_HADLOCK[0].split("=")[1].split(" ")[0] #1
-            hc_hadlock_avg = HC_HADLOCK[1].split("=")[1].split(" ")[0] 
-            hc_hadlock_ga_weeks  = HC_HADLOCK[2].split("=")[1].split(" ")[0] 
-            hc_hadlock_ga_days = HC_HADLOCK[2].split("=")[1].split(" ")[1] 
-            hc_hadlock_ga  = hc_hadlock_ga_weeks+" "+hc_hadlock_ga_days
-            hc_hadlock_edc = HC_HADLOCK[3].split("=")[1].split(" ")[0] 
-            hc_hadlock_dev = HC_HADLOCK[4].split("=")[1].split(" ")[0][:-1] 
             hc_hadlock_1 = np.round((float(hc_hadlock_1)*10), decimals=2) #To mm
-            hc_hadlock_avg = np.round((float(hc_hadlock_avg)*10), decimals=2) #To mm
         # Va Anterior Ventricle
         if ('Va' in line):
             Va = line.strip().split("|")
             Va = Va[:-1]
             va_1= Va[0].split("=")[1].split(" ")[0] #1
-            va_avg = Va[0].split("=")[1].split(" ")[0] #1
         # Vp Posterior ventricle
         if ('Vp' in line):
             Vp = line.strip().split("|")
             Vp = Vp[:-1]
             vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
-            vp_avg = Vp[0].split("=")[1].split(" ")[0] #1
         if ('AFI' in line):
             print("line", line)
             afi = line.strip().split("|")
@@ -192,28 +151,12 @@ def process_data(file):
         'edb': CLINICAL_EDC,
         'ga': ga_weeks,
         'csp_1': csp_1,
-        # 'csp_avg': csp_avg,
         'cm_1': cm_1,
-        # 'cm_avg': cm_avg,
         'hc_hadlock_1': hc_hadlock_1,
-        # 'hc_hadlock_avg': hc_hadlock_avg,
-        # 'hc_hadlock_ga': hc_hadlock_ga,
-        # 'hc_hadlock_edc': hc_hadlock_edc,
-        # 'hc_hadlock_dev': hc_hadlock_dev,
         'bpd_hadlock_1': bpd_hadlock_1,
-        # 'bdp_hadlock_avg': bpd_hadlock_avg,
-        # 'bdp_hadlock_ga': bpd_hadlock_ga,
-        # 'bdp_hadlock_edc': bpd_hadlock_edc,
-        # 'bdp_hadlock_dev': bpd_hadlock_dev,
         'cereb_hill_1': cereb_hill_1,
-        # 'cereb_hill_avg': cereb_hill_avg,
-        # 'cereb_hill_ga': cereb_hill_ga,
-        # 'cereb_hill_edc': cereb_hill_edc,
-        # 'cereb_hill_dev': cereb_hill_dev,
         'va_1': va_1,
-        # 'va_avg': va_avg,
         'vp_1': vp_1,
-        # 'vp_avg': vp_avg,
         'ga_days': ga_days,
         'afi': afi_sum
     }
@@ -235,11 +178,6 @@ def ConvertDateTime(studydate, studytime):
 
 def comparison(diagnosisData):
     gest_age = diagnosisData['ga']
-    
-    #'nombreMedicion': valorDatoReporte
-    valores_normales = {}
-    #'nombreMedicion': [Diagnostico, valorDatoReporte, valorReferencia]
-    valores_anormales = {}
     
     data = {'hc_hadlock': diagnosisData['hc_hadlock_1'], 'bpd_hadlock': diagnosisData['bpd_hadlock_1'], 'csp': diagnosisData['csp_1'],
             'cm': diagnosisData['cm_1'], 'vp': diagnosisData['vp_1'], 'va': diagnosisData['va_1'], 'cereb_hill': diagnosisData['cereb_hill_1'],
@@ -286,20 +224,13 @@ def comparison(diagnosisData):
                         diagnosisResult["cereb_hill"] = 'Normal'
                 
                 if key == 3: #CSP
-                    if data["csp"] == None:
-                        print("asddsa")
+                    if (float(data["csp"]) > med.valorinter):
+                        diagnosisResult["csp"] = 'Anormalidad por valor superior'
+                        
+                    elif (float(data["csp"]) < med.valormin):
+                        diagnosisResult["csp"] = 'Anormalidad por valor inferior'                            
                     else:
-                        if (float(data["csp"]) > med.valorinter):
-                            diagnosisResult["csp"] = 'Anormalidad por valor superior'
-                            print("aqui")
-                            
-                        elif (float(data["csp"]) < med.valormin):
-                            diagnosisResult["csp"] = 'Anormalidad por valor inferior'
-                            print("aqui22")
-                            
-                        else:
-                            diagnosisResult["csp"] = 'Normal'
-                            print("aqui333")
+                        diagnosisResult["csp"] = 'Normal'
                         
                 if key == 9: #EFW
                     if (float(data["efw"]) > med.valorinter):
@@ -320,50 +251,39 @@ def comparison(diagnosisData):
                 print("Para la medición:", key, "no se encontró nada con esta edad gestacional")
                      
         if key == 4: #CM -> Para todas las edades
-            if data["cm"] == None:
-                print("asddsa")
+            if (float(data["cm"]) > settings.CM_REF):
+                diagnosisResult["cm"] = 'Megacisterna o cisterno alargada'
             else:
-                if (float(data["cm"]) > settings.CM_REF):
-                    diagnosisResult["cm"] = 'Megacisterna o cisterno alargada'
-                else:
-                    diagnosisResult["cm"] = 'Normal'
-        if key == 5 or key == 6: #VP or VA
-            if data["vp"] == None or data["va"] == None:
-                print("asddsa")
-            else:
-                if (float(data["vp"]) < settings.VT_MIN):
-                    diagnosisResult["vp"] = 'Normal'
-                if(float(data["va"]) < settings.VT_MIN):
-                    diagnosisResult["va"] = 'Normal'
-
-                if ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
-                    diagnosisResult["vp"] = 'Ventriculomegalia leve'
-                if ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
-                    diagnosisResult["va"] = 'Ventriculomegalia leve'
-
-                if (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
-                    diagnosisResult["vp"] = 'Ventriculomegalia moderada'
-                if (settings.VT_3 < float(data["va"]) < settings.VT_4):
-                    diagnosisResult["va"] = 'Ventriculomegalia moderada'
+                diagnosisResult["cm"] = 'Normal'
                     
-                if (float(data["vp"]) > settings.VT_MAX ):
-                    diagnosisResult["vp"] = 'Ventriculomegalia severa'
-                if ( float(data["va"]) > settings.VT_MAX):
-                    diagnosisResult["va"] = 'Ventriculomegalia severa'
+        if key == 5 or key == 6: #VP or VA
+            if (float(data["vp"]) < settings.VT_MIN):
+                diagnosisResult["vp"] = 'Normal'
+            if(float(data["va"]) < settings.VT_MIN):
+                diagnosisResult["va"] = 'Normal'
+
+            if ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
+                diagnosisResult["vp"] = 'Ventriculomegalia leve'
+            if ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
+                diagnosisResult["va"] = 'Ventriculomegalia leve'
+
+            if (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
+                diagnosisResult["vp"] = 'Ventriculomegalia moderada'
+            if (settings.VT_3 < float(data["va"]) < settings.VT_4):
+                diagnosisResult["va"] = 'Ventriculomegalia moderada'
+                
+            if (float(data["vp"]) > settings.VT_MAX ):
+                diagnosisResult["vp"] = 'Ventriculomegalia severa'
+            if ( float(data["va"]) > settings.VT_MAX):
+                diagnosisResult["va"] = 'Ventriculomegalia severa'
  
         if key == 8:
-            if data["afi"] == None:
-                print("asddsa")
-            else:
-                if (float(data["afi"]) < settings.AFI_MIN):
-                    # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Oligohidramnios', data["afi"], 5]})
-                    diagnosisResult["afi"] = 'Oligohidramnios'
-                    
-                elif (settings.AFI_MIN < float(data["afi"]) < settings.AFI_MAX):
-                    # valores_normales.update({'Indice de líquido amniótico (AFI)': ['Normal', data["afi"], '< 24']})
-                    diagnosisResult["afi"] = 'Normal'
-                    
-                elif (float(data["afi"]) > settings.AFI_MAX):
-                    # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
-                    diagnosisResult["afi"] = 'Polihidramnios'
+            if (float(data["afi"]) < settings.AFI_MIN):
+                diagnosisResult["afi"] = 'Oligohidramnios'
+                
+            elif (settings.AFI_MIN < float(data["afi"]) < settings.AFI_MAX):
+                diagnosisResult["afi"] = 'Normal'
+                
+            elif (float(data["afi"]) > settings.AFI_MAX):
+                diagnosisResult["afi"] = 'Polihidramnios'
     return diagnosisResult

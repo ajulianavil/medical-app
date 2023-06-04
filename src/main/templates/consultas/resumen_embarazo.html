@@ -29,17 +29,18 @@
     </div>
     </br>
         <div class="reports-container">
-            {% for reporte in embarazo_consultas %}
-                {% for consulta in embarazo_consultas %}
+                {% for consulta, reportes_embarazo in embarazo_consultas %}
                     <div style="display: block; align-items: left;">  
                         <p style="font-weight: bold;"> Consulta N° {{ consulta.consultaid }} <i class="fa-solid fa-eye all-eye" style="color: #0279AF;" onclick="window.location.href='{% url 'registroinfo' consulta.consultaid %}'"></i></p> <br>  
                         <p class="init-text"> Motivo de consulta: </p> <br> <p class="desc-text"> {{ consulta.motivo_consulta }}</p> <br> <br>
                         <p class="init-text"> Fecha de consulta: </p> <br> <p class="desc-text"> {{ consulta.fecha_consulta }}</p> <br> <br>
-                        <p class="init-text"> Observaciones del médico: </p> <br> <p class="desc-text"> {{ reporte.txtresults }}</p>
+                        {% for reporte in reportes_embarazo %}
+                            <p class="init-text"> Observaciones del médico: </p> <br> <p class="desc-text"> {{ reporte.txtresults }}</p>
+                            <br>
+                        {% endfor %}
                         <br><br> <br>
                     </div>
                 {% endfor %}
-            {% endfor %}
 
             </div>
     

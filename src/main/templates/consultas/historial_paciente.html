@@ -39,9 +39,9 @@
             <div class="tooltip-container">
                 <input type="radio" name="option" id="option_new" class="radio-input" value="0">
                 <label for="option_new" class="radio-label">
-                    <i class="fa-solid fa-circle-plus" onclick="window.location.href='{% url 'consultas/nueva/unico'%}'"></i> 
+                    <i class="fa-solid fa-circle-plus" onclick="window.location.href='{% url 'consultas/nueva'%}'"></i> 
                 </label>
-              <span class="tooltip">Realizar una nueva consulta a esta paciente.</span>
+              <span class="tooltip">Realizar una nueva consulta.</span>
             </div>
         </div>
     </div>
@@ -57,10 +57,10 @@
             {% for embarazo, consultas_embarazo in embarazo_consultas.items %}
                 <div class="card {% if forloop.last  %} actual {%else%} finalizado {%endif%}" > 
                     <table>
-                        <colgroup>
+                        {% comment %} <colgroup>
                             <col span="3">
                             <col>
-                        </colgroup>
+                        </colgroup> {% endcomment %}
                         <tr>
                             <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ embarazo.numero_embarazo }}  </p></th>
                             <th style="text-align: right">
@@ -78,7 +78,7 @@
                             {% comment %} <td><p style="color: #909090;">{{consultas_embarazo}}</td> {% endcomment %}
                         </tr>
                         {% for con in consultas_embarazo %}
-                            <tr>
+                            <tr style="border-bottom: 1px solid black">
                                 <td><i class="fa-solid fa-eye goto" onclick="goToReportPopup({{con.consultaid}})"></i></td>
                                 <td><p style="color: #909090;">{{con.fecha_consulta}}</p></td>
                                 <td><p style="color: #909090;">{{con.consultaid|get_ga}} semanas</p></td>
