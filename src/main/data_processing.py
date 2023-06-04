@@ -1,5 +1,6 @@
 from django.conf import settings
 import numpy as np
+import re
 
 from main.models import Medicion, Tipomedicion
 
@@ -142,7 +143,10 @@ def process_data(file):
             afi_sum = afi[4].split("=")[1].split(" ")[0]
         if ('COMMENT' in line):
             try:
-                comments = line.strip().split('"')[1]    
+                #comments = line.strip().split('"')[1]    
+                text = re.search(r'"([^"]*)"', line).group(1)
+                # Replace '\n' with blank spaces
+                comments = re.sub(r'\\n', ' - ', text)
             except:
                 comments = None
             
@@ -182,18 +186,15 @@ def comparison(diagnosisData):
     data = {'hc_hadlock': diagnosisData['hc_hadlock_1'], 'bpd_hadlock': diagnosisData['bpd_hadlock_1'], 'csp': diagnosisData['csp_1'],
             'cm': diagnosisData['cm_1'], 'vp': diagnosisData['vp_1'], 'va': diagnosisData['va_1'], 'cereb_hill': diagnosisData['cereb_hill_1'],
             'efw': diagnosisData['efw'], 'afi': diagnosisData['afi']}
-    diagnosisResult = {'hc_hadlock':'', 'bpd_hadlock': '', 'csp': 'ASDA', 'cm':'', 'vp': '', 'va': '', 'cereb_hill':'ASDA', 'efw': 'ASDA', 'afi': ''}
-    # print("DATOS", data)
+    diagnosisResult = {'hc_hadlock':'', 'bpd_hadlock': '', 'csp': '', 'cm':'', 'vp': '', 'va': '', 'cereb_hill':'', 'efw': '', 'afi': ''}
+
     tipos_mediciones = Tipomedicion.objects.all()
     mediciones = {}
-    # Guarda el id y el nombre de cada tipo de medición
+
     for obj in tipos_mediciones:
         mediciones[obj.idTipoMedicion] = obj.nombreMedicion
 
-    #Filtra por tipo de medicion y luego por edad gestional
-    # valorinter -> valor max || valordev -> valordev(valor intermedio)
     for key in mediciones:
-        #or key == 7
         if key == 1 or key == 2 or key == 7 or key == 3 or key==9:
             try:
                 med = Medicion.objects.get(id_tipo_medicion=key, ga=gest_age)

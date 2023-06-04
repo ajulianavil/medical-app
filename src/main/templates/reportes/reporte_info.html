@@ -24,7 +24,7 @@
   <div class="toggleReport toggle-container">
     <a href="#" onclick="toggleAnterior()" class="toggle-link"><i class="fa-solid fa-arrow-left"></i> Anterior</a>
     <p id="currentIndex" class="currentIndex"> 1 de {{reporte|length}}</p>
-    <a href="#" onclick="toggleSiguiente()" class="toggle-link">Siguiente <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="#" onclick="toggleSiguiente()" class="toggle-link">Siguiente <i class="fa-solid fa-arrow-right" ></i></a>
   </div>
 {%endif%}
 
@@ -139,7 +139,7 @@
         <hr>
       </div>
     </div>
-    <form class="report-form" id="full-report-form" method="POST" action="{% url 'editReportData' consulta.consultaid %}">
+    <form class="report-form" id="full-report-form" method="POST" action="{% url 'editReportData' r.idreporte %}">
       {% csrf_token %}
       <div class="row">
         <div class="col">

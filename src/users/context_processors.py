@@ -51,12 +51,12 @@ def current_user(request):
                 institucionid = investigador_data.institutionid_id
                                 
             else:
-                print("aun no hay informacion del usuario")
                 nombre = ""
                 apellido = ""
                 cedula = ""
                 telefono = ""
-                direccion = ""                
+                direccion = ""    
+                institucionid = ""            
             
             user_info = {
             'useremail': user.email,

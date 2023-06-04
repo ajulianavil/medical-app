@@ -36,10 +36,12 @@ def val_cedulapac(cedulapac):
 
 def validate_unique_user_identification(value):
     from main.models import Personalsalud, Usuarioexterno
-    print("value", value)
-    print("existe salud", Personalsalud.objects.filter(cedulamed=value).exists())
-    print("existe cedulaext", Usuarioexterno.objects.filter(cedulaext=value).exists())
     
     if Personalsalud.objects.filter(cedulamed=value).exists() or Usuarioexterno.objects.filter(cedulaext=value).exists():
-        print("entré")
         raise ValidationError('El usuario con este número de identificación ya posee una cuenta en el sistema.')
+    
+def validate_unique_phone(value):
+    from main.models import Personalsalud, Usuarioexterno
+    
+    if Personalsalud.objects.filter(telefonomed=value).exists() or Usuarioexterno.objects.filter(telefonoext=value).exists():
+        raise ValidationError('Un usuario con este número de celular ya posee una cuenta en el sistema.')

@@ -122,6 +122,59 @@ def get_ref_values(reporte, medicion):
     except Medicion.DoesNotExist:
         med = None
         return '(No existen valores de referencia)'
+    
+@register.filter
+def get_ref_values_pdf(reporte, medicion):
+    try:
+        tipo_medicion = Tipomedicion.objects.get(nombreMedicion = medicion.upper())
+        idMedicion = tipo_medicion.idTipoMedicion
+        med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
+        
+        if medicion == 'efw' or medicion == 'afi':
+            reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
+            value = getattr(reporte_value, medicion)
+        else:
+            reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
+            prefixed_attr = medicion + '_1'
+            value = getattr(reporte_value, prefixed_attr)
+
+        if idMedicion == 1 or idMedicion == 2 or idMedicion == 7 or idMedicion == 3 or idMedicion == 9:
+            return str(med.valormin) + ' - ' + str(med.valorinter)
+        
+        # if idMedicion == 7:
+        #     if float(med.valormin) < float(value):
+        #         return str(med.valormin)
+        #     else:
+        #         return str(med.valormin)
+
+        if idMedicion == 4:
+            return ' < ' + str(settings.CM_REF)
+        if idMedicion == 5 or idMedicion == 6:
+                return ' < ' + str(settings.VT_MIN)
+            # if float(value) < float(settings.VT_MIN):
+                
+            # if  float(settings.VT_1) < float(value) < float(settings.VT_2):
+            #     return str(settings.VT_1) + ' - ' + str(settings.VT_2)
+            
+            # if float(settings.VT_3) < float(value) < float(settings.VT_4):
+            #     return str(settings.VT_3) + ' - ' + str(settings.VT_4)
+            
+            # if float(value) > float(settings.VT_MAX):
+            #     return + str(settings.VT_MAX)
+                            
+        if idMedicion == 8:
+                return ' < ' + str(settings.AFI_MIN)
+            # if float(value) < float(settings.AFI_MIN):
+                
+            # if  float(settings.AFI_MIN) < float(value) < float(settings.AFI_MAX):
+            #     return  str(settings.AFI_MIN) + ' - ' + str(settings.AFI_MAX)
+            
+            # if float(value) > float(settings.AFI_MAX):
+            #     return   + str(settings.AFI_MAX)
+        
+    except Medicion.DoesNotExist:
+        med = None
+        return '(No existen valores de referencia)'
 
 @register.filter
 def get_diagnosis(reporte, medicion):

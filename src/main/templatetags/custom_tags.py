@@ -70,9 +70,7 @@ def get_estado(consultaid):
         diagnostico = FetoMedicionDiagnostico.objects.filter(reporte = reporte.idreporte)
         
         for instance in diagnostico:
-            print("aqupi", instance)
             for field in instance._meta.get_fields():
-                print("entré")
                 if field.name not in ['idfetomediciondiagnostico', 'reporte']:
                     value = getattr(instance, field.name)
 

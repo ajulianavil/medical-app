@@ -54,15 +54,12 @@
     <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
         
         <div class="reports-container">
-            {% for embarazo, consultas_embarazo in embarazo_consultas.items %}
+            {% for embarazo, consultas_reportes in embarazo_consultas_reportes.items %}
                 <div class="card {% if forloop.last  %} actual {%else%} finalizado {%endif%}" > 
                     <table>
-                        {% comment %} <colgroup>
-                            <col span="3">
-                            <col>
-                        </colgroup> {% endcomment %}
                         <tr>
-                            <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ embarazo.numero_embarazo }}  </p></th>
+                            {% get_embarazo embarazo.id_embarazo as type%} 
+                            <th colspan="3" style="text-align: left"><p style="color: #909090;">Embarazo {{ embarazo.numero_embarazo }}    |    {{type.1}} feto(s)</p></th>
                             <th style="text-align: right">
                                 <div class="tooltip-left-container">
                                     <i class="fa-solid fa-eye tab-icon" data-tooltip="Ver resumen de embarazo." onclick="openPopup({{embarazo.id_embarazo}})"></i>
@@ -77,28 +74,21 @@
                             <td>Médico encargado </td>
                             {% comment %} <td><p style="color: #909090;">{{consultas_embarazo}}</td> {% endcomment %}
                         </tr>
-                        {% for con in consultas_embarazo %}
-                            <tr style="border-bottom: 1px solid black">
-                                <td><i class="fa-solid fa-eye goto" onclick="goToReportPopup({{con.consultaid}})"></i></td>
-                                <td><p style="color: #909090;">{{con.fecha_consulta}}</p></td>
-                                <td><p style="color: #909090;">{{con.consultaid|get_ga}} semanas</p></td>
-                                {% get_medico_name con.medConsulta_id as medico_name %}
-                                <td><p style="color: #909090;">{{medico_name}}</p></td>
-                                {% comment %} <td><p style="color: #909090;">Column 4</td> {% endcomment %}
+                        {% for consulta, reportes in consultas_reportes.items %}
+                            {% for reporte in reportes %}
+                                <tr >
+                                    <td><i class="fa-solid fa-eye goto" onclick="goToReportPopup({{consulta.consultaid}})"></i></td>
+                                    <td><p style="color: #909090;">{{consulta.fecha_consulta}}</p></td>
+                                    <td><p style="color: #909090;">{{consulta.consultaid|get_ga}} semanas</p></td>
+                                    {% get_medico_name consulta.medConsulta_id as medico_name %}
+                                    <td><p style="color: #909090;">{{medico_name}}</p></td>
+                                </tr>
+                            {%endfor%}
+                            <tr>
+                                <td colspan="4"><hr style="border-top: 1px solid #000;"></td>
                             </tr>
                         {%endfor%}
                     </table>
-                    {% comment %} {% if forloop.last %} {% endcomment %}
-                    {% comment %} <div class="bottom-corner">
-                        <div class="tooltip-container">
-                            <input type="radio" name="option" id="option{{ embarazo.id_embarazo }}" class="radio-input" value="{{ embarazo.id_embarazo }}">
-                            <label for="option{{ embarazo.id_embarazo }}" class="radio-label">
-                                <i class="fa-sharp fa-solid fa-circle-check tab-icon" style="font-size: xx-large !important;" data-tooltip="Agregar un reporte a embarazo actual"></i>
-                            </label>
-                            <span class="tooltip">Agregar un reporte a embarazo actual </span>
-                        </div>
-                    </div>
-                    {%endif%} {% endcomment %}
                 </div>
             {%endfor%}
             </div>

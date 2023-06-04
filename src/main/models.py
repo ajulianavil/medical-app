@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 from users.models import Appuser
-from .validators import val_cedulamed, val_cedulaext, val_cedulapac, validate_unique_user_identification
+from .validators import val_cedulamed, val_cedulaext, val_cedulapac, validate_unique_user_identification, validate_unique_phone
 # from tinymce.models import HTMLField
 
 # Create your models here.
@@ -23,7 +23,7 @@ class Personalsalud(models.Model):
     cedulamed = models.IntegerField( primary_key=True, validators=[val_cedulamed, validate_unique_user_identification])  # Field name made lowercase.
     nombresmed = models.CharField( max_length=150)  # Field name made lowercase.
     apellidosmed = models.CharField( max_length=150)  # Field name made lowercase.
-    telefonomed = models.CharField(max_length=50,  unique=True)  # Field name made lowercase.
+    telefonomed = models.CharField(max_length=50,  unique=True, validators=[validate_unique_phone])  # Field name made lowercase.
     direccionmed = models.CharField(max_length=200)  # Field name made lowercase.
     userid = models.ForeignKey(Appuser, on_delete=models.SET_DEFAULT, default="")  # Field name made lowercase.
     hospitalid = models.ForeignKey(Hospital, default="", verbose_name= "Hospitales", on_delete=models.SET_DEFAULT)  # Field name made lowercase.
@@ -68,7 +68,7 @@ class Usuarioexterno(models.Model):
     cedulaext = models.IntegerField( primary_key=True, validators=[val_cedulaext, validate_unique_user_identification])  # Field name made lowercase.
     nombresext = models.CharField( max_length=150, blank=True, null=True)  # Field name made lowercase.
     apellidosext = models.CharField( max_length=150, blank=True, null=True)  # Field name made lowercase.
-    telefonoext = models.CharField( max_length=50, blank=True, null=True)  # Field name made lowercase.
+    telefonoext = models.CharField( max_length=50, blank=True, null=True, validators=[validate_unique_phone])  # Field name made lowercase.
     direccionext = models.CharField( max_length=200, blank=True, null=True)  # Field name made lowercase.
     userid = models.OneToOneField(Appuser, models.SET_DEFAULT, db_column='UserId', default="", unique=True)  # Field name made lowercase.
     institutionid = models.ForeignKey(Institucion, models.SET_DEFAULT, default="")  # Field name made lowercase.

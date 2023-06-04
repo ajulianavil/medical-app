@@ -132,7 +132,7 @@ def agregar_consulta(request):
                 context={"form": form}
             )
         
-        if processedDataReport["ga"] > '40' or processedDataReport["ga"] < 14:
+        if processedDataReport["ga"] > '40' or processedDataReport["ga"] < '14':
             messages.error(request, f"Este sistema sólo soporta diagnósticos de la semana 15 a la semana 40 de gestación.")
             return render(
             request=request,
@@ -514,7 +514,7 @@ def agregar_consulta_multiple(request):
                     for obj in processed_data:
                         processedDataReport = obj[1]
                         
-                        if processedDataReport["ga"] > '40' or processedDataReport["ga"] < 14:
+                        if processedDataReport["ga"] > '40' or processedDataReport["ga"] < '14':
                             messages.error(request, f"Este sistema sólo soporta diagnósticos de la semana 15 a la semana 40 de gestación.")
                             return render(
                             request=request,
@@ -861,31 +861,31 @@ def paciente_existe(request, idpac, consultaid):
         
 def historial_paciente(request, idpac):
     embarazos = Embarazo.objects.filter(idpac = idpac)
-    embarazo_consultas = {}
+    embarazo_consultas_reportes = {}
     if embarazos:
         for embarazo in embarazos:
             consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo.id_embarazo)
-            embarazo_consultas[embarazo] = list(consultas_embarazo)
+            consultas_reportes = {}
+            
+            for consulta in consultas_embarazo:
+                reportes_embarazo = Reporte.objects.filter(consultaid= consulta.consultaid)
+                consultas_reportes[consulta] = list(reportes_embarazo)
                 
+            embarazo_consultas_reportes[embarazo] = consultas_reportes
+
     paciente = Paciente.objects.get(idpac=idpac)
-    # consulta = Consulta.objects.filter(idpac=idpac).last()
-    return render(request, 'consultas/historial_paciente.html', context={"paciente": paciente, "embarazos": embarazos, "embarazo_consultas": embarazo_consultas})
+        
+    return render(request, 'consultas/historial_paciente.html', context={"paciente": paciente, "embarazos": embarazos, "embarazo_consultas_reportes": embarazo_consultas_reportes})
 
 def resumen_embarazo(request, id_embarazo):
     embarazo = Embarazo.objects.get(id_embarazo=id_embarazo)
     embarazo_consultas = []
-    
     consultas_embarazo = Consulta.objects.filter(idembarazo=id_embarazo)
-    consulta_ids = consultas_embarazo.values_list('consultaid', flat=True)
-    
-    # reportes_embarazo = Reporte.objects.filter(consultaid__in=consulta_ids)
-    for id in consulta_ids:
-        for consulta in consultas_embarazo:
-            print("---------------", consulta, id)
-            reportes_embarazo = Reporte.objects.filter(consultaid=id)
-            print ("reportes", reportes_embarazo)
-            embarazo_consultas.append((consulta, reportes_embarazo))
 
+    for consulta in consultas_embarazo:
+        reportes_embarazo = Reporte.objects.filter(consultaid= consulta.consultaid)
+        embarazo_consultas.append((consulta, reportes_embarazo))
+        
     return render(request, 'consultas/resumen_embarazo.html', context={"embarazo_consultas": embarazo_consultas, "embarazo": embarazo})
 
 def reporteInfo(request, param: int):
@@ -1083,7 +1083,12 @@ def agregar_usuario(request):
             return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
         else:
             for error in list(form.errors.values()):
-                messages.error(request, error) 
+                error_str = str(error)
+                print("error", error, type(error))
+                if error_str == '<ul class="errorlist"><li>User with this Email already exists.</li></ul>':
+                    messages.error(request, f'Ya existe un usuario registrado con este email.')
+                else:
+                    messages.error(request, error_str) 
 
             rol = request.GET.get('rol')
             return render(request, 'agregar_usuario/agregar_usuario_form.html', {"form": form, "rol": rol})
@@ -1370,7 +1375,7 @@ def reporte_pdf(request, idreporte_id: int):
                 # valor_feto = my_filters.get_field_value(med)
                 valor_feto = my_filters.get_field_value(r, med)
 
-                valor_ref = my_filters.get_ref_values(r, med)
+                valor_ref = my_filters.get_ref_values_pdf(r, med)
                 
                 diag_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
                 
@@ -1391,7 +1396,7 @@ def reporte_pdf(request, idreporte_id: int):
             for med in diagnostico['anormales']:
                 nombre_medicion = my_filters.get_med_name(med)
                 valor_feto = my_filters.get_field_value(r, med)
-                valor_ref = my_filters.get_ref_values(r, med)
+                valor_ref = my_filters.get_ref_values_pdf(r, med)
                 
                 abnormal_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
                 
@@ -1409,12 +1414,13 @@ def reporte_pdf(request, idreporte_id: int):
         else:
             for med in diagnostico['anormales']:
                 nombre_medicion = my_filters.get_med_name(med)
+                valor_feto = my_filters.get_field_value(r, med)
                 valor_ref = my_filters.get_ref_values(r, med)
                 diag = my_filters.get_diagnosis(r, med)
                 
                 
-                elements.append(Paragraph('{}: se encuentra fuera del rango {}, lo que puede indicar {}'
-                                        .format(nombre_medicion, valor_ref, diag), text_style))
+                elements.append(Paragraph('{}: {} se encuentra {}, lo que puede indicar {}'
+                                        .format(nombre_medicion, valor_feto, valor_ref, diag), text_style))
                 elements.append(spacer_data)
         
         if r.txtresults != None:
@@ -1463,11 +1469,13 @@ def editPacientData(request, consultaid: int):
         target_url = reverse('registroinfo', args=[consultaid])
         return HttpResponseRedirect(target_url)
     
-def editReportData(request, consultaid: int):
+def editReportData(request, idreporte: int):
     if request.method == 'POST':
-        consulta = Consulta.objects.get(consultaid=consultaid)
-        consulta.txtresults = request.POST.get('obs')
-        consulta.save()
+        reporte = Reporte.objects.get(idreporte = idreporte)
+        reporte.txtresults = request.POST.get('obs')
+        reporte.save()
+        
+        consultaid = reporte.consultaid
 
         target_url = reverse('registroinfo', args=[consultaid])
         return HttpResponseRedirect(target_url)
