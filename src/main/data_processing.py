@@ -224,20 +224,13 @@ def comparison(diagnosisData):
                         diagnosisResult["cereb_hill"] = 'Normal'
                 
                 if key == 3: #CSP
-                    if data["csp"] == None:
-                        print("asddsa")
+                    if (float(data["csp"]) > med.valorinter):
+                        diagnosisResult["csp"] = 'Anormalidad por valor superior'
+                        
+                    elif (float(data["csp"]) < med.valormin):
+                        diagnosisResult["csp"] = 'Anormalidad por valor inferior'                            
                     else:
-                        if (float(data["csp"]) > med.valorinter):
-                            diagnosisResult["csp"] = 'Anormalidad por valor superior'
-                            print("aqui")
-                            
-                        elif (float(data["csp"]) < med.valormin):
-                            diagnosisResult["csp"] = 'Anormalidad por valor inferior'
-                            print("aqui22")
-                            
-                        else:
-                            diagnosisResult["csp"] = 'Normal'
-                            print("aqui333")
+                        diagnosisResult["csp"] = 'Normal'
                         
                 if key == 9: #EFW
                     if (float(data["efw"]) > med.valorinter):
@@ -258,51 +251,39 @@ def comparison(diagnosisData):
                 print("Para la medición:", key, "no se encontró nada con esta edad gestacional")
                      
         if key == 4: #CM -> Para todas las edades
-            if data["cm"] == None:
-                print("asddsa")
+            if (float(data["cm"]) > settings.CM_REF):
+                diagnosisResult["cm"] = 'Megacisterna o cisterno alargada'
             else:
-                if (float(data["cm"]) > settings.CM_REF):
-                    diagnosisResult["cm"] = 'Megacisterna o cisterno alargada'
-                else:
-                    diagnosisResult["cm"] = 'Normal'
+                diagnosisResult["cm"] = 'Normal'
                     
         if key == 5 or key == 6: #VP or VA
-            if data["vp"] == None or data["va"] == None:
-                print("asddsa")
-            else:
-                if (float(data["vp"]) < settings.VT_MIN):
-                    diagnosisResult["vp"] = 'Normal'
-                if(float(data["va"]) < settings.VT_MIN):
-                    diagnosisResult["va"] = 'Normal'
+            if (float(data["vp"]) < settings.VT_MIN):
+                diagnosisResult["vp"] = 'Normal'
+            if(float(data["va"]) < settings.VT_MIN):
+                diagnosisResult["va"] = 'Normal'
 
-                if ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
-                    diagnosisResult["vp"] = 'Ventriculomegalia leve'
-                if ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
-                    diagnosisResult["va"] = 'Ventriculomegalia leve'
+            if ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
+                diagnosisResult["vp"] = 'Ventriculomegalia leve'
+            if ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
+                diagnosisResult["va"] = 'Ventriculomegalia leve'
 
-                if (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
-                    diagnosisResult["vp"] = 'Ventriculomegalia moderada'
-                if (settings.VT_3 < float(data["va"]) < settings.VT_4):
-                    diagnosisResult["va"] = 'Ventriculomegalia moderada'
-                    
-                if (float(data["vp"]) > settings.VT_MAX ):
-                    diagnosisResult["vp"] = 'Ventriculomegalia severa'
-                if ( float(data["va"]) > settings.VT_MAX):
-                    diagnosisResult["va"] = 'Ventriculomegalia severa'
+            if (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
+                diagnosisResult["vp"] = 'Ventriculomegalia moderada'
+            if (settings.VT_3 < float(data["va"]) < settings.VT_4):
+                diagnosisResult["va"] = 'Ventriculomegalia moderada'
+                
+            if (float(data["vp"]) > settings.VT_MAX ):
+                diagnosisResult["vp"] = 'Ventriculomegalia severa'
+            if ( float(data["va"]) > settings.VT_MAX):
+                diagnosisResult["va"] = 'Ventriculomegalia severa'
  
         if key == 8:
-            if data["afi"] == None:
-                print("asddsa")
-            else:
-                if (float(data["afi"]) < settings.AFI_MIN):
-                    # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Oligohidramnios', data["afi"], 5]})
-                    diagnosisResult["afi"] = 'Oligohidramnios'
-                    
-                elif (settings.AFI_MIN < float(data["afi"]) < settings.AFI_MAX):
-                    # valores_normales.update({'Indice de líquido amniótico (AFI)': ['Normal', data["afi"], '< 24']})
-                    diagnosisResult["afi"] = 'Normal'
-                    
-                elif (float(data["afi"]) > settings.AFI_MAX):
-                    # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
-                    diagnosisResult["afi"] = 'Polihidramnios'
+            if (float(data["afi"]) < settings.AFI_MIN):
+                diagnosisResult["afi"] = 'Oligohidramnios'
+                
+            elif (settings.AFI_MIN < float(data["afi"]) < settings.AFI_MAX):
+                diagnosisResult["afi"] = 'Normal'
+                
+            elif (float(data["afi"]) > settings.AFI_MAX):
+                diagnosisResult["afi"] = 'Polihidramnios'
     return diagnosisResult

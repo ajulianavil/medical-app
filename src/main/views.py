@@ -132,6 +132,14 @@ def agregar_consulta(request):
                 context={"form": form}
             )
         
+        if processedDataReport["ga"] > '40' or processedDataReport["ga"] < 14:
+            messages.error(request, f"Este sistema sólo soporta diagnósticos de la semana 15 a la semana 40 de gestación.")
+            return render(
+            request=request,
+            template_name='consultas/agregar_consulta.html',
+            context={"form": form}
+        )
+        
         #--------------------------------------------- DATOS GENERALES
         fullDate = processedData[2]
         med_name = processedData[3]
@@ -258,6 +266,7 @@ def agregar_consulta(request):
             # ---------------- CREA EL REPORTE
             processedDataReport["consultaid"] = last_consulta
             processedDataReport["txtresults"] = comments
+            
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
                 try:
@@ -284,6 +293,7 @@ def agregar_consulta(request):
             # -------------------- CREA DIAGNOSTICO
             diagnosis = comparison(processedDataReport)
             diagnosis["reporte"] = last_report
+            print("=========================", diagnosis)
             feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
             
             if feto_medicion_diagnostico_serializer.is_valid():
@@ -300,8 +310,9 @@ def agregar_consulta(request):
                         context={"form": form}
                     )
             else:
-                for error in list(form.errors.values()):                    
-                    messages.error(request, error)
+                for error in list(form.errors.values()):  
+                    print("AQUÍ SE TOTEA", error)                  
+                    messages.error(request, f"El sistema no cuenta con los datos para esta edad gestacional")
                 # Delete the paciente record
                 reporte.delete()   # Delete the reporte record
                 consulta.delete()  # Delete the consulta record
@@ -328,6 +339,9 @@ def agregar_consulta(request):
 
 def agregar_consulta_multiple(request):
     if request.method == 'POST':
+        storage = messages.get_messages(request)
+        storage.used = True
+        
         processed_data = []
         file_inputs = [key for key in request.FILES.keys() if key.startswith('file')]
         if(len(file_inputs) < 2):
@@ -499,6 +513,15 @@ def agregar_consulta_multiple(request):
                     
                     for obj in processed_data:
                         processedDataReport = obj[1]
+                        
+                        if processedDataReport["ga"] > '40' or processedDataReport["ga"] < 14:
+                            messages.error(request, f"Este sistema sólo soporta diagnósticos de la semana 15 a la semana 40 de gestación.")
+                            return render(
+                            request=request,
+                            template_name='consultas/agregar_consulta.html',
+                            context={"form": form}
+                        )
+            
                         processedDataReport["consultaid"] = last_consulta
                         processedDataReport["txtresults"] = obj[5]
                         processedDataReport["fetoid"] = fetos_ids[index]
