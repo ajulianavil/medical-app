@@ -269,13 +269,37 @@ background: #f1f1f1; /* Color of the tracking area */
 }
 
 .currentIndex{
-    margin-left: 10px;
-    margin-right: 10px;
+    margin: 0px 10px 0px 10px;
 }
 
-a{
+.toggle-link{
+    font-weight: bold;
     padding-left: 10px;
     padding-right: 10px;
     color: #0279AF;
     font-family: 'League Spartan', sans-serif;
+    font-size: large;
+    transition: all 0.3s ease;
 }
+
+.toggle-link:hover{
+    color: #26283E;
+}
+
+.transition-effect {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.toggle-container {
+    background: #d9d9d9;
+    width: 30%;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+  }
+  
