@@ -248,7 +248,6 @@ def comparison(diagnosisData):
     # print("DATOS", data)
     tipos_mediciones = Tipomedicion.objects.all()
     mediciones = {}
-    
     # Guarda el id y el nombre de cada tipo de medición
     for obj in tipos_mediciones:
         mediciones[obj.idTipoMedicion] = obj.nombreMedicion
@@ -328,7 +327,6 @@ def comparison(diagnosisData):
                     diagnosisResult["cm"] = 'Megacisterna o cisterno alargada'
                 else:
                     diagnosisResult["cm"] = 'Normal'
-        
         if key == 5 or key == 6: #VP or VA
             if data["vp"] == None or data["va"] == None:
                 print("asddsa")
@@ -338,19 +336,19 @@ def comparison(diagnosisData):
                 if(float(data["va"]) < settings.VT_MIN):
                     diagnosisResult["va"] = 'Normal'
 
-                elif ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
+                if ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
                     diagnosisResult["vp"] = 'Ventriculomegalia leve'
-                elif ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
+                if ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
                     diagnosisResult["va"] = 'Ventriculomegalia leve'
 
-                elif (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
+                if (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
                     diagnosisResult["vp"] = 'Ventriculomegalia moderada'
-                elif (settings.VT_3 < float(data["va"]) < settings.VT_4):
+                if (settings.VT_3 < float(data["va"]) < settings.VT_4):
                     diagnosisResult["va"] = 'Ventriculomegalia moderada'
                     
-                elif (float(data["vp"]) > settings.VT_MAX ):
+                if (float(data["vp"]) > settings.VT_MAX ):
                     diagnosisResult["vp"] = 'Ventriculomegalia severa'
-                elif ( float(data["va"]) > settings.VT_MAX):
+                if ( float(data["va"]) > settings.VT_MAX):
                     diagnosisResult["va"] = 'Ventriculomegalia severa'
  
         if key == 8:
@@ -368,5 +366,4 @@ def comparison(diagnosisData):
                 elif (float(data["afi"]) > settings.AFI_MAX):
                     # valores_anormales.update({'Indice de líquido amniótico (AFI)': ['Polihidramnios', data["afi"], 24]})
                     diagnosisResult["afi"] = 'Polihidramnios'
-
     return diagnosisResult
