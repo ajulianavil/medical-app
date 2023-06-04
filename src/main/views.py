@@ -1226,7 +1226,8 @@ def reporte_pdf(request, idreporte_id: int):
     
     # Information
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
-
+    print('matching_report')
+    print(matching_report)
     medico = Personalsalud.objects.get(cedulamed=matching_consulta.medConsulta_id)
     first_name = medico.nombresmed.split(' ')[0] if ' ' in medico.nombresmed else medico.nombresmed
     last_name = medico.apellidosmed.split(' ')[0] if ' ' in medico.apellidosmed else medico.apellidosmed
@@ -1250,10 +1251,10 @@ def reporte_pdf(request, idreporte_id: int):
 
     diagnostico = { 
             'form': matching_result_info,
-            'num_fields': len(normal_columns) + len(anormales_columns[2:]), 
+            'num_fields': len(normal_columns) + len(anormales_columns), 
             'count': len(normal_columns),
             'normales':normal_columns,
-            'anormales':anormales_columns[2:]
+            'anormales':anormales_columns
         }
     
     doc = SimpleDocTemplate(buf, pagesize=letter,
@@ -1276,139 +1277,140 @@ def reporte_pdf(request, idreporte_id: int):
     
     print("=====================================")
     print(matching_consulta, matching_patient, matching_report, matching_result_info)
-    report_title = Paragraph('REPORTE MÉDICO N°{}'.format(matching_report.idreporte), report_style)
-    elements.append(report_title)
-    title = Paragraph('ANOMALÍAS DEL SISTEMA NERVIOSO CENTRAL FETAL', title_style)
-    elements.append(title)
-    
-    image = Image('main/static/images/logo_foscal.png', width=1.5*inch, height=0.8*inch, hAlign="LEFT")
-    elements.insert(0,image)
-
-    elements.append(spacer_logo)
-
-     # Create a line drawing
-    line_drawing = Drawing(400, 1)
-    line = Line(0, 0, 500, 0)
-    line.strokeColor = Color(0.851, 0.851, 0.851)
-    line_drawing.add(line)
-    elements.append(line_drawing)
-    
-    elements.append(spacer_data)
-    elements.append(Paragraph('DATOS DEL PACIENTE', section_title_style))
-    elements.append(spacer_data)
-    elements.append(line_drawing)
-    elements.append(spacer_section)
-    
-    patient_data = [
-    ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{full_name}"],
-    ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{matching_report.edb}"],
-    ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{matching_report.ga} semanas"],
-    ["Peso fetal:",  f"{matching_report.efw} gr", "Último periodo menstrual:", f"{matching_patient.lmp}"],
-    ]
-    
-    patientdata_table = Table(patient_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
-    elements.append(patientdata_table)
-    
-    motivo_consulta = [
-    ["Motivo consulta:", matching_consulta.motivo_consulta],    
-    ]
-    elements.append(spacer_data)
-    motivo_consulta_table = Table(motivo_consulta, style=table_style, colWidths=[1.5*inch, 5.5*inch])
-    elements.append(motivo_consulta_table)
-            
-    elements.append(spacer_section)
-    elements.append(line_drawing)
+    for r in matching_report:
+        report_title = Paragraph('REPORTE MÉDICO N°{}'.format(r.idreporte), report_style)
+        elements.append(report_title)
+        title = Paragraph('ANOMALÍAS DEL SISTEMA NERVIOSO CENTRAL FETAL', title_style)
+        elements.append(title)
         
-    # SECCION OBSERVACIONES
-    elements.append(spacer_section)
-    elements.append(spacer_section)
-    elements.append(Paragraph('RESULTADOS', section_title_style))
-    
-    elements.append(spacer_data)
-    elements.append(Paragraph('El feto presenta valores normales en {} de {} mediciones.'.format(diagnostico['count'], diagnostico['num_fields']), text_style))
-    elements.append(spacer_subsection)
-    elements.append(Paragraph('Valores normales', val_style))
-    elements.append(spacer_data)
-    
-    med_data = ["MEDICIÓN", "VALOR", "REFERENCIA"],    
-    med_data_table = Table(med_data, style=table_med_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
-    
-    if len(diagnostico['normales']) == 0:
-        elements.append(Paragraph('El feto no presenta valores normales que correspondan a su edad gestacional.', text_style))
-    else:
-        diag_data = []
-        for med in diagnostico['normales']:
-            nombre_medicion = my_filters.get_med_name(med)
-            # valor_feto = my_filters.get_field_value(med)
-            valor_feto = my_filters.get_field_value(matching_report, med)
+        image = Image('main/static/images/logo_foscal.png', width=1.5*inch, height=0.8*inch, hAlign="LEFT")
+        elements.insert(0,image)
 
-            valor_ref = my_filters.get_ref_values(matching_report, med)
-            
-            diag_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
-            
-            diagdata_table = Table(diag_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
-                       
-        elements.append(med_data_table)
-        elements.append(diagdata_table)
-    
-    elements.append(spacer_subsection)
-    elements.append(Paragraph('Anormalidades', val_style))
-    elements.append(spacer_data)
-    
-    abnormal_data = []
-    if len(diagnostico['anormales']) == 0:
-        elements.append(Paragraph('El feto no presenta anormalidades', text_style))
+        elements.append(spacer_logo)
+
+        # Create a line drawing
+        line_drawing = Drawing(400, 1)
+        line = Line(0, 0, 500, 0)
+        line.strokeColor = Color(0.851, 0.851, 0.851)
+        line_drawing.add(line)
+        elements.append(line_drawing)
         
-    else:
-        for med in diagnostico['anormales']:
-            nombre_medicion = my_filters.get_med_name(med)
-            valor_feto = my_filters.get_field_value(matching_report, med)
-            valor_ref = my_filters.get_ref_values(matching_report, med)
-            
-            abnormal_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
-            
-            abnormal_data_table = Table(abnormal_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
-
-        elements.append(med_data_table)
-        elements.append(abnormal_data_table)
-    
-    elements.append(spacer_subsection)
-    elements.append(Paragraph('Conclusiones', val_style))
-    elements.append(spacer_data)
-    
-    if len(diagnostico['anormales']) == 0:
-        elements.append(Paragraph('El feto está dentro de los rangos normales para su edad gestacional.', text_style))
-    else:
-        for med in diagnostico['anormales']:
-            nombre_medicion = my_filters.get_med_name(med)
-            valor_ref = my_filters.get_ref_values(matching_report, med)
-            diag = my_filters.get_diagnosis(matching_report, med)
-            
-            
-            elements.append(Paragraph('{}: se encuentra fuera del rango {}, lo que puede indicar {}'
-                                    .format(nombre_medicion, valor_ref, diag), text_style))
-            elements.append(spacer_data)
-    
-    if matching_consulta.txtresults != None:
-        elements.append(spacer_subsection)
-        elements.append(Paragraph('OBSERVACIONES DEL MÉDICO', section_title_style))
         elements.append(spacer_data)
-        elements.append(Paragraph('{}'.format(matching_consulta.txtresults), text_style))
-    
-    #Footer
-    # Define the page template with the footer
-    frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
-    template = PageTemplate(id='test', frames=[frame], onPage=footer)
-    doc.addPageTemplates([template])
+        elements.append(Paragraph('DATOS DEL PACIENTE', section_title_style))
+        elements.append(spacer_data)
+        elements.append(line_drawing)
+        elements.append(spacer_section)
+        
+        patient_data = [
+        ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{full_name}"],
+        ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{r.edb}"],
+        ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{r.ga} semanas"],
+        ["Peso fetal:",  f"{r.efw} gr", "Último periodo menstrual:", f"{matching_patient.lmp}"],
+        ]
+        
+        patientdata_table = Table(patient_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
+        elements.append(patientdata_table)
+        
+        motivo_consulta = [
+        ["Motivo consulta:", matching_consulta.motivo_consulta],    
+        ]
+        elements.append(spacer_data)
+        motivo_consulta_table = Table(motivo_consulta, style=table_style, colWidths=[1.5*inch, 5.5*inch])
+        elements.append(motivo_consulta_table)
+                
+        elements.append(spacer_section)
+        elements.append(line_drawing)
+            
+        # SECCION OBSERVACIONES
+        elements.append(spacer_section)
+        elements.append(spacer_section)
+        elements.append(Paragraph('RESULTADOS', section_title_style))
+        
+        elements.append(spacer_data)
+        elements.append(Paragraph('El feto presenta valores normales en {} de {} mediciones.'.format(diagnostico['count'], diagnostico['num_fields']), text_style))
+        elements.append(spacer_subsection)
+        elements.append(Paragraph('Valores normales', val_style))
+        elements.append(spacer_data)
+        
+        med_data = ["MEDICIÓN", "VALOR", "REFERENCIA"],    
+        med_data_table = Table(med_data, style=table_med_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
+        
+        if len(diagnostico['normales']) == 0:
+            elements.append(Paragraph('El feto no presenta valores normales que correspondan a su edad gestacional.', text_style))
+        else:
+            diag_data = []
+            for med in diagnostico['normales']:
+                nombre_medicion = my_filters.get_med_name(med)
+                # valor_feto = my_filters.get_field_value(med)
+                valor_feto = my_filters.get_field_value(r, med)
 
-    
-    # Build the document and render the PDF.
-    doc.build(elements)
+                valor_ref = my_filters.get_ref_values(r, med)
+                
+                diag_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
+                
+                diagdata_table = Table(diag_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
+                        
+            elements.append(med_data_table)
+            elements.append(diagdata_table)
+        
+        elements.append(spacer_subsection)
+        elements.append(Paragraph('Anormalidades', val_style))
+        elements.append(spacer_data)
+        
+        abnormal_data = []
+        if len(diagnostico['anormales']) == 0:
+            elements.append(Paragraph('El feto no presenta anormalidades', text_style))
+            
+        else:
+            for med in diagnostico['anormales']:
+                nombre_medicion = my_filters.get_med_name(med)
+                valor_feto = my_filters.get_field_value(r, med)
+                valor_ref = my_filters.get_ref_values(r, med)
+                
+                abnormal_data.append([f"{nombre_medicion}", f"{valor_feto}", f"{valor_ref}"])
+                
+                abnormal_data_table = Table(abnormal_data, style=table_style, colWidths=[3.8*inch, 1.5*inch, 2*inch])
 
-    buf.seek(0)
-    filename = 'REPORTE_{}_{}.pdf'.format(datetime.now().strftime('%Y%m%d'), matching_patient.cedulapac)
+            elements.append(med_data_table)
+            elements.append(abnormal_data_table)
+        
+        elements.append(spacer_subsection)
+        elements.append(Paragraph('Conclusiones', val_style))
+        elements.append(spacer_data)
+        
+        if len(diagnostico['anormales']) == 0:
+            elements.append(Paragraph('El feto está dentro de los rangos normales para su edad gestacional.', text_style))
+        else:
+            for med in diagnostico['anormales']:
+                nombre_medicion = my_filters.get_med_name(med)
+                valor_ref = my_filters.get_ref_values(r, med)
+                diag = my_filters.get_diagnosis(r, med)
+                
+                
+                elements.append(Paragraph('{}: se encuentra fuera del rango {}, lo que puede indicar {}'
+                                        .format(nombre_medicion, valor_ref, diag), text_style))
+                elements.append(spacer_data)
+        
+        if r.txtresults != None:
+            elements.append(spacer_subsection)
+            elements.append(Paragraph('OBSERVACIONES DEL MÉDICO', section_title_style))
+            elements.append(spacer_data)
+            elements.append(Paragraph('{}'.format(r.txtresults), text_style))
+        
+        #Footer
+        # Define the page template with the footer
+        frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
+        template = PageTemplate(id='test', frames=[frame], onPage=footer)
+        doc.addPageTemplates([template])
 
-    return FileResponse(buf, as_attachment=True, filename=filename)
+        
+        # Build the document and render the PDF.
+        doc.build(elements)
+
+        buf.seek(0)
+        filename = 'REPORTE_{}_{}.pdf'.format(datetime.now().strftime('%Y%m%d'), matching_patient.cedulapac)
+
+        return FileResponse(buf, as_attachment=True, filename=filename)
 
 def editPacientData(request, consultaid: int):
     if request.method == 'POST':
