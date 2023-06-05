@@ -190,15 +190,15 @@ def agregar_consulta(request):
                 )
         else:
             # ------------------- CREA EL EMBARAZO
-            is_there_embarazo = Embarazo.objects.filter(idpac=onpatient).count()
+            # is_there_embarazo = Embarazo.objects.filter(idpac=onpatient).count()
+            is_there_embarazo = Embarazo.objects.filter(idpac=onpatient).last()
             preg = processedDataPat["numgestacion"]
             
-            # if is_there_embarazo == 0:
-            if int(preg) > is_there_embarazo:
+            if is_there_embarazo == None:
                 embarazo_info = {
-                    'idpac': onpatient,
-                    'numero_embarazo': preg
-                }
+                        'idpac': onpatient,
+                        'numero_embarazo': preg
+                    }
                 embarazo_serializer = EmbarazoSerializer(data=embarazo_info)
                 if embarazo_serializer.is_valid():
                     try:
@@ -221,8 +221,44 @@ def agregar_consulta(request):
                         context={"form": form}
                     )
             else:
-                #------- Si existe el embarazo obtenemos su id
-                last_embarazo = Embarazo.objects.filter(idpac=onpatient, numero_embarazo = preg).first().id_embarazo
+                num_embarazo = is_there_embarazo.numero_embarazo
+                print("is_there_embarazo", is_there_embarazo)
+                print("preg", preg)
+                
+                # if is_there_embarazo == 0:
+                # if int(preg) > is_there_embarazo:
+                if int(preg) != num_embarazo and int(preg) > num_embarazo:
+                        print("nuevo embarazo", preg, is_there_embarazo)
+                        embarazo_info = {
+                            'idpac': onpatient,
+                            'numero_embarazo': preg
+                        }
+                        embarazo_serializer = EmbarazoSerializer(data=embarazo_info)
+                        if embarazo_serializer.is_valid():
+                            try:
+                                embarazo = embarazo_serializer.save()
+                                last_embarazo = embarazo.id_embarazo
+                            except Exception as e:
+                                messages.error(request, f"Error al guardar el embarazo: {str(e)}")
+                                # Delete the paciente record
+                                return render(
+                                    request=request,
+                                    template_name='consultas/agregar_consulta.html',
+                                    context={"form": form}
+                                )
+                        else:
+                            for error in list(form.errors.values()):
+                                messages.error(request, error)
+                            return render(
+                                request=request,
+                                template_name='consultas/agregar_consulta.html',
+                                context={"form": form}
+                            )
+
+                else:
+                    #------- Si existe el embarazo obtenemos su id
+                    last_embarazo = Embarazo.objects.filter(idpac=onpatient, numero_embarazo = preg).first().id_embarazo
+                    print("ya existe embarazo", last_embarazo)
             # ------------------- CREA LA CONSULTA
             user_logged = current_user(request)
             info = list(user_logged.values())
@@ -1016,28 +1052,14 @@ def reporte_graficos(request, consultaid:int):
         'efw': 9
     }
     
-    
-    embarazo = Consulta.objects.get(consultaid = consultaid)
-    # embarazo_consultas_reportes = {}
-    
-    if embarazo:
-        consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo.idembarazo)
-        consultas_reportes = {}
-        
-        for consulta in consultas_embarazo:
-            reportes_embarazo = Reporte.objects.filter(consultaid= consulta.consultaid)
-            consultas_reportes[consulta] = list(reportes_embarazo)
-            
-        # embarazo_consultas_reportes[embarazo] = consultas_reportes
-    
-    # print("embarazo_consultas_reportes======", embarazo_consultas_reportes)
-    print("embarazo_consultas======", consultas_reportes)
-    
     reporte_data = {}
+
     
     for med, med_id in mediciones_dict.items():
         # if med_id != 8:
-        
+        print("aqui", med_id, matching_report.ga)
+        medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+
         column_mapping = {
             'hc_hadlock': 'hc_hadlock_1',
             'bpd_hadlock': 'bpd_hadlock_1',
@@ -1049,83 +1071,109 @@ def reporte_graficos(request, consultaid:int):
             'afi': 'afi',
             'efw': 'efw',
         }
-        
-        if med_id == 1 or med_id == 2 or med_id == 3 or med_id == 9:
-            medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
-        
-            # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
-            if med not in reporte_data:
+
+        # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
+        if med not in reporte_data:
+
+            if med_id == 1 or med_id == 2 or med_id == 3 or med_id == 9:
+                medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+
+                # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
+                if med not in reporte_data:
+                    value = getattr(matching_report, column_mapping.get(med, med))
+                    print("MENOR", value, medvalue.valormin)
+
+                    reporte_data[med] = {
+                        'value': value,
+                        'minvalue': medvalue.valormin,
+                        'maxvalue': medvalue.valorinter,
+                        'is_lower': float(value) < medvalue.valormin,
+                        'is_higher': float(value) > medvalue.valorinter,
+                    }
+            if med_id == 4:
                 value = getattr(matching_report, column_mapping.get(med, med))
-                print("MENOR", value, medvalue.valormin)
-                
+                reporte_data[med] = {
+                    'value': getattr(matching_report, column_mapping.get(med, med)),
+                    'value': value,
+                    'minvalue': 0,
+                    'maxvalue': settings.CM_REF,
+                    'is_lower': float(value) < 0,
+                    'is_higher': float(value) > settings.CM_REF,
+                }
+            if med_id == 5 or med_id == 6:
+                value = getattr(matching_report, column_mapping.get(med, med))
+                reporte_data[med] = {
+                    'value': value,
+                    'minvalue': 0,
+                    'maxvalue': settings.VT_MIN,
+                    'is_lower': float(value) < 0,
+                    'is_higher': float(value) > settings.VT_MIN,
+                }
+
+            if med_id == 7:
+                medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+                value = getattr(matching_report, column_mapping.get(med, med))
                 reporte_data[med] = {
                     'value': value,
                     'minvalue': medvalue.valormin,
                     'maxvalue': medvalue.valorinter,
+                    'maxvalue': 51,
                     'is_lower': float(value) < medvalue.valormin,
-                    'is_higher': float(value) > medvalue.valorinter,
+                    'is_higher': float(value) > 51,
                 }
-        if med_id == 4:
-            value = getattr(matching_report, column_mapping.get(med, med))
-            reporte_data[med] = {
-                'value': value,
-                'minvalue': 0,
-                'maxvalue': settings.CM_REF,
-                'is_lower': float(value) < 0,
-                'is_higher': float(value) > settings.CM_REF,
-            }
-        if med_id == 5 or med_id == 6:
-            value = getattr(matching_report, column_mapping.get(med, med))
-            reporte_data[med] = {
-                'value': value,
-                'minvalue': 0,
-                'maxvalue': settings.VT_MIN,
-                'is_lower': float(value) < 0,
-                'is_higher': float(value) > settings.VT_MIN,
-            }
-            
-        if med_id == 7:
-            medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
-            value = getattr(matching_report, column_mapping.get(med, med))
-            reporte_data[med] = {
-                'value': value,
-                'minvalue': medvalue.valormin,
-                'maxvalue': 51,
-                'is_lower': float(value) < medvalue.valormin,
-                'is_higher': float(value) > 51,
-            }
-            
-        if med_id == 8:
-            
-            value = getattr(matching_report, column_mapping.get(med, med))
-            reporte_data[med] = {
-                'value': value,
-                'minvalue': settings.AFI_MIN,
-                'maxvalue': settings.AFI_MAX,
-                'is_lower': float(value) < settings.AFI_MIN,
-                'is_higher': float(value) > settings.AFI_MAX,
-            }
+
+            if med_id == 8:
+
+                value = getattr(matching_report, column_mapping.get(med, med))
+                reporte_data[med] = {
+                    'value': value,
+                    'minvalue': settings.AFI_MIN,
+                    'maxvalue': settings.AFI_MAX,
+                    'is_lower': float(value) < settings.AFI_MIN,
+                    'is_higher': float(value) > settings.AFI_MAX,
+                }
     
     return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones_dict, "reporte_data": reporte_data, "matching_consulta": matching_consulta})
 
-def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str):
+def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str, consultaid:int):
+    print(idreporte_id, consultaid)
     mediciones = get_mediciones()
     # value_reporte = my_filters.get_field_value(nombreMedicion)
     valores_medicion = Medicion.objects.filter(id_tipo_medicion=mediciones[nombreMedicion])
     matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
     value_reporte = my_filters.get_field_value(matching_report,nombreMedicion)
+    
+    embarazo = Consulta.objects.get(consultaid = consultaid).idembarazo
+
+    if embarazo:
+        consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo)
+        consultas_reportes = {}
+        ga_historicos = []
+
+        for consulta in consultas_embarazo:
+            reportes_embarazo = Reporte.objects.filter(consultaid= consulta.consultaid)
+            for r in reportes_embarazo:
+                ga_historicos.append(r.ga)
+                value_r = my_filters.get_field_value(r,nombreMedicion)
+                consultas_reportes[consulta] = value_r
 
     values_min = [result.valormin for result in valores_medicion]
     values_max = [result.valorinter for result in valores_medicion]
     values_ga = [result.ga for result in valores_medicion]
+    values_hist = [value for value in consultas_reportes.values()]
+
     data = {
         'values_min': values_min,
         'values_max': values_max,
         'values_ga': values_ga,
         'ga_reporte': ga,
-        'value_reporte': value_reporte
+        'value_reporte': value_reporte,
+        'ga_hist': ga_historicos,
+        'values_hist': values_hist
     }
-
+    
+    print("==", data)
+    
     # Return the updated chart data as a JSON response
     return JsonResponse(data, safe=False)
 
