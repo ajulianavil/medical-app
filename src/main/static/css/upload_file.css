@@ -132,3 +132,23 @@ h4 {
   color:#0279af;
   transform: scale(1.05);
 }
+
+#loading-icon {
+  display: none; /* Hide the icon by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  z-index: 9999; /* Ensure it appears above other content */
+}
+
+#loading-icon i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: #ffffff;
+}

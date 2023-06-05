@@ -137,15 +137,12 @@ def process_data(file):
             Vp = Vp[:-1]
             vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
         if ('AFI' in line):
-            print("line", line)
             afi = line.strip().split("|")
             afi = afi[:-1]
             afi_sum = afi[4].split("=")[1].split(" ")[0]
         if ('COMMENT' in line):
             try:
-                #comments = line.strip().split('"')[1]    
                 text = re.search(r'"([^"]*)"', line).group(1)
-                # Replace '\n' with blank spaces
                 comments = re.sub(r'\\n', ' - ', text)
             except:
                 comments = None
@@ -169,7 +166,6 @@ def process_data(file):
 
     
 def ConvertDateTime(studydate, studytime):
-    print(studydate, studytime)
     if studydate is None or studytime is None:
         return None
     

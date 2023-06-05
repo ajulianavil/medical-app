@@ -65,63 +65,71 @@ def get_med_name_nosiglas(item):
 
 @register.filter
 def get_ref_values(reporte, medicion):
-    try:
-        tipo_medicion = Tipomedicion.objects.get(nombreMedicion = medicion.upper())
-        idMedicion = tipo_medicion.idTipoMedicion
-        med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
+    
+    tipo_medicion = Tipomedicion.objects.get(nombreMedicion = medicion.upper())
+    idMedicion = tipo_medicion.idTipoMedicion
+    
+    if medicion == 'efw' or medicion == 'afi':
+        reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
+        value = getattr(reporte_value, medicion)
+    else:
+        reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
+        prefixed_attr = medicion + '_1'
+        value = getattr(reporte_value, prefixed_attr)
         
-        if medicion == 'efw' or medicion == 'afi':
-            reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
-            value = getattr(reporte_value, medicion)
-        else:
-            reporte_value = Reporte.objects.get(idreporte=reporte.idreporte)
-            prefixed_attr = medicion + '_1'
-            value = getattr(reporte_value, prefixed_attr)
-
-        if idMedicion == 1 or idMedicion == 2 or idMedicion == 3 or idMedicion == 9:
+    if idMedicion == 1 or idMedicion == 2 or idMedicion == 3 or idMedicion == 9:
+        try:
+            med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
+        
             if float(med.valormin) < float(value) < float(med.valorinter):
                 return ' en el rango ' + str(med.valormin) + ' - ' + str(med.valorinter)
             else:
                 return ' fuera del rango ' + str(med.valormin) + ' - ' + str(med.valorinter)
-        
-        if idMedicion == 7:
+        except Medicion.DoesNotExist:
+            med = None
+            return '(No se hallaron valores de referencia)'
+    
+    if idMedicion == 7:
+        try:
+            med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
             if float(med.valormin) < float(value):
                 return ' en el rango > ' + str(med.valormin)
             else:
                 return ' en del rango < ' + str(med.valormin)
+        except Medicion.DoesNotExist:
+            med = None
+            return '(No se hallaron valores de referencia)'
 
-        if idMedicion == 4:
-            if float(settings.CM_REF) < float(value):
-                return ' fuera del rango < ' + str(settings.CM_REF)
-            else:
-                return ' en el rango < ' + str(settings.CM_REF)
+    if idMedicion == 4:
+        if float(settings.CM_REF) < float(value):
+            return ' fuera del rango < ' + str(settings.CM_REF)
+        else:
+            return ' en el rango < ' + str(settings.CM_REF)
 
-        if idMedicion == 5 or idMedicion == 6:
-            if float(value) < float(settings.VT_MIN):
-                return ' en el rango < ' + str(settings.VT_MIN)
-            
-            if  float(settings.VT_1) < float(value) < float(settings.VT_2):
-                return ' en el rango ' + str(settings.VT_1) + ' - ' + str(settings.VT_2)
-            
-            if float(settings.VT_3) < float(value) < float(settings.VT_4):
-                return ' en el rango ' + str(settings.VT_3) + ' - ' + str(settings.VT_4)
-            
-            if float(value) > float(settings.VT_MAX):
-                return ' en el rango > ' + str(settings.VT_MAX)
-                            
-        if idMedicion == 8:
-            if float(value) < float(settings.AFI_MIN):
-                return ' en el rango < ' + str(settings.AFI_MIN)
-            
-            if  float(settings.AFI_MIN) < float(value) < float(settings.AFI_MAX):
-                return  ' en el rango ' + str(settings.AFI_MIN) + ' - ' + str(settings.AFI_MAX)
-            
-            if float(value) > float(settings.AFI_MAX):
-                return   ' en el rango > ' + str(settings.AFI_MAX)
+    if idMedicion == 5 or idMedicion == 6:
+        if float(value) < float(settings.VT_MIN):
+            return ' en el rango < ' + str(settings.VT_MIN)
         
-    except Medicion.DoesNotExist:
-        med = None
-        return '(No existen valores de referencia)'
+        if  float(settings.VT_1) < float(value) < float(settings.VT_2):
+            return ' en el rango ' + str(settings.VT_1) + ' - ' + str(settings.VT_2)
+        
+        if float(settings.VT_3) < float(value) < float(settings.VT_4):
+            return ' en el rango ' + str(settings.VT_3) + ' - ' + str(settings.VT_4)
+        
+        if float(value) > float(settings.VT_MAX):
+            return ' en el rango > ' + str(settings.VT_MAX)
+                        
+    if idMedicion == 8:
+        if float(value) < float(settings.AFI_MIN):
+            return ' en el rango < ' + str(settings.AFI_MIN)
+        
+        if  float(settings.AFI_MIN) < float(value) < float(settings.AFI_MAX):
+            return  ' en el rango ' + str(settings.AFI_MIN) + ' - ' + str(settings.AFI_MAX)
+        
+        if float(value) > float(settings.AFI_MAX):
+            return   ' en el rango > ' + str(settings.AFI_MAX)
+        
+    
     
 @register.filter
 def get_ref_values_pdf(reporte, medicion):
@@ -208,7 +216,6 @@ def get_pacient_id(id:int):
 
 @register.filter
 def get_numero_embarazo(id_embarazo):
-    print("id", id_embarazo)
     embarazo = Embarazo.objects.filter(id_embarazo=id_embarazo)
     if embarazo:
         for item in embarazo:

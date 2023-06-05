@@ -17,7 +17,6 @@ def get_matching_consulta(consulta_id):
     matching_patient = Paciente.objects.filter(idpac=matching_consulta.idpac_id).first()
     # matching_clinichist = Historiaclinica.objects.filter(idPaciente=matching_patient.idpac).first()
     matching_report = Reporte.objects.filter(consultaid=matching_consulta.consultaid)
-    print('reportes', len(matching_report))
     matching_result_info = []
     if(len(matching_report)>1):
         for r in matching_report:

@@ -171,7 +171,7 @@ background: #f1f1f1; /* Color of the tracking area */
 .analisis-button:hover{
     background-color: #35840C;
     color: white;
-    transform: scale(1.1);
+    transform: scale(1.03);
 }
 
 .report-button{
@@ -220,7 +220,7 @@ background: #f1f1f1; /* Color of the tracking area */
 .download-button:hover{
     background-color: #A95C00;
     color: white;
-    transform: scale(1.1);
+    transform: scale(1.03);
 }
 
 .download-button:disabled{

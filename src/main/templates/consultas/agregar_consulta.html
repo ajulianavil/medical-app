@@ -4,6 +4,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/upload_file.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/loading.css' %}"/>
 
     <script src="https://kit.fontawesome.com/5bdb3c603b.js" crossorigin="anonymous"></script>
     <script src="{% static 'js/upload_file.js' %}"></script>
@@ -28,7 +29,9 @@ padding: 50px;">
     <div style="display: flex; justify-content: space-around;
     align-items: center;">
     <div class="bg-light p-5 text-center" style="border-radius: 15px; width: 60%">
-
+        <div id="loading-icon">
+            <i class="fa fa-spinner fa-spin"></i>
+        </div>
     {% comment %} <p style="font-weight: lighter; color: #909090; margin-bottom: 0px">{% if multiple %} Sus archivos se procesarán para generar los reporte de diagnóstico de cada feto. {%else%}Su archivo se procesará para generar el reporte de diagnóstico. {%endif%}</p> {% endcomment %}
     
     </p>
@@ -64,7 +67,7 @@ padding: 50px;">
           </div>
         <br>
         <br>
-        <button class="btn submit-button" type="submit">Procesar</button>
+        <button class="btn submit-button" type="submit" onclick="activateLoader()">Procesar</button>
     </form>
 
   </div>
@@ -75,7 +78,6 @@ padding: 50px;">
     function addInput() {
         var inputContainer = document.getElementById("left-div");
         var inputCount = inputContainer.getElementsByTagName("input").length;
-        console.log(inputCount)
         var newInput = document.createElement("input");
         newInput.type = "file";
         newInput.accept = "text/plain";
@@ -84,6 +86,12 @@ padding: 50px;">
         if (inputCount < 5) {
             inputContainer.appendChild(newInput);
         }
+    }
+
+    var loadingIcon = document.getElementById("loading-icon");
+
+    function activateLoader(){
+        loadingIcon.style.display = "block";
     }
 </script>
 {% endblock %}

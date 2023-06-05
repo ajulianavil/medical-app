@@ -71,9 +71,7 @@ def current_user(request):
             'is_superuser': superuser,
             'institucion': institucionid
             }
-            
-            print(user_info)
-            
+                        
             forbidden_url_patterns = [
                 r'^/registros$',
                 r'^/consultas/nueva$',
@@ -104,9 +102,6 @@ def current_user(request):
                     if re.match(pattern, current_path):
                         raise PermissionDenied
                             
-        else:
-            print("Error no existe el usuario")
-        
         return {'current_user': user_info}
     
     else:

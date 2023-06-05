@@ -1,4 +1,5 @@
 from urllib.parse import urlencode
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -293,7 +294,6 @@ def agregar_consulta(request):
             # -------------------- CREA DIAGNOSTICO
             diagnosis = comparison(processedDataReport)
             diagnosis["reporte"] = last_report
-            print("=========================", diagnosis)
             feto_medicion_diagnostico_serializer = FetoMedicionDiagnosticoSerializer(data=diagnosis)
             
             if feto_medicion_diagnostico_serializer.is_valid():
@@ -364,8 +364,14 @@ def agregar_consulta_multiple(request):
 
                 for obj in processed_data:
                     processedDataPat = obj[0]
-                    if( pat_id != processedDataPat['cedulapac'] or preg !=processedDataPat['numgestacion']):
+                    if( pat_id != processedDataPat['cedulapac']):
                         messages.error(request, 'Las cedulas de los pacientes no coinciden. Asegúrese de cargar dos archivos de la misma paciente.')
+                        return render(
+                            request=request,
+                            template_name='consultas/tipo_embarazo.html',
+                        )
+                    if (preg !=processedDataPat['numgestacion']):
+                        messages.error(request, 'Las archivos cargados indican dos embarazos diferentes. Asegúrese de cargar dos archivos de un mismo embarazo.')
                         return render(
                             request=request,
                             template_name='consultas/tipo_embarazo.html',
@@ -445,7 +451,6 @@ def agregar_consulta_multiple(request):
                                 )
                         else:
                             for error in list(form.errors.values()):
-                                print('error',error)
                                 messages.error(request, error)
                             return render(
                                 request=request,
@@ -610,7 +615,6 @@ def agregar_consulta_multiple(request):
                                             
 
             except Exception as e:
-                print(str(e))
                 messages.error(request, 'Por favor seleccione un archivo')
                 return render(
                     request=request,
@@ -640,9 +644,7 @@ def temporal_historial(request):
         #--------------- SE GUARDAN LOS IDS DE LOS FETOS SELECCIONADOS
         for name, value in form_data.items():
             # Process each feto radio button
-            print('name and value',name,value)
             if(name != "consulta" and name != "fetos" and name != 'csrfmiddlewaretoken'):
-                print('supuesto feto id',value)
                 reportes_fetos_ids.append(value)
         pat_id = processed_data[0][0]['cedulapac']
         preg = processed_data[0][0]['numgestacion']
@@ -708,7 +710,6 @@ def temporal_historial(request):
             processedDataReport["consultaid"] = last_consulta
             processedDataReport["txtresults"] = obj[5]
             processedDataReport["fetoid"] = reportes_fetos_ids[index]
-            print(processedDataReport)
             index = index + 1
             reporte_serializer = ReporteSerializer(data=processedDataReport)
             if reporte_serializer.is_valid():
@@ -729,7 +730,6 @@ def temporal_historial(request):
 
             else:
                 for error in list(reporte_serializer.errors.values()):
-                    print(error)
                     messages.error(request, error)
                 # Delete the consulta record
                 consulta.delete()  
@@ -945,7 +945,6 @@ def repositorio(request):
         filter_kwargs["end_date"] = end_date
         filter_kwargs["med_input"] = med_input
         filter_kwargs["diagnosis_input"] = diagnosis_input
-        print(filter_kwargs)
         return render(request, 'repositorio/repositorio.html', context={"objects": objects_list, "filtros": filter_kwargs})
         
     else:
@@ -1017,11 +1016,27 @@ def reporte_graficos(request, consultaid:int):
         'efw': 9
     }
     
+    
+    embarazo = Consulta.objects.get(consultaid = consultaid)
+    # embarazo_consultas_reportes = {}
+    
+    if embarazo:
+        consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo.idembarazo)
+        consultas_reportes = {}
+        
+        for consulta in consultas_embarazo:
+            reportes_embarazo = Reporte.objects.filter(consultaid= consulta.consultaid)
+            consultas_reportes[consulta] = list(reportes_embarazo)
+            
+        # embarazo_consultas_reportes[embarazo] = consultas_reportes
+    
+    # print("embarazo_consultas_reportes======", embarazo_consultas_reportes)
+    print("embarazo_consultas======", consultas_reportes)
+    
     reporte_data = {}
-
+    
     for med, med_id in mediciones_dict.items():
         # if med_id != 8:
-        medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
         
         column_mapping = {
             'hc_hadlock': 'hc_hadlock_1',
@@ -1034,13 +1049,61 @@ def reporte_graficos(request, consultaid:int):
             'afi': 'afi',
             'efw': 'efw',
         }
-
-        # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
-        if med not in reporte_data:
+        
+        if med_id == 1 or med_id == 2 or med_id == 3 or med_id == 9:
+            medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+        
+            # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
+            if med not in reporte_data:
+                value = getattr(matching_report, column_mapping.get(med, med))
+                print("MENOR", value, medvalue.valormin)
+                
+                reporte_data[med] = {
+                    'value': value,
+                    'minvalue': medvalue.valormin,
+                    'maxvalue': medvalue.valorinter,
+                    'is_lower': float(value) < medvalue.valormin,
+                    'is_higher': float(value) > medvalue.valorinter,
+                }
+        if med_id == 4:
+            value = getattr(matching_report, column_mapping.get(med, med))
             reporte_data[med] = {
-                'value': getattr(matching_report, column_mapping.get(med, med)),
+                'value': value,
+                'minvalue': 0,
+                'maxvalue': settings.CM_REF,
+                'is_lower': float(value) < 0,
+                'is_higher': float(value) > settings.CM_REF,
+            }
+        if med_id == 5 or med_id == 6:
+            value = getattr(matching_report, column_mapping.get(med, med))
+            reporte_data[med] = {
+                'value': value,
+                'minvalue': 0,
+                'maxvalue': settings.VT_MIN,
+                'is_lower': float(value) < 0,
+                'is_higher': float(value) > settings.VT_MIN,
+            }
+            
+        if med_id == 7:
+            medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+            value = getattr(matching_report, column_mapping.get(med, med))
+            reporte_data[med] = {
+                'value': value,
                 'minvalue': medvalue.valormin,
-                'maxvalue': medvalue.valorinter,
+                'maxvalue': 51,
+                'is_lower': float(value) < medvalue.valormin,
+                'is_higher': float(value) > 51,
+            }
+            
+        if med_id == 8:
+            
+            value = getattr(matching_report, column_mapping.get(med, med))
+            reporte_data[med] = {
+                'value': value,
+                'minvalue': settings.AFI_MIN,
+                'maxvalue': settings.AFI_MAX,
+                'is_lower': float(value) < settings.AFI_MIN,
+                'is_higher': float(value) > settings.AFI_MAX,
             }
     
     return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones_dict, "reporte_data": reporte_data, "matching_consulta": matching_consulta})
@@ -1084,7 +1147,6 @@ def agregar_usuario(request):
         else:
             for error in list(form.errors.values()):
                 error_str = str(error)
-                print("error", error, type(error))
                 if error_str == '<ul class="errorlist"><li>User with this Email already exists.</li></ul>':
                     messages.error(request, f'Ya existe un usuario registrado con este email.')
                 else:
@@ -1257,8 +1319,6 @@ def reporte_pdf(request, idreporte_id: int):
     
     # Information
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
-    print('matching_report')
-    print(matching_report)
     medico = Personalsalud.objects.get(cedulamed=matching_consulta.medConsulta_id)
     first_name = medico.nombresmed.split(' ')[0] if ' ' in medico.nombresmed else medico.nombresmed
     last_name = medico.apellidosmed.split(' ')[0] if ' ' in medico.apellidosmed else medico.apellidosmed
@@ -1306,8 +1366,6 @@ def reporte_pdf(request, idreporte_id: int):
     max_height = 7 * inch  # adjust the value as needed
     current_height = 0
     
-    print("=====================================")
-    print(matching_consulta, matching_patient, matching_report, matching_result_info)
     for r in matching_report:
         report_title = Paragraph('REPORTE MÉDICO N°{}'.format(r.idreporte), report_style)
         elements.append(report_title)

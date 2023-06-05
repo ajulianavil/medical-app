@@ -34,12 +34,12 @@
       </thead>
       <tbody>
         {% for key, values in reporte_data.items %}
-          <tr class="clickableRow {% if values.value|floatformat:2 < values.minvalue|floatformat:2 %} lower {% elif  values.value|floatformat:2 > values.maxvalue|floatformat:2 %} higher {% else %} normal {% endif %}">
+          <tr class="clickableRow {% if values.is_lower %} lower {% elif values.is_higher %} higher {% else %} normal {% endif %}">
           <td style="text-align: left !important;">{{ key}}</td> {% comment %}  text-transform: uppercase;  {% endcomment %}
           <td>{{ values.value }}</td>
           <td>{{ values.minvalue }}</td>
           <td>{{ values.maxvalue }}</td>
-        </tr>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
@@ -66,10 +66,15 @@
   
 </div>
 <div style="display:flex; justify-content: flex-end; padding: 10px 50px">
-  <button id="submitBtn" class="btn goback-button" style="width: 200px;" onclick="window.location.href='{%url 'registroinfo' matching_consulta.consultaid %}'">Volver a reporte</button>
+  <button id="submitBtn" class="btn goback-button" style="width: 200px;" onclick="goBack()">Volver a reporte</button>
 </div>
 
 <script>
+
+  function goBack() {
+    window.history.back();
+  }
+  
   $('#infoTable').on('click', 'tbody tr', function (event) {
     $(this).addClass('highlight').siblings().removeClass('highlight');
 
@@ -157,14 +162,14 @@
     data: {
       labels: [],
       datasets: [{
-        label: 'Mínimos',
+        label: 'Mínimos para GA',
         data: [],  // Initial default data
         backgroundColor: 'rgba(7, 150, 216, 0.5)',
         borderColor: 'rgba(7, 150, 216, 1)',
         borderWidth: 1 
       },
       {
-        label: 'Máximos',
+        label: 'Máximos para GA',
         data: [],  // Initial default data
         backgroundColor: 'rgba(3, 113, 164, 0.5)',
         borderColor: 'rgba(3, 113, 164, 1)',

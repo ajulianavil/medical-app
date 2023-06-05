@@ -36,9 +36,13 @@
             <p style="color: #26283E; font-weight: bold;">En la primera consulta, se identificó cada feto por su posición de la siguiente manera:.</p> </br>
         </div>
     </div>
+
+    <div id="loading-icon">
+        <i class="fa fa-spinner fa-spin"></i>
+    </div>
+
     <form method="POST", enctype="multipart/form-data">
         {% csrf_token %}
-    
         <div class="text-center"style="display: flex; justify-content: space-around; align-items: center;">
             <div class="reports-container">
                 {% comment %} {% for emb in embarazos%} {% endcomment %}
@@ -79,8 +83,18 @@
         </div>
         <input type="hidden" name="consulta" value="{{ consulta }}">
         <input type="hidden" name="fetos" value="{{ fetos }}">
-        <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px; "type="submit">Continuar a reporte</button>
+        <button id="submitBtn" class="btn submit-button" style="background: #63AC3D; width: 200px; "type="submit"  onclick="activateLoader()">Continuar</button>
     </form>
 </div>
+
+<script>
+
+    var loadingIcon = document.getElementById("loading-icon");
+
+    function activateLoader(){
+        console.log("alo")
+        loadingIcon.style.display = "block";
+    }
+</script>
 
 {% endblock %}

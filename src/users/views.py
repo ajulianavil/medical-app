@@ -167,9 +167,7 @@ def user_data(request):
                 return render(request, 'users/user_data.html', {"form": form, "rol": rol})
         else:
             for field, errors in form.errors.items():
-                print(f"Errors for field '{field}':")
                 for error in errors:
-                    print(f"- {error}")
                     messages.error(request, f"{error}")
             rol = request.GET.get('rol')
             return render(request, 'users/user_data.html', {"form": form, "rol": rol})
