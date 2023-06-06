@@ -8,6 +8,13 @@ from main.models import *
 register = template.Library()
 
 @register.filter
+def get_array_object(array, index):
+    if index < len(array):
+        return array[index]
+    else:
+        return None
+
+@register.filter
 def get_fields(obj):
     return obj._meta.get_fields()
 

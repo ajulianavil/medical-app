@@ -926,23 +926,28 @@ def resumen_embarazo(request, id_embarazo):
 
 def reporteInfo(request, param: int):
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(param)
-    normal_columns = []
-    anormales_columns = []
+   
+    diagnostico_list = []
+    print(matching_result_info)
+
     for diagnostico in matching_result_info:
+        normal_columns = []
+        anormales_columns = []
         for field in diagnostico._meta.fields:
             if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
                 if getattr(diagnostico, field.name) == 'Normal':
                     normal_columns.append(field.name)
                 else:
                     anormales_columns.append(field.name)
-    diagnostico = { 
-            'form': matching_result_info,
+        diagnostico = { 
             'num_fields': len(normal_columns) + len(anormales_columns), 
             'count': len(normal_columns),
             'normales':normal_columns,
             'anormales':anormales_columns
         }
-    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnostico": diagnostico})
+        diagnostico_list.append(diagnostico)
+    
+    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnosticos": diagnostico_list})
 
 def repositorio(request):
     objects_list = []
@@ -1035,8 +1040,8 @@ def reportes(request,):
         matching_consultas = Consulta.objects.filter(medConsulta=userced, fecha_consulta__range=(date_init, date_end)).order_by('-fecha_consulta')
         return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
-def reporte_graficos(request, consultaid:int):
-    matching_report = Reporte.objects.filter(consultaid=consultaid).first()
+def reporte_graficos(request, consultaid:int, idreporte:int):
+    matching_report = Reporte.objects.filter(idreporte=idreporte).first()
     matching_consulta = Consulta.objects.get(consultaid=consultaid)
     mediciones = get_mediciones()
     
@@ -1308,7 +1313,7 @@ def footer(canvas, doc):
     canvas.setFillColor(style.textColor)
     canvas.drawString(18*mm, 20*mm, f"Fecha y hora de impresión: {current_date}")
 
-def reporte_pdf(request, idreporte_id: int):
+def reporte_pdf(request, consultaid: int, reporteid: int):
     buf = io.BytesIO()
     
     # Styles
@@ -1366,27 +1371,38 @@ def reporte_pdf(request, idreporte_id: int):
     ]
     
     # Information
-    matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
+    matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(consultaid)
+    print('consulta id', consultaid)
+    print('reporteid id', reporteid)
+    reporte = None
+    diag = None
+    for r in matching_report:
+        if r.idreporte == reporteid:
+            reporte = r
+            break
+    for d in matching_result_info:
+        print('d', d.reporte.idreporte)
+        print('reporte', reporte.idreporte)
+        if d.reporte.idreporte == reporte.idreporte:
+            print('aqui tiene que entrar wtf')
+            diag = d
+            break
+    print('diag', diag)
+
     medico = Personalsalud.objects.get(cedulamed=matching_consulta.medConsulta_id)
+
     first_name = medico.nombresmed.split(' ')[0] if ' ' in medico.nombresmed else medico.nombresmed
     last_name = medico.apellidosmed.split(' ')[0] if ' ' in medico.apellidosmed else medico.apellidosmed
     full_name = f'{first_name} {last_name}'
     normal_columns = []
     anormales_columns = []
 
-    # for field in matching_result_info.get()._meta.fields:
-    #     if getattr(matching_result_info.get(), field.name) == 'Normal':
-    #         normal_columns.append(field.name)
-    #     else:
-    #         anormales_columns.append(field.name)
-    
-    for diagnostico in matching_result_info:
-        for field in diagnostico._meta.fields:
-            if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
-                if getattr(diagnostico, field.name) == 'Normal':
-                    normal_columns.append(field.name)
-                else:
-                    anormales_columns.append(field.name)
+    for field in diag._meta.fields:
+        if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
+            if getattr(diag, field.name) == 'Normal':
+                normal_columns.append(field.name)
+            else:
+                anormales_columns.append(field.name)
 
     diagnostico = { 
             'form': matching_result_info,
@@ -1415,7 +1431,7 @@ def reporte_pdf(request, idreporte_id: int):
     current_height = 0
     
     for r in matching_report:
-        report_title = Paragraph('REPORTE MÉDICO N°{}'.format(r.idreporte), report_style)
+        report_title = Paragraph('REPORTE MÉDICO N°{}'.format(reporte.idreporte), report_style)
         elements.append(report_title)
         title = Paragraph('ANOMALÍAS DEL SISTEMA NERVIOSO CENTRAL FETAL', title_style)
         elements.append(title)
@@ -1440,9 +1456,9 @@ def reporte_pdf(request, idreporte_id: int):
         
         patient_data = [
         ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{full_name}"],
-        ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{r.edb}"],
-        ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{r.ga} semanas"],
-        ["Peso fetal:",  f"{r.efw} gr", "Último periodo menstrual:", f"{matching_patient.lmp}"],
+        ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{reporte.edb}"],
+        ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{reporte.ga} semanas"],
+        ["Peso fetal:",  f"{reporte.efw} gr", "Último periodo menstrual:", f"{matching_patient.lmp}"],
         ]
         
         patientdata_table = Table(patient_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
@@ -1533,7 +1549,7 @@ def reporte_pdf(request, idreporte_id: int):
             elements.append(spacer_subsection)
             elements.append(Paragraph('OBSERVACIONES DEL MÉDICO', section_title_style))
             elements.append(spacer_data)
-            elements.append(Paragraph('{}'.format(r.txtresults), text_style))
+            elements.append(Paragraph('{}'.format(reporte.txtresults), text_style))
         
         #Footer
         # Define the page template with the footer
