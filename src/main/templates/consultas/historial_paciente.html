@@ -94,12 +94,15 @@
             </div>
     </div>
         <div style="display:flex; justify-content: flex-end">
-            <button id="submitBtn" class="btn-reg submit-button" onclick="window.location.href='{%url 'registros'%}'">Volver a 'Registros'</button>
+            <button id="submitBtn" class="btn-reg submit-button" onclick="goBack()">Volver a 'Registros'</button>
         </div>
             {% comment %} </form> {% endcomment %}
 </div>
 
 <script>
+    function goBack() {
+        window.history.back();
+      }
     const radioButtons = document.querySelectorAll('.radio-input');
     const submitBtn = document.getElementById('submitBtn');
     
