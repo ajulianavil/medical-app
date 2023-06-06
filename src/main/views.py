@@ -1044,7 +1044,7 @@ def reporte_graficos(request, consultaid:int, idreporte:int):
     matching_report = Reporte.objects.filter(idreporte=idreporte).first()
     matching_consulta = Consulta.objects.get(consultaid=consultaid)
     mediciones = get_mediciones()
-    
+    print('wtf mothaskjdkasd')
     mediciones_dict = {
         'hc_hadlock': 1,
         'bpd_hadlock': 2,
@@ -1140,32 +1140,33 @@ def reporte_graficos(request, consultaid:int, idreporte:int):
     
     return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones_dict, "reporte_data": reporte_data, "matching_consulta": matching_consulta})
 
-def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str, consultaid:int):
-    print(idreporte_id, consultaid)
+def chart_data_view(request, idpaciente:int,idreporte_id:int, nombreMedicion:str, ga: str, consultaid:int):
     mediciones = get_mediciones()
     # value_reporte = my_filters.get_field_value(nombreMedicion)
     valores_medicion = Medicion.objects.filter(id_tipo_medicion=mediciones[nombreMedicion])
     matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
     value_reporte = my_filters.get_field_value(matching_report,nombreMedicion)
-    
-    embarazo = Consulta.objects.get(consultaid = consultaid).idembarazo
-
-    if embarazo:
-        consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo)
-        consultas_reportes = {}
-        ga_historicos = []
-
-        for consulta in consultas_embarazo:
-            reportes_embarazo = Reporte.objects.filter(consultaid= consulta.consultaid)
-            for r in reportes_embarazo:
-                ga_historicos.append(r.ga)
-                value_r = my_filters.get_field_value(r,nombreMedicion)
-                consultas_reportes[consulta] = value_r
 
     values_min = [result.valormin for result in valores_medicion]
     values_max = [result.valorinter for result in valores_medicion]
     values_ga = [result.ga for result in valores_medicion]
-    values_hist = [value for value in consultas_reportes.values()]
+
+    hist_reportes = []
+    #------------ OBTENER TODAS LAS CONSULTAS DEL PACIENTE
+    matching_consultas = Consulta.objects.filter(idpac=idpaciente)
+    for consulta in matching_consultas:
+        reporte = Reporte.objects.filter(consultaid=consulta.consultaid)
+        hist_reportes.append(reporte)
+
+    semanas_gestacion = len(values_ga)
+    values_historicos = [None] * semanas_gestacion
+    index = 0
+    for reporte in hist_reportes:
+        if(len(reporte) < 2 ):
+            valor_medicion =  my_filters.get_field_value(reporte[0],nombreMedicion)
+            reporte_ga = reporte[0].ga
+            index = values_ga.index(int(reporte_ga))
+            values_historicos[index] = valor_medicion
 
     data = {
         'values_min': values_min,
@@ -1173,11 +1174,8 @@ def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str, cons
         'values_ga': values_ga,
         'ga_reporte': ga,
         'value_reporte': value_reporte,
-        'ga_hist': ga_historicos,
-        'values_hist': values_hist
+        'values_hist': values_historicos
     }
-    
-    print("==", data)
     
     # Return the updated chart data as a JSON response
     return JsonResponse(data, safe=False)
