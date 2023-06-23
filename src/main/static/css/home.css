@@ -1,12 +1,13 @@
 
 /* Style the counter cards */
 .card1 {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
-    padding: 50px 10px 50px 10px;
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+    padding: 10px;
     text-align: center;
     background-color: #ffffff;
-    border-radius: 17px;
-    height: 300px;
+    border-radius: 10px;
+    border: none;
+    height: 200px;
     transition: all 0.5s;
     display: flex;
     align-items: center;
@@ -22,10 +23,12 @@
 }
 
 .card2{
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     padding: 30px 10px 30px 10px;
     text-align: center;
-    background-color: #0796D8;
+    background-color: white;
+    /* background-color: #9FA0D0; */
+    border: none; 
     border-radius: 17px;
     height: auto;
     cursor: pointer;
@@ -72,7 +75,7 @@ h5{
     color: white;
     font-family: 'League Spartan', sans-serif;
     transition: all 0.5s;
-    background-color: #52CBF5;
+    background-color: #0279AF;
     cursor: default;
     color: white;
     transition: all 0.5s ease;
@@ -181,7 +184,7 @@ h5{
 }
 
 .card-description{
-    color: white
+    color: #26283E;
 }
 
 .containerx {

@@ -13,16 +13,16 @@ def process_data(file):
     pat_name = None
     num_gesta = None
     lmp = None
-    EFW = None
+    EFW = 0
     CLINICAL_EDC = None
     ga_weeks = None
-    csp_1 = None
-    cm_1 = None
-    hc_hadlock_1 = None
-    bpd_hadlock_1 = None
-    cereb_hill_1 = None
-    va_1 = None
-    vp_1 = None
+    csp_1 = 0
+    cm_1 = 0
+    hc_hadlock_1 = 0
+    bpd_hadlock_1 = 0
+    cereb_hill_1 = 0
+    va_1 = 0
+    vp_1 = 0
     ga_days = None
     afi_sum = None
     med_name = None
@@ -90,57 +90,70 @@ def process_data(file):
         }
     
     count = 0
+    flag = False
     for row_bytes in file_readed:
         line = row_bytes.decode("utf-8") 
     # BIORBITAL DIAMETER Diámetro bi-orbitario externo
-        if ('BOD_JEANTY' in line):
-            BOD_JEANTY = line.strip().split("|")
-            BOD_JEANTY = BOD_JEANTY[:-1]
-            BOD_JEANTY = BOD_JEANTY[0].split("=")[1].split(" ")[0] #1
-            BOD_JEANTY = (float(BOD_JEANTY)*10) #To mm
-        # diámetro transverso del cerebelo
-        if ('CEREB_HILL' in line):
-            CEREB_HILL = line.strip().split("|")
-            CEREB_HILL = CEREB_HILL[:-1]
-            cereb_hill_1 = CEREB_HILL[0].split("=")[1].split(" ")[0] #1
-            cereb_hill_1 = np.round((float(cereb_hill_1)*10), decimals=2) #To mm
-        # BIPARIETAL DIAMETER Diametro Biparietal (Distancia en milímetros entre ambos huesos parietales de la cabeza del bebé)
-        if ('BPD_HADLOCK' in line):
-            BPD_HADLOCK = line.strip().split("|")
-            BPD_HADLOCK = BPD_HADLOCK[:-1]
-            bpd_hadlock_1 = BPD_HADLOCK[0].split("=")[1].split(" ")[0] #1
-            bpd_hadlock_1 = np.round((float(bpd_hadlock_1)*10), decimals=2) #To mm
-        # CISTERNA MAGNA
-        if ('CM' in line):
-            CM = line.strip().split("|")
-            CM = CM[:-1]
-            cm_1 = CM[0].split("=")[1].split(" ")[0] #1
-        # CAVUM SEPTI PELLUCIDI
-        if ('CSP' in line):
-            CSP = line.strip().split("|")
-            CSP = CSP[:-1]
-            csp_1 = CSP[0].split("=")[1].split(" ")[0] #1
-        # HEAD CIRCUMFERENCE
-        if ('HC_HADLOCK' in line):
-            HC_HADLOCK = line.strip().split("|")
-            HC_HADLOCK = HC_HADLOCK[:-1]
-            hc_hadlock_1 = HC_HADLOCK[0].split("=")[1].split(" ")[0] #1
-            hc_hadlock_1 = np.round((float(hc_hadlock_1)*10), decimals=2) #To mm
-        # Va Anterior Ventricle
-        if ('Va' in line):
-            Va = line.strip().split("|")
-            Va = Va[:-1]
-            va_1= Va[0].split("=")[1].split(" ")[0] #1
-        # Vp Posterior ventricle
-        if ('Vp' in line):
-            Vp = line.strip().split("|")
-            Vp = Vp[:-1]
-            vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
-        if ('AFI' in line):
-            afi = line.strip().split("|")
-            afi = afi[:-1]
-            afi_sum = afi[4].split("=")[1].split(" ")[0]
-        if ('COMMENT' in line):
+        if ('BEGIN FETALBIO' in line):
+            flag = True
+        if ('END FETALBIO' in line):
+            False
+            
+        print(flag)
+        
+        if flag:
+            print(flag, line)
+            if ('BOD_JEANTY' in line):
+                BOD_JEANTY = line.strip().split("|")
+                BOD_JEANTY = BOD_JEANTY[:-1]
+                BOD_JEANTY = BOD_JEANTY[0].split("=")[1].split(" ")[0] #1
+                BOD_JEANTY = (float(BOD_JEANTY)*10) #To mm
+            # diámetro transverso del cerebelo
+            if ('CEREB_HILL' in line):
+                CEREB_HILL = line.strip().split("|")
+                CEREB_HILL = CEREB_HILL[:-1]
+                cereb_hill_1 = CEREB_HILL[0].split("=")[1].split(" ")[0] #1
+                cereb_hill_1 = np.round((float(cereb_hill_1)*10), decimals=2) #To mm
+            # BIPARIETAL DIAMETER Diametro Biparietal (Distancia en milímetros entre ambos huesos parietales de la cabeza del bebé)
+            if ('BPD_HADLOCK' in line):
+                BPD_HADLOCK = line.strip().split("|")
+                BPD_HADLOCK = BPD_HADLOCK[:-1]
+                bpd_hadlock_1 = BPD_HADLOCK[0].split("=")[1].split(" ")[0] #1
+                bpd_hadlock_1 = np.round((float(bpd_hadlock_1)*10), decimals=2) #To mm
+            # CISTERNA MAGNA
+            if ('CM' in line):
+                CM = line.strip().split("|")
+                CM = CM[:-1]
+                cm_1 = CM[0].split("=")[1].split(" ")[0] #1
+            # CAVUM SEPTI PELLUCIDI
+            if ('CSP' in line):
+                CSP = line.strip().split("|")
+                CSP = CSP[:-1]
+                csp_1 = CSP[0].split("=")[1].split(" ")[0] #1
+            # HEAD CIRCUMFERENCE
+            if ('HC_HADLOCK' in line):
+                HC_HADLOCK = line.strip().split("|")
+                HC_HADLOCK = HC_HADLOCK[:-1]
+                hc_hadlock_1 = HC_HADLOCK[0].split("=")[1].split(" ")[0] #1
+                hc_hadlock_1 = np.round((float(hc_hadlock_1)*10), decimals=2) #To mm
+            # Va Anterior Ventricle
+            if ('Va' in line):
+                print(line)
+                Va = line.strip().split("|")
+                Va = Va[:-1]
+                va_1= Va[0].split("=")[1].split(" ")[0] #1
+            # Vp Posterior ventricle
+            if ('Vp' in line):
+                Vp = line.strip().split("|")
+                Vp = Vp[:-1]
+                vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
+            if ('AFI' in line):
+                print(line)
+                afi = line.strip().split("|")
+                afi = afi[:-1]
+                print(afi)
+                afi_sum = afi[4].split("=")[1].split(" ")[0]
+        if line.startswith('COMMENT'):
             try:
                 text = re.search(r'"([^"]*)"', line).group(1)
                 comments = re.sub(r'\\n', ' - ', text)
@@ -161,6 +174,8 @@ def process_data(file):
         'ga_days': ga_days,
         'afi': afi_sum
     }
+    
+    
     
     return insert_paciente, reporte_info, convertedDate, med_name, med_lastname, comments
 
@@ -196,7 +211,10 @@ def comparison(diagnosisData):
                 med = Medicion.objects.get(id_tipo_medicion=key, ga=gest_age)
                 
                 if key == 1: #HC_HADLOCK
-                    if (data["hc_hadlock"] > med.valorinter):
+                    if float(data["hc_hadlock"]) == 0:
+                        diagnosisResult["hc_hadlock"] = 'None'
+                        
+                    elif (data["hc_hadlock"] > med.valorinter):
                         diagnosisResult["hc_hadlock"] = 'Macrocrania'
                         
                     elif (data["hc_hadlock"] < med.valormin):
@@ -205,7 +223,9 @@ def comparison(diagnosisData):
                         diagnosisResult["hc_hadlock"] = 'Normal'
 
                 if key == 2: #BPD
-                    if (data["bpd_hadlock"] > med.valorinter):
+                    if float(data["bpd_hadlock"]) == 0:
+                        diagnosisResult["bpd_hadlock"] = 'None'
+                    elif (data["bpd_hadlock"] > med.valorinter):
                         diagnosisResult["bpd_hadlock"] = 'Anormalidad por valor superior'
                         
                     elif (data["bpd_hadlock"] < med.valormin):
@@ -215,13 +235,17 @@ def comparison(diagnosisData):
                         diagnosisResult["bpd_hadlock"] = 'Normal'
                         
                 if key == 7: #Diametro transverso del cerebelo CEREB_HILL
-                    if (data["cereb_hill"] < med.valormin):
+                    if float(data["cereb_hill"]) == 0:
+                        diagnosisResult["cereb_hill"] = 'None'
+                    elif (data["cereb_hill"] < med.valormin):
                         diagnosisResult["cereb_hill"] = 'Hipoplasia cereberal'
                     else:
                         diagnosisResult["cereb_hill"] = 'Normal'
                 
                 if key == 3: #CSP
-                    if (float(data["csp"]) > med.valorinter):
+                    if float(data["csp"]) == 0:
+                        diagnosisResult["csp"] = 'None'
+                    elif (float(data["csp"]) > med.valorinter):
                         diagnosisResult["csp"] = 'Anormalidad por valor superior'
                         
                     elif (float(data["csp"]) < med.valormin):
@@ -230,7 +254,9 @@ def comparison(diagnosisData):
                         diagnosisResult["csp"] = 'Normal'
                         
                 if key == 9: #EFW
-                    if (float(data["efw"]) > med.valorinter):
+                    if float(data["efw"]) == 0:
+                        diagnosisResult["efw"] = 'None'
+                    elif (float(data["efw"]) > med.valorinter):
                         diagnosisResult["efw"] = 'Feto grande para la edad gestacional'
                         
                     elif (float(data["efw"]) < med.valordev):
@@ -248,34 +274,48 @@ def comparison(diagnosisData):
                 print("Para la medición:", key, "no se encontró nada con esta edad gestacional")
                      
         if key == 4: #CM -> Para todas las edades
-            if (float(data["cm"]) > settings.CM_REF):
+            if float(data["cm"]) == 0:
+                diagnosisResult["cm"] = 'None'
+            elif (float(data["cm"]) > settings.CM_REF):
                 diagnosisResult["cm"] = 'Megacisterna o cisterno alargada'
             else:
                 diagnosisResult["cm"] = 'Normal'
                     
-        if key == 5 or key == 6: #VP or VA
-            if (float(data["vp"]) < settings.VT_MIN):
+        if key == 5: #VP or VA
+            if float(data["vp"]) == 0:
+                diagnosisResult["vp"] = 'None'
+            elif (float(data["vp"]) < settings.VT_MIN):
                 diagnosisResult["vp"] = 'Normal'
-            if(float(data["va"]) < settings.VT_MIN):
+
+            elif ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
+                diagnosisResult["vp"] = 'Ventriculomegalia leve'
+
+            elif (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
+                diagnosisResult["vp"] = 'Ventriculomegalia moderada'
+                
+            elif (float(data["vp"]) > settings.VT_MAX ):
+                diagnosisResult["vp"] = 'Ventriculomegalia severa'
+        
+        if key == 6: #VP or VA
+            if float(data["va"])== 0:
+                diagnosisResult["va"] = 'None'
+
+            elif(float(data["va"]) < settings.VT_MIN):
                 diagnosisResult["va"] = 'Normal'
 
-            if ((settings.VT_1 < float(data["vp"]) < settings.VT_2) ):
-                diagnosisResult["vp"] = 'Ventriculomegalia leve'
-            if ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
+            elif ( (settings.VT_1 < float(data["va"]) < settings.VT_2)):
                 diagnosisResult["va"] = 'Ventriculomegalia leve'
 
-            if (settings.VT_3 < float(data["vp"]) < settings.VT_4 ):
-                diagnosisResult["vp"] = 'Ventriculomegalia moderada'
-            if (settings.VT_3 < float(data["va"]) < settings.VT_4):
+            elif (settings.VT_3 < float(data["va"]) < settings.VT_4):
                 diagnosisResult["va"] = 'Ventriculomegalia moderada'
                 
-            if (float(data["vp"]) > settings.VT_MAX ):
-                diagnosisResult["vp"] = 'Ventriculomegalia severa'
-            if ( float(data["va"]) > settings.VT_MAX):
+            elif ( float(data["va"]) > settings.VT_MAX):
                 diagnosisResult["va"] = 'Ventriculomegalia severa'
  
         if key == 8:
-            if (float(data["afi"]) < settings.AFI_MIN):
+            if float(data["afi"]) == 0:
+                diagnosisResult["afi"] = 'None'
+            elif (float(data["afi"]) < settings.AFI_MIN):
                 diagnosisResult["afi"] = 'Oligohidramnios'
                 
             elif (settings.AFI_MIN < float(data["afi"]) < settings.AFI_MAX):

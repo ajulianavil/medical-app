@@ -76,3 +76,9 @@ class RepositorioFilterForm(forms.ModelForm):
     class Meta:
         model = Personalsalud
         fields = ['nombresmed', 'apellidosmed', 'cedulamed', 'telefonomed', 'direccionmed', 'hospitalid']
+        
+class ImageUploadForm(forms.ModelForm):
+    print("en el formulario")
+    class Meta:
+        model = Images
+        exclude = ['image_data']

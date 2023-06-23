@@ -154,7 +154,7 @@ background: #f1f1f1; /* Color of the tracking area */
 }
 
 .analisis-button{
-    width: 200px !important; background-color: #63AC3D;
+    width: 200px !important; background-color: #9FA0D0;
     font-family: 'League Spartan', sans-serif;
     color: #fff;
     padding: 10px;
@@ -169,9 +169,37 @@ background: #f1f1f1; /* Color of the tracking area */
 }
 
 .analisis-button:hover{
-    background-color: #35840C;
+    background-color: #6889D2;
     color: white;
     transform: scale(1.03);
+}
+
+.imagenes-button{
+    width: 200px !important; background-color: #9FA0D0;
+    font-family: 'League Spartan', sans-serif;
+    margin: 0px 6px 0px 10px;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    transition: all .5s ease;
+}
+
+.imagenes-button:hover{
+    background-color: #6889D2;
+    color: white;
+    transform: scale(1.03);
+}   
+
+.diagnosis-div{
+    background-color: rgba(159, 160, 208, 0.2);
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .report-button{
@@ -203,7 +231,7 @@ background: #f1f1f1; /* Color of the tracking area */
 }
 
 .download-button{
-    width: 200px !important; background-color: #F7941D;
+    width: 200px !important; background-color: #63AC3D;
     font-family: 'League Spartan', sans-serif;
     color: #fff;
     padding: 10px;
@@ -218,7 +246,7 @@ background: #f1f1f1; /* Color of the tracking area */
 }
 
 .download-button:hover{
-    background-color: #A95C00;
+    background-color: #488B25;
     color: white;
     transform: scale(1.03);
 }

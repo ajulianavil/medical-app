@@ -54,7 +54,7 @@
                             <h5 class="card-title">
                                 Total pacientes
                             </h5>
-                            <button type="button" class="inside-card-button" style="background-color: #52CBF5;">
+                            <button type="button" class="inside-card-button" style="background-color: #63AC3D;">
                                 {{ current_user.user_identification|total_pacientes }}
                             </button>
                         </div>
@@ -88,7 +88,7 @@
                             <h5 class="card-title">
                                 Fetos con diagnóstico
                             </h5>
-                            <button type="button" class="inside-card-button" style="background-color: #F7941D;">
+                            <button type="button" class="inside-card-button" style="background-color: #63AC3D;">
                                 {{ current_user.user_identification|total_anormales}}
                             </button>
                         </div>
@@ -102,7 +102,7 @@
                     <h2 style="color: #26283E"> Repositorio de datos </h2>
                     <h5 class="card-description" >Filtre y descargue información sobre los datos clínicos almacenados. </h5>
                     <button  class="card-text-button" style="width: 200px" onclick="window.location.href='{% url 'repositorio' %}'">
-                        Ir a repositorio
+                        Ir al repositorio
                     </button>
                 </div>
             </div>

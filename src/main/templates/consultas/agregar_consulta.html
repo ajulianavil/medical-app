@@ -60,11 +60,26 @@ padding: 50px;">
                     </div>
                 </div>
                 {%else%}
-                    <input type="file" accept="text/plain" name="file1" id="file1">
+                    <input type="file" accept="text/plain" name="file1" id="file1"> </br>
+
                 {% endif %}
             </div>
-            <br/>
           </div>
+          {%if not multiple%}
+            <hr>
+                <div class="image-content">
+                    <h4 style="margin: 0px;">¿Desea adjuntar las imágenes de ultrasonido?
+                        <button type="button" class="collapsible">
+                            <i class="fa-solid fa-angle-down fa-bounce"></i>
+                        </button>
+                    </h4>
+                </div>
+                <div class="collapsible-content">
+                    <div class="inputContainer" id="inputContainer">
+                        <input multiple type="file" accept="image/jpeg" name="image_data" id="file1">
+                    </div>
+                </div>
+            {%endif%}
         <br>
         <br>
         <button class="btn submit-button" type="submit" onclick="activateLoader()">Procesar</button>
@@ -75,6 +90,22 @@ padding: 50px;">
 </div>
 
 <script>
+
+    var collapsibles = document.getElementsByClassName("collapsible");
+
+    for (var i = 0; i < collapsibles.length; i++) {
+      collapsibles[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.closest(".image-content").nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+    
+
     function addInput() {
         var inputContainer = document.getElementById("left-div");
         var inputCount = inputContainer.getElementsByTagName("input").length;
