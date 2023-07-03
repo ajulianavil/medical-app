@@ -45,23 +45,35 @@ padding: 50px;">
 
             <p style="font-weight: lighter; color: #909090; margin-top:10px; font-size: small;">Asegúrese de que la edad gestacional del feto se encuentre entre las 15 y 39 semanas.</p>
             </header>
-            <p>Archivos soportados: TEXT</p>
+            {% if not multiple %} <p>Archivos soportados: TEXT</p> {%else%} <p style="color: red;">* Documentos obligatorios</p> {%endif%}
             <div class="inputContainer" id="inputContainer">
                 {% if multiple %}
-                <div class="mid-container">
-                    <div class="left-div" id="left-div">
-                        <input type="file" accept="text/plain" name="file1" id="file1">
-                        
-                        <input type="file" accept="text/plain" name="file2" id="file2">
-                        {% comment %} <button class="btn" type="button" onclick="addInput()" style="width: 80%"><i class="fa-solid fa-plus" style="margin-right: 5px"></i> Añadir otro archivo</button> {% endcomment %}
+                <div class="mid-container-title">
+                    <div class="left-div" style="padding:0px">
+                <p style="margin:0px;"> * TXT con la información del feto </p>
                     </div>
                     <div class="right-div">
-                        <i class="fa-solid fa-file-circle-plus add-file" onclick="addInput()"></i>
+                <p  style="margin:0px;"> Imágenes de ultrasonido </p>
                     </div>
                 </div>
+                <div class="mid-container" id="mid-container">
+                    <div class="two-divs">
+                        
+                        <div class="left-div" id="left-div">
+                            
+                            <input type="file" accept="text/plain" name="file1" id="file1">
+                        </div>
+                        
+                        <div class="right-multiple-div">
+                            
+                            <i class="fa-regular fa-image"></i>
+                            <input multiple type="file" accept="image/jpeg" name="image1" id="image1" title="Seleccionar imagen" aria-label="Seleccionar imagen">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" type="button" onclick="addInput()"><i class="fa-solid fa-plus" style="margin-right: 5px"></i></button>
                 {%else%}
                     <input type="file" accept="text/plain" name="file1" id="file1"> </br>
-
                 {% endif %}
             </div>
           </div>
@@ -82,6 +94,7 @@ padding: 50px;">
             {%endif%}
         <br>
         <br>
+        <input type="hidden" name="total_two_divs" id="total_two_divs_input" value="0">
         <button class="btn submit-button" type="submit" onclick="activateLoader()">Procesar</button>
     </form>
 
@@ -106,18 +119,64 @@ padding: 50px;">
     }
     
 
+    var two_divs_count = 1;
     function addInput() {
-        var inputContainer = document.getElementById("left-div");
-        var inputCount = inputContainer.getElementsByTagName("input").length;
-        var newInput = document.createElement("input");
-        newInput.type = "file";
-        newInput.accept = "text/plain";
-        newInput.name = "file" + (inputCount + 1);
-        newInput.id = "file" + (inputCount + 1);
+        var inputContainer = document.getElementById("mid-container");
+        var inputCount = inputContainer.getElementsByClassName("two-divs").length;
+
         if (inputCount < 5) {
-            inputContainer.appendChild(newInput);
+          // Create new file input
+          var newFileInput = document.createElement("input");
+          newFileInput.type = "file";
+          newFileInput.accept = "text/plain";
+          newFileInput.name = "file" + (inputCount + 1);
+          newFileInput.id = "file" + (inputCount + 1);
+          
+          // Create new image input
+          var newImageInput = document.createElement("input");
+          newImageInput.type = "file";
+          newImageInput.accept = "image/jpeg";
+          newImageInput.name = "image" + (inputCount + 1);
+          newImageInput.id = "image" + (inputCount + 1);
+          newImageInput.multiple = true;
+          
+          // Create a div for the new inputs
+          var twoDivs = document.createElement("div");
+          twoDivs.className = "two-divs";
+          
+          // Create the left div
+          var leftDiv = document.createElement("div");
+          leftDiv.className = "left-div";
+          leftDiv.appendChild(newFileInput);
+          
+          // Create the right div
+          var rightDiv = document.createElement("div");
+          rightDiv.className = "right-multiple-div";
+          
+          // Create the icon element
+          var icon = document.createElement("i");
+          icon.className = "fa-regular fa-image";
+          
+          // Append the icon and image input to the right div
+          rightDiv.appendChild(icon);
+          rightDiv.appendChild(newImageInput);
+          
+          // Append the left and right divs to the two divs
+          twoDivs.appendChild(leftDiv);
+          twoDivs.appendChild(rightDiv);
+          
+          // Append the two divs to the container
+          inputContainer.appendChild(twoDivs);
         }
-    }
+
+        two_divs_count = two_divs_count + 1;
+        document.getElementById('total_two_divs_input').value = two_divs_count;
+        console.log(two_divs_count)
+      }
+      
+      
+      
+      
 
     var loadingIcon = document.getElementById("loading-icon");
 

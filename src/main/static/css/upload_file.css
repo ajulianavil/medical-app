@@ -88,7 +88,6 @@ h4 {
   padding: 12px 20px;
   border-radius: 4px;
 }
-
 .inputContainer {
   display: flex;
   flex-direction: column;
@@ -98,27 +97,60 @@ h4 {
 
 .mid-container {
   display: flex;
+  flex-direction: column; /* Change flex-direction to column */
+  align-items: center;
   justify-content: center; /* Clears any floats within the container */
 }
 
-.left-div, .right-div {
+.mid-container-title{
+  width: 100%;
+  display: flex;
+  flex-direction: row; /* Change flex-direction to column */
+  align-items: center;
+  justify-content: space-around; 
+}
+
+.left-div,
+.right-div,
+.right-multiple-div {
   gap: 10px;
   display: flex;
   flex: 0 0 auto; /* Allows divs to shrink to fit content */
   margin: 0 10px; /* Adjust the margin between the divs as per your preference */
 }
 
-.left-div{
+.left-div {
+  padding-top: 20px;
   flex-direction: column;
 }
 
-.right-div{
+.right-div {
   align-items: center;
   justify-content: space-around;
 }
 
+.right-multiple-div{
+  background-color: rgb(159,160,208,0.3);
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+}
+
+.two-divs{
+  border: 2px solid rgb(159,160,208,0.3);
+  border-radius: 10px;
+  display: flex;
+  margin-bottom: 20px;
+}
+
 .input{
   margin: 10px;
+  font-size: smaller;
+}
+
+.fa-image{
+  font-size: xx-large;
+  color: #9093C8;
 }
 
 .add-file{

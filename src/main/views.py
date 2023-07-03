@@ -351,7 +351,6 @@ def agregar_consulta(request):
                     )
             else:
                 for error in list(form.errors.values()):  
-                    print("AQUÍ SE TOTEA", error)                  
                     messages.error(request, f"El sistema no cuenta con los datos para esta edad gestacional")
                 # Delete the paciente record
                 reporte.delete()   # Delete the reporte record
