@@ -93,7 +93,6 @@ def process_data(file):
     for row_bytes in file_readed:
         line = row_bytes.decode("utf-8") 
     # BIORBITAL DIAMETER Diámetro bi-orbitario externo
-<<<<<<< Updated upstream
         if ('BOD_JEANTY' in line):
             BOD_JEANTY = line.strip().split("|")
             BOD_JEANTY = BOD_JEANTY[:-1]
@@ -142,62 +141,6 @@ def process_data(file):
             afi = afi[:-1]
             afi_sum = afi[4].split("=")[1].split(" ")[0]
         if ('COMMENT' in line):
-=======
-        if ('BEGIN FETALBIO' in line):
-            flag = True
-        if ('END FETALBIO' in line):
-            False
-                    
-        if flag:
-            if ('BOD_JEANTY' in line):
-                BOD_JEANTY = line.strip().split("|")
-                BOD_JEANTY = BOD_JEANTY[:-1]
-                BOD_JEANTY = BOD_JEANTY[0].split("=")[1].split(" ")[0] #1
-                BOD_JEANTY = (float(BOD_JEANTY)*10) #To mm
-            # diámetro transverso del cerebelo
-            if ('CEREB_HILL' in line):
-                CEREB_HILL = line.strip().split("|")
-                CEREB_HILL = CEREB_HILL[:-1]
-                cereb_hill_1 = CEREB_HILL[0].split("=")[1].split(" ")[0] #1
-                cereb_hill_1 = np.round((float(cereb_hill_1)*10), decimals=2) #To mm
-            # BIPARIETAL DIAMETER Diametro Biparietal (Distancia en milímetros entre ambos huesos parietales de la cabeza del bebé)
-            if ('BPD_HADLOCK' in line):
-                BPD_HADLOCK = line.strip().split("|")
-                BPD_HADLOCK = BPD_HADLOCK[:-1]
-                bpd_hadlock_1 = BPD_HADLOCK[0].split("=")[1].split(" ")[0] #1
-                bpd_hadlock_1 = np.round((float(bpd_hadlock_1)*10), decimals=2) #To mm
-            # CISTERNA MAGNA
-            if ('CM' in line):
-                CM = line.strip().split("|")
-                CM = CM[:-1]
-                cm_1 = CM[0].split("=")[1].split(" ")[0] #1
-            # CAVUM SEPTI PELLUCIDI
-            if ('CSP' in line):
-                CSP = line.strip().split("|")
-                CSP = CSP[:-1]
-                csp_1 = CSP[0].split("=")[1].split(" ")[0] #1
-            # HEAD CIRCUMFERENCE
-            if ('HC_HADLOCK' in line):
-                HC_HADLOCK = line.strip().split("|")
-                HC_HADLOCK = HC_HADLOCK[:-1]
-                hc_hadlock_1 = HC_HADLOCK[0].split("=")[1].split(" ")[0] #1
-                hc_hadlock_1 = np.round((float(hc_hadlock_1)*10), decimals=2) #To mm
-            # Va Anterior Ventricle
-            if ('Va' in line):
-                Va = line.strip().split("|")
-                Va = Va[:-1]
-                va_1= Va[0].split("=")[1].split(" ")[0] #1
-            # Vp Posterior ventricle
-            if ('Vp' in line):
-                Vp = line.strip().split("|")
-                Vp = Vp[:-1]
-                vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
-            if ('AFI' in line):
-                afi = line.strip().split("|")
-                afi = afi[:-1]
-                afi_sum = afi[4].split("=")[1].split(" ")[0]
-        if line.startswith('COMMENT'):
->>>>>>> Stashed changes
             try:
                 text = re.search(r'"([^"]*)"', line).group(1)
                 comments = re.sub(r'\\n', ' - ', text)
