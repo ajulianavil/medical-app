@@ -36,13 +36,13 @@ h4 {
 }
 
 .drop_box {
-  margin: 10px 0;
-  padding: 30px;
+  margin: 10px;
+  /* padding: 30px; */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  border: 3px dotted #a3a3a3;
+  /* border: 3px dotted #a3a3a3; */
   border-radius: 5px;
 }
 
@@ -88,7 +88,6 @@ h4 {
   padding: 12px 20px;
   border-radius: 4px;
 }
-
 .inputContainer {
   display: flex;
   flex-direction: column;
@@ -98,27 +97,60 @@ h4 {
 
 .mid-container {
   display: flex;
+  flex-direction: column; /* Change flex-direction to column */
+  align-items: center;
   justify-content: center; /* Clears any floats within the container */
 }
 
-.left-div, .right-div {
+.mid-container-title{
+  width: 100%;
+  display: flex;
+  flex-direction: row; /* Change flex-direction to column */
+  align-items: center;
+  justify-content: space-around; 
+}
+
+.left-div,
+.right-div,
+.right-multiple-div {
   gap: 10px;
   display: flex;
   flex: 0 0 auto; /* Allows divs to shrink to fit content */
   margin: 0 10px; /* Adjust the margin between the divs as per your preference */
 }
 
-.left-div{
+.left-div {
+  padding-top: 20px;
   flex-direction: column;
 }
 
-.right-div{
+.right-div {
   align-items: center;
   justify-content: space-around;
 }
 
+.right-multiple-div{
+  background-color: rgb(159,160,208,0.3);
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+}
+
+.two-divs{
+  border: 2px solid rgb(159,160,208,0.3);
+  border-radius: 10px;
+  display: flex;
+  margin-bottom: 20px;
+}
+
 .input{
   margin: 10px;
+  font-size: smaller;
+}
+
+.fa-image{
+  font-size: xx-large;
+  color: #9093C8;
 }
 
 .add-file{
@@ -151,4 +183,58 @@ h4 {
   transform: translate(-50%, -50%);
   font-size: 48px;
   color: #ffffff;
+}
+
+.collapsible-content{
+  background-color: rgba(159, 160, 208, 0.2); padding: 10px 50px;
+  display: none;
+  overflow: hidden;
+}
+
+.collapsible{
+  background-color: #d9d9d9;
+  color: #6889D2;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 5px;
+  border: none;
+  text-align: center;
+  outline: none;
+  font-size: 15px;
+}
+
+.image-content{
+  background-color: rgba(159, 160, 208, 0.2); padding: 10px 50px; border-radius: 10px 10px 0px 0px;
+}
+
+hr {
+  border-top: 1px solid black;
+  color: black;
+} 
+
+.image-content h4 {
+  font-size: 16px;
+  font-weight: bold;
+  font-family: "League Spartan", sans-serif;
+  color: #26283e;
+}
+
+.goback-button{
+  background-color: #0796D8;
+    width: 150px;
+    font-family: 'League Spartan', sans-serif;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    height: 40px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+}
+
+.goback-button:hover{
+    background-color: #0279AF;
+    color: white;
 }

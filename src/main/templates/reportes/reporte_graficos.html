@@ -115,7 +115,6 @@
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
         var newData = JSON.parse(xhr.responseText);
-        console.log("new", newData)
         // Update the chart data
         myChart.data.datasets[0].data = newData.values_min;
         myChart.data.datasets[1].data = newData.values_max;
@@ -123,40 +122,14 @@
         myChart.data.datasets[3].data = newData.values_hist;
 
         var data_2 = [];
-        
-        for (var i = 0; i < newData.ga_hist.length; i++) {
-          var ga = newData.ga_hist[i];
-          var value = newData.values_hist[i];
-
-          var labelIndex2 = newData.values_ga.indexOf(parseInt(ga));
-          data_2[labelIndex2] = value;
+        for (var i = 0; i < newData.values_ga.length; i++) {
+          if(newData.values_ga[i] == parseInt(newData.ga_reporte)){
+            data_2.push(newData.value_reporte)
+          }else{
+            data_2.push('None')
+          }
         }
-
-        // Add the dot at a specific label index
-        var labelIndex = newData.values_ga.indexOf(parseInt(newData.ga_reporte));
-
-        // Get the dataset you want to modify
-        var datasetIndex = 2;
-        var dataset = myChart.data.datasets[datasetIndex];
-
-        // Update the data array to add the dot at the specified label index
-        var data = [];
-        data[labelIndex] = newData.value_reporte; // Update the value at the specific label index
-
-        // Create a new array for the point background colors
-        var pointBackgroundColors = Array(data.length).fill('rgba(7, 150, 216, 0.2)');
-        pointBackgroundColors[labelIndex] = 'rgba(247, 148, 29, 1)'; // Set the background color of the dot
-
-        // Create a new array for the point border colors
-        var pointBorderColors = Array(data.length).fill('rgba(54, 162, 235, 1)');
-        pointBorderColors[labelIndex] = 'rgba(247, 148, 29, 1)'; // Set the border color of the dot
-
-        // Update the dataset properties
-        dataset.data = data;
-        dataset.data = data_2;
-        dataset.pointBackgroundColor = pointBackgroundColors;
-        dataset.pointBorderColor = pointBorderColors;
-
+        myChart.data.datasets[2].data = data_2;
         myChart.update();
       }
     };
@@ -165,7 +138,7 @@
     var endIndex = reporteString.lastIndexOf(')');
     var reporteId = parseInt(reporteString.slice(startIndex, endIndex), 10);
 
-    xhr.open('GET', '/chart-data/' + reporteId + '/' + rowData[0] + '/' + '{{reporte.ga}}'+ '/' + '{{reporte.consultaid}}');
+    xhr.open('GET', '/chart-data/'+ "{{matching_consulta.idpac_id}}" + '/'+ reporteId + '/' + rowData[0] + '/' + '{{reporte.ga}}'+ '/' + '{{reporte.consultaid}}');
     xhr.send();
   });
 
@@ -176,34 +149,36 @@
     data: {
       labels: [],
       datasets: [{
-        label: 'Mínimos para GA',
+        label: 'Mínimos',
         data: [],  // Initial default data
-        backgroundColor: 'rgba(7, 150, 216, 0.5)',
-        borderColor: 'rgba(7, 150, 216, 1)',
+        backgroundColor: 'rgba(7, 150, 216, 0.1)',
+        borderColor: 'rgba(7, 150, 216, 0.3)',
         borderWidth: 1 
       },
       {
-        label: 'Máximos para GA',
+        label: 'Máximos',
         data: [],  // Initial default data
-        backgroundColor: 'rgba(3, 113, 164, 0.5)',
-        borderColor: 'rgba(3, 113, 164, 1)',
+        backgroundColor: 'rgba(159, 160, 208, 0.1)',
+        borderColor: 'rgba(159, 160, 208, 0.3)',
         borderWidth: 1
       },
       {
         label: 'Dato reporte',
         data: [],  // Initial default data
-        backgroundColor: 'rgba(247, 148, 29, 0.5)',
-        borderColor: 'rgba(247, 148, 29, 1)',
+        backgroundColor: 'rgba(7, 150, 216, 0.5)',
+        borderColor: 'rgba(7, 150, 216, 1)',
         borderWidth: 1,
         pointStyle: 'circle',  // Set pointStyle to 'circle'
-        pointRadius: 5  // Set the radius of the points
+        pointRadius: 6  // Set the radius of the points
       },
       {
         label: 'Históricos',
         data: [],  // Initial default data
         backgroundColor: 'rgba(112, 217, 84, 0.5)',
-        borderColor: 'rgba(3, 113, 164, 1)',
-        borderWidth: 1
+        borderColor: 'rgba(112, 217, 84, 1)',
+        borderWidth: 1,
+        pointStyle: 'circle',  // Set pointStyle to 'circle'
+        pointRadius: 5 
      }
       ]
     },

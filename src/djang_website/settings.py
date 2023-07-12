@@ -113,10 +113,10 @@ WSGI_APPLICATION = 'djang_website.wsgi.application'
 DATABASES={
    'default':{
       'ENGINE':'django.db.backends.postgresql',
-      'NAME':'UsDiagnosisApp',
+      'NAME':'postgres',
       'USER':'postgres',
-      'PASSWORD':'adminuis',
-      'HOST':'datacoildb.chjxvyh29cm7.us-east-2.rds.amazonaws.com',
+      'PASSWORD':'adminuis123#',
+      'HOST':'db.ewkdqrafscbgapztsovm.supabase.co',
       'PORT':'5432',
    }
 }

@@ -1,3 +1,4 @@
+import base64
 from urllib.parse import urlencode
 from django.conf import settings
 from django.shortcuts import render, redirect
@@ -7,7 +8,7 @@ from django.urls import reverse
 from django.views import View
 from main.forms import RepositorioFilterForm
 from users.context_processors import current_user
-from main.forms import CreateUserForm, UploadFileForm
+from main.forms import CreateUserForm, UploadFileForm, ImageUploadForm
 # from main.utils import get_matching_consulta, get_mediciones, export_to_csv
 from main.utils import get_matching_consulta, get_mediciones
 from .data_processing import comparison, process_data
@@ -35,6 +36,7 @@ from reportlab.lib.colors import Color
 import json
 import math
 from django.db.models import Q
+from PIL import Image as PILImage
 
 
 from chartjs.views.lines import BaseLineChartView
@@ -111,6 +113,8 @@ def agregar_consulta(request):
             
         #------------------------------------- FUNCION TRATAMIENTO DE DATOS PACIENTE
         processedData = process_data(file)
+        print("----------------------------------")
+        print(processedData)
         
         processedDataPat = processedData[0]
         for key, value in processedDataPat.items():
@@ -347,7 +351,6 @@ def agregar_consulta(request):
                     )
             else:
                 for error in list(form.errors.values()):  
-                    print("AQUÍ SE TOTEA", error)                  
                     messages.error(request, f"El sistema no cuenta con los datos para esta edad gestacional")
                 # Delete the paciente record
                 reporte.delete()   # Delete the reporte record
@@ -357,7 +360,26 @@ def agregar_consulta(request):
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form}
                 )
+            
+            # print("file_data", file_data)
+            images = []
+            for file_data in request.FILES.getlist('image_data'):
+                content = file_data.read()
+                filename = file_data.name
+                content_file = ContentFile(content, name=filename)    
+                image = {
+                'reporte': last_report,
+                'image_data': content_file
+                }
+                serializer = ImagesSerializer(data=image)
 
+                if serializer.is_valid():
+                    serializer.save()
+                    images.append(serializer.data)
+
+                else:
+                    print(serializer.errors)
+                    print("no es válido")
         # messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
         target_url = reverse('registroinfo', args=[last_consulta])
         # Redirect to the target view
@@ -926,23 +948,32 @@ def resumen_embarazo(request, id_embarazo):
 
 def reporteInfo(request, param: int):
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(param)
-    normal_columns = []
-    anormales_columns = []
+   
+    diagnostico_list = []
+    print(matching_result_info)
+
     for diagnostico in matching_result_info:
+        normal_columns = []
+        anormales_columns = []
         for field in diagnostico._meta.fields:
             if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
-                if getattr(diagnostico, field.name) == 'Normal':
-                    normal_columns.append(field.name)
-                else:
-                    anormales_columns.append(field.name)
-    diagnostico = { 
-            'form': matching_result_info,
+                print("NAME", getattr(diagnostico, field.name))
+                if getattr(diagnostico, field.name) != 'None':
+                    if getattr(diagnostico, field.name) == 'Normal':
+                        print("normal")
+                        normal_columns.append(field.name)
+                    else:
+                        print("anormal")
+                        anormales_columns.append(field.name)
+        diagnostico = { 
             'num_fields': len(normal_columns) + len(anormales_columns), 
             'count': len(normal_columns),
             'normales':normal_columns,
             'anormales':anormales_columns
         }
-    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnostico": diagnostico})
+        diagnostico_list.append(diagnostico)
+    
+    return render(request, 'reportes/reporte_info.html', context={"consulta": matching_consulta, "paciente": matching_patient, "reporte": matching_report, "diagnosticos": diagnostico_list})
 
 def repositorio(request):
     objects_list = []
@@ -987,9 +1018,10 @@ def repositorio(request):
         end_date = datetime.now().date()
         start_date = end_date - timedelta(days=90)
         matching_consultas = Consulta.objects.filter(fecha_consulta__range=(start_date, end_date)).order_by('-fecha_consulta')
-        
+        print("aaaaa",matching_consultas)
         for consulta in matching_consultas:
             matching_reporte = Reporte.objects.filter(consultaid=consulta.consultaid).first()
+            print(consulta, matching_reporte)
             diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=matching_reporte.idreporte).first()
             obj = {
                 'reporte': matching_reporte,
@@ -1035,11 +1067,11 @@ def reportes(request,):
         matching_consultas = Consulta.objects.filter(medConsulta=userced, fecha_consulta__range=(date_init, date_end)).order_by('-fecha_consulta')
         return render(request, 'reportes/reportes.html', context={"objects": matching_consultas})
 
-def reporte_graficos(request, consultaid:int):
-    matching_report = Reporte.objects.filter(consultaid=consultaid).first()
+def reporte_graficos(request, consultaid:int, idreporte:int):
+    matching_report = Reporte.objects.filter(idreporte=idreporte).first()
     matching_consulta = Consulta.objects.get(consultaid=consultaid)
     mediciones = get_mediciones()
-    
+    print('wtf mothaskjdkasd')
     mediciones_dict = {
         'hc_hadlock': 1,
         'bpd_hadlock': 2,
@@ -1074,93 +1106,122 @@ def reporte_graficos(request, consultaid:int):
 
         # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
         if med not in reporte_data:
+            
+            if getattr(matching_report, column_mapping.get(med, med)) != '0':
+                # print("--------------------------------")
+                # print(getattr(matching_report, column_mapping.get(med, med)))
+        
+                if med_id == 1 or med_id == 2 or med_id == 3 or med_id == 9:
+                    medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
 
-            if med_id == 1 or med_id == 2 or med_id == 3 or med_id == 9:
-                medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+                    # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
+                    if med not in reporte_data:
+                        value = getattr(matching_report, column_mapping.get(med, med))
 
-                # reporte_data = {med: getattr(matching_report, column_mapping.get(med, med)) for med in mediciones_dict.keys()}
-                if med not in reporte_data:
+                        reporte_data[med] = {
+                            'value': value,
+                            'minvalue': medvalue.valormin,
+                            'maxvalue': medvalue.valorinter,
+                            'is_lower': float(value) < medvalue.valormin,
+                            'is_higher': float(value) > medvalue.valorinter,
+                        }
+                if med_id == 4:
                     value = getattr(matching_report, column_mapping.get(med, med))
-                    print("MENOR", value, medvalue.valormin)
+                    reporte_data[med] = {
+                        'value': getattr(matching_report, column_mapping.get(med, med)),
+                        'value': value,
+                        'minvalue': 0,
+                        'maxvalue': settings.CM_REF,
+                        'is_lower': float(value) < 0,
+                        'is_higher': float(value) > settings.CM_REF,
+                    }
+                if med_id == 5 or med_id == 6:
+                    value = getattr(matching_report, column_mapping.get(med, med))
+                    reporte_data[med] = {
+                        'value': value,
+                        'minvalue': 0,
+                        'maxvalue': settings.VT_MIN,
+                        'is_lower': float(value) < 0,
+                        'is_higher': float(value) > settings.VT_MIN,
+                    }
 
+                if med_id == 7:
+                    medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
+                    value = getattr(matching_report, column_mapping.get(med, med))
                     reporte_data[med] = {
                         'value': value,
                         'minvalue': medvalue.valormin,
                         'maxvalue': medvalue.valorinter,
+                        'maxvalue': 51,
                         'is_lower': float(value) < medvalue.valormin,
-                        'is_higher': float(value) > medvalue.valorinter,
+                        'is_higher': float(value) > 51,
                     }
-            if med_id == 4:
-                value = getattr(matching_report, column_mapping.get(med, med))
-                reporte_data[med] = {
-                    'value': getattr(matching_report, column_mapping.get(med, med)),
-                    'value': value,
-                    'minvalue': 0,
-                    'maxvalue': settings.CM_REF,
-                    'is_lower': float(value) < 0,
-                    'is_higher': float(value) > settings.CM_REF,
-                }
-            if med_id == 5 or med_id == 6:
-                value = getattr(matching_report, column_mapping.get(med, med))
-                reporte_data[med] = {
-                    'value': value,
-                    'minvalue': 0,
-                    'maxvalue': settings.VT_MIN,
-                    'is_lower': float(value) < 0,
-                    'is_higher': float(value) > settings.VT_MIN,
-                }
 
-            if med_id == 7:
-                medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
-                value = getattr(matching_report, column_mapping.get(med, med))
-                reporte_data[med] = {
-                    'value': value,
-                    'minvalue': medvalue.valormin,
-                    'maxvalue': medvalue.valorinter,
-                    'maxvalue': 51,
-                    'is_lower': float(value) < medvalue.valormin,
-                    'is_higher': float(value) > 51,
-                }
+                if med_id == 8:
 
-            if med_id == 8:
-
-                value = getattr(matching_report, column_mapping.get(med, med))
-                reporte_data[med] = {
-                    'value': value,
-                    'minvalue': settings.AFI_MIN,
-                    'maxvalue': settings.AFI_MAX,
-                    'is_lower': float(value) < settings.AFI_MIN,
-                    'is_higher': float(value) > settings.AFI_MAX,
-                }
-    
+                    value = getattr(matching_report, column_mapping.get(med, med))
+                    reporte_data[med] = {
+                        'value': value,
+                        'minvalue': settings.AFI_MIN,
+                        'maxvalue': settings.AFI_MAX,
+                        'is_lower': float(value) < settings.AFI_MIN,
+                        'is_higher': float(value) > settings.AFI_MAX,
+                    }
+        
     return render(request, 'reportes/reporte_graficos.html', context ={"reporte": matching_report, "mediciones" : mediciones_dict, "reporte_data": reporte_data, "matching_consulta": matching_consulta})
 
-def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str, consultaid:int):
-    print(idreporte_id, consultaid)
+def chart_data_view(request, idpaciente:int,idreporte_id:int, nombreMedicion:str, ga: str, consultaid:int):
     mediciones = get_mediciones()
     # value_reporte = my_filters.get_field_value(nombreMedicion)
+    print("nombreMedicion", nombreMedicion)
     valores_medicion = Medicion.objects.filter(id_tipo_medicion=mediciones[nombreMedicion])
     matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
     value_reporte = my_filters.get_field_value(matching_report,nombreMedicion)
+        
+    if nombreMedicion == 'cm':
+        print("entré en cm")
+        values_min = [0] * 26
+        values_max = [settings.CM_REF] * 26
+        
+    elif nombreMedicion == 'vp' or nombreMedicion == 'va':
+        values_min = [0] * 26
+        values_max = [settings.VT_MIN] * 26
+        
+    elif nombreMedicion == 'afi':
+        values_min = [settings.AFI_MIN] * 26
+        values_max = [settings.AFI_MAX] * 26
     
-    embarazo = Consulta.objects.get(consultaid = consultaid).idembarazo
-
-    if embarazo:
-        consultas_embarazo = Consulta.objects.filter(idembarazo=embarazo)
-        consultas_reportes = {}
-        ga_historicos = []
-
-        for consulta in consultas_embarazo:
-            reportes_embarazo = Reporte.objects.filter(consultaid= consulta.consultaid)
-            for r in reportes_embarazo:
-                ga_historicos.append(r.ga)
-                value_r = my_filters.get_field_value(r,nombreMedicion)
-                consultas_reportes[consulta] = value_r
-
-    values_min = [result.valormin for result in valores_medicion]
-    values_max = [result.valorinter for result in valores_medicion]
+    
+    else:
+        print("entré en otros")
+        values_min = [result.valormin for result in valores_medicion]
+        if nombreMedicion == 'cereb_hill':
+            values_max = [51] * 26
+        else:
+            values_max = [result.valorinter for result in valores_medicion]
+            
+        
     values_ga = [result.ga for result in valores_medicion]
-    values_hist = [value for value in consultas_reportes.values()]
+
+    print (values_min)
+    
+    
+    hist_reportes = []
+    #------------ OBTENER TODAS LAS CONSULTAS DEL PACIENTE
+    matching_consultas = Consulta.objects.filter(idpac=idpaciente)
+    for consulta in matching_consultas:
+        reporte = Reporte.objects.filter(consultaid=consulta.consultaid)
+        hist_reportes.append(reporte)
+
+    semanas_gestacion = len(values_ga)
+    values_historicos = [None] * semanas_gestacion
+    index = 0
+    for reporte in hist_reportes:
+        if(len(reporte) < 2 ):
+            valor_medicion =  my_filters.get_field_value(reporte[0],nombreMedicion)
+            reporte_ga = reporte[0].ga
+            index = values_ga.index(int(reporte_ga))
+            values_historicos[index] = valor_medicion
 
     data = {
         'values_min': values_min,
@@ -1168,11 +1229,8 @@ def chart_data_view(request, idreporte_id:int, nombreMedicion:str, ga: str, cons
         'values_ga': values_ga,
         'ga_reporte': ga,
         'value_reporte': value_reporte,
-        'ga_hist': ga_historicos,
-        'values_hist': values_hist
+        'values_hist': values_historicos
     }
-    
-    print("==", data)
     
     # Return the updated chart data as a JSON response
     return JsonResponse(data, safe=False)
@@ -1308,7 +1366,7 @@ def footer(canvas, doc):
     canvas.setFillColor(style.textColor)
     canvas.drawString(18*mm, 20*mm, f"Fecha y hora de impresión: {current_date}")
 
-def reporte_pdf(request, idreporte_id: int):
+def reporte_pdf(request, consultaid: int, reporteid: int):
     buf = io.BytesIO()
     
     # Styles
@@ -1366,24 +1424,34 @@ def reporte_pdf(request, idreporte_id: int):
     ]
     
     # Information
-    matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(idreporte_id)
+    matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(consultaid)
+    print('consulta id', consultaid)
+    print('reporteid id', reporteid)
+    reporte = None
+    diag = None
+    for r in matching_report:
+        if r.idreporte == reporteid:
+            reporte = r
+            break
+    for d in matching_result_info:
+        if d.reporte.idreporte == reporte.idreporte:
+            diag = d
+            print(diag)
+            break
+    print('diag', diag)
+
     medico = Personalsalud.objects.get(cedulamed=matching_consulta.medConsulta_id)
+
     first_name = medico.nombresmed.split(' ')[0] if ' ' in medico.nombresmed else medico.nombresmed
     last_name = medico.apellidosmed.split(' ')[0] if ' ' in medico.apellidosmed else medico.apellidosmed
     full_name = f'{first_name} {last_name}'
     normal_columns = []
     anormales_columns = []
 
-    # for field in matching_result_info.get()._meta.fields:
-    #     if getattr(matching_result_info.get(), field.name) == 'Normal':
-    #         normal_columns.append(field.name)
-    #     else:
-    #         anormales_columns.append(field.name)
-    
-    for diagnostico in matching_result_info:
-        for field in diagnostico._meta.fields:
-            if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
-                if getattr(diagnostico, field.name) == 'Normal':
+    for field in diag._meta.fields:
+        if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
+            if getattr(diag, field.name) != 'None':
+                if getattr(diag, field.name) == 'Normal':
                     normal_columns.append(field.name)
                 else:
                     anormales_columns.append(field.name)
@@ -1415,7 +1483,7 @@ def reporte_pdf(request, idreporte_id: int):
     current_height = 0
     
     for r in matching_report:
-        report_title = Paragraph('REPORTE MÉDICO N°{}'.format(r.idreporte), report_style)
+        report_title = Paragraph('REPORTE MÉDICO N°{}'.format(reporte.idreporte), report_style)
         elements.append(report_title)
         title = Paragraph('ANOMALÍAS DEL SISTEMA NERVIOSO CENTRAL FETAL', title_style)
         elements.append(title)
@@ -1440,9 +1508,9 @@ def reporte_pdf(request, idreporte_id: int):
         
         patient_data = [
         ["Fecha y hora de atención:", f"{matching_consulta.formatted_fecha_consulta}" + " " + f"{matching_consulta.formatted_hora_consulta}", "Médico encargado:", f"{full_name}"],
-        ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{r.edb}"],
-        ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{r.ga} semanas"],
-        ["Peso fetal:",  f"{r.efw} gr", "Último periodo menstrual:", f"{matching_patient.lmp}"],
+        ["Paciente:", f"{matching_patient.nombreuno}" + " " + f"{matching_patient.apellido_paterno}", "Fecha est. de parto:", f"{reporte.edb}"],
+        ["Identificación:", f"{matching_patient.cedulapac}", "Edad gestacional:",  f"{reporte.ga} semanas"],
+        ["Peso fetal:",  f"{reporte.efw} gr", "Último periodo menstrual:", f"{matching_patient.lmp}"],
         ]
         
         patientdata_table = Table(patient_data, style=table_style, colWidths=[2*inch, 1.5*inch, 2*inch, 1.5*inch])
@@ -1533,8 +1601,24 @@ def reporte_pdf(request, idreporte_id: int):
             elements.append(spacer_subsection)
             elements.append(Paragraph('OBSERVACIONES DEL MÉDICO', section_title_style))
             elements.append(spacer_data)
-            elements.append(Paragraph('{}'.format(r.txtresults), text_style))
+            elements.append(Paragraph('{}'.format(reporte.txtresults), text_style))
         
+
+        image_objects = Images.objects.filter(reporte=reporte.idreporte)
+
+        elements.append(spacer_subsection)
+
+        for image_obj in image_objects:
+            image_data = image_obj.image_data
+            try:
+                image_file = io.BytesIO(image_data)
+                image = Image(image_file, width=4*inch, height=3*inch)  # Adjust width and height as needed
+                elements.append(image)
+                elements.append(spacer_data)
+                
+            except Exception as e:
+                print(f"Error processing image: {e}")
+
         #Footer
         # Define the page template with the footer
         frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
@@ -1585,6 +1669,31 @@ def editReportData(request, idreporte: int):
 
         target_url = reverse('registroinfo', args=[consultaid])
         return HttpResponseRedirect(target_url)
+    
+def upload_images(request):
+    if request.method == 'POST':
+        for file_data in request.FILES.getlist('image_data'):
+            form = ImageUploadForm(request.POST, request.FILES)
+            print("form", form)
+            if form.is_valid():
+                    print("filedata", file_data)
+                    image = form.save(commit=False)
+                    # image.image_data = request.FILES['image_data'].read()
+                    image.image_data = file_data.read()
+                    print(type(image))
+                    image.save()
+        return redirect('/profile')
+    else:
+        form = ImageUploadForm()
+        return render(request, 'consultas/images.html', {'form': form})
+    
+def display_image(request, reporte):
+    print(reporte)
+    image = Images.objects.filter(reporte=reporte)
+    image_data = []
+    for image in image:
+        image_data.append(base64.b64encode(image.image_data).decode('utf-8')) 
+    return render(request, 'consultas/display_image.html', {'image_data': image_data})
 
 def get(self, request, *args, **kwargs):
         parameter = request.GET.get('parameter')

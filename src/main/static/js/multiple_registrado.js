@@ -9,9 +9,31 @@ function handleRadioButton(radioButton) {
   var cardIndex = Array.from(document.querySelectorAll('.card-two')).indexOf(cardContainer);
   var radioButtonIndex = Array.from(radioButtons).indexOf(radioButton);
 
+  console.log(cardIndex, radioButtonIndex)
+
+  var radioId = 'radio_' + cardIndex + '_' + radioButtonIndex;
+  var radd = document.getElementById(radioId);
+  cardRadioButtonMap.set(cardIndex, radioButtonIndex);
+
+  // var xx = document.getElementById(radioId);
+  console.log("xx", radd)
+
   if (isRadioButtonIndexValid(radioButtonIndex)) {
-    return;
-    radioButton.checked = false; 
+    cardRadioButtonMap.forEach(function(value, key){
+      console.log(value, key)
+
+      var elementId = 'radio' + radioButtonIndex;
+
+      var radioButton = document.getElementById(elementId);
+
+      if (radioButton) {
+        console.log("rad", radioButton)
+        // Perform operations on the radio button element
+        radioButton.checked = true;
+        // ... additional operations ...
+      }
+    });
+    // radioButton.checked = false; 
   } else {
     console.log("here")
     cardRadioButtonMap.set(cardIndex, radioButtonIndex);
@@ -20,8 +42,7 @@ function handleRadioButton(radioButton) {
   console.log('Card Index:', cardIndex);
   console.log('Radio Button Index:', radioButtonIndex);
   
-  console.log(cardRadioButtonMap)
-
+  console.log("cardmap", cardRadioButtonMap)
 }
 
 function isRadioButtonIndexValid(radioButtonIndex) {

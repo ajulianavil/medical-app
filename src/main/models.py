@@ -180,3 +180,8 @@ class FetoMedicionDiagnostico(models.Model):
         db_table = 'FetoMedicionDiagnostico'
         verbose_name_plural = "FetoMedicionDiagnostico"
         
+class Images(models.Model):
+    idimage = models.BigAutoField(primary_key=True)
+    image_data = models.BinaryField()
+    reporte = models.ForeignKey(Reporte, models.CASCADE, default="")  # Field name made lowercase.
+    

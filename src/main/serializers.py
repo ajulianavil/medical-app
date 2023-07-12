@@ -1,5 +1,8 @@
+import base64
 import datetime
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
+from django.core.files.base import ContentFile
 from .models import *
 from django.contrib.auth import get_user_model
 
@@ -49,3 +52,20 @@ class FetoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feto
         fields =  'id_embarazo', 'posicion_feto'
+        
+class ImagesSerializer(serializers.ModelSerializer):
+    image_data = serializers.FileField(required=True)
+
+    class Meta:
+        model = Images
+        fields = ['image_data', 'reporte']
+
+    def create(self, validated_data):
+        image_data = validated_data.pop('image_data')
+        
+        if isinstance(image_data, ContentFile):
+            validated_data['image_data'] = image_data.read()
+        else:
+            raise serializers.ValidationError("Invalid image data.")
+
+        return super().create(validated_data)
