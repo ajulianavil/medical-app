@@ -26,6 +26,11 @@
     padding: 30px 10px 30px 10px;
     text-align: center;
     background-color: #0796D8;
+<<<<<<< Updated upstream
+=======
+    /* background-color: #9FA0D0; */
+    border: none; 
+>>>>>>> Stashed changes
     border-radius: 17px;
     height: auto;
     cursor: pointer;
@@ -72,7 +77,11 @@ h5{
     color: white;
     font-family: 'League Spartan', sans-serif;
     transition: all 0.5s;
+<<<<<<< Updated upstream
     background-color: #52CBF5;
+=======
+    background-color: #26283E;
+>>>>>>> Stashed changes
     cursor: default;
     color: white;
     transition: all 0.5s ease;

@@ -1,5 +1,29 @@
 /* Style the greeting card */
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Style the greeting card */
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(50%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 #card_greetings {
+  animation: 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 slideInFromLeft;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     padding: 25px 50px 25px 50px;
     text-align: left;
