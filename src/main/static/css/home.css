@@ -26,7 +26,7 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     padding: 30px 10px 30px 10px;
     text-align: center;
-    background-color: white;
+    background-color: #0796D8;
     /* background-color: #9FA0D0; */
     border: none; 
     border-radius: 17px;
@@ -75,7 +75,7 @@ h5{
     color: white;
     font-family: 'League Spartan', sans-serif;
     transition: all 0.5s;
-    background-color: #0279AF;
+    background-color: #26283E;
     cursor: default;
     color: white;
     transition: all 0.5s ease;
