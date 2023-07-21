@@ -17,7 +17,7 @@ function editProfile(){
     var fields = form.getElementsByTagName('input');
 
     for (var i = 0; i < fields.length; i++) {
-        if (fields[i].name === "cedula" || fields[i].name === "email" || fields[i].name === "rol") {
+        if (fields[i].name === "cedula" || fields[i].name === "email" || fields[i].name === "rol" || fields[i].name === "institucion") {
             continue;
         }
       fields[i].disabled = false;
@@ -45,7 +45,7 @@ function onCancelEdition(){
     var fields = form.getElementsByTagName('input');
 
     for (var i = 0; i < fields.length; i++) {
-        if (fields[i].name === "cedula" || fields[i].name === "email" || fields[i].name === "rol") {
+        if (fields[i].name === "cedula" || fields[i].name === "email" || fields[i].name === "rol" || fields[i].name === "institucion") {
             continue;
         }
       fields[i].disabled = true;

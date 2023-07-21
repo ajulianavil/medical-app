@@ -226,7 +226,7 @@ def agregar_consulta(request):
                     )
             else:
                 num_embarazo = is_there_embarazo.numero_embarazo
-                print("is_there_embarazo", is_there_embarazo)
+                print("is_there_embarazo", num_embarazo)
                 print("preg", preg)
                 
                 # if is_there_embarazo == 0:
@@ -258,7 +258,10 @@ def agregar_consulta(request):
                                 template_name='consultas/agregar_consulta.html',
                                 context={"form": form}
                             )
-
+                elif int(preg) != num_embarazo and int(preg) < num_embarazo:
+                    embarazo = Embarazo.objects.filter(idpac=onpatient, numero_embarazo = num_embarazo).first()
+                    last_embarazo = embarazo.id_embarazo
+                    print("aqui!!!!!!!!!!!!!!!!!!!!")
                 else:
                     #------- Si existe el embarazo obtenemos su id
                     embarazo = Embarazo.objects.filter(idpac=onpatient, numero_embarazo = preg).first()
