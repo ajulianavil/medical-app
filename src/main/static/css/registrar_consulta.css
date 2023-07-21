@@ -314,9 +314,15 @@ background: #f1f1f1; /* Color of the tracking area */
     color: #26283E;
 }
 
-.transition-effect {
+.transition-effect-out {
     transition: opacity 0.3s ease-in-out;
-}
+    opacity: 0;
+  }
+  
+  .transition-effect-in {
+    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
+  }
 
 .toggle-container {
     background: #d9d9d9;

@@ -276,23 +276,55 @@
   objects[currentIndex].style.display = "block";
 
   function toggleAnterior() {
-    if(currentIndex > 0){
-      objects[currentIndex].style.display = "none";
+    if (currentIndex > 0) {
+      const previousIndex = currentIndex;
       currentIndex = (currentIndex - 1) % objects.length;
-      objects[currentIndex].style.display = "block";
-      objects[currentIndex].classList.add("transition-effect");
-      document.getElementById("currentIndex").textContent =  (currentIndex+1) + "/" + "{{reporte|length}}";
+  
+      objects[previousIndex].classList.add("transition-effect-out");
+      setTimeout(() => {
+        objects[previousIndex].style.display = "none";
+  
+        objects[currentIndex].style.display = "block";
+  
+        objects[currentIndex].classList.add("transition-effect-in");
+  
+        setTimeout(() => {
+          objects[currentIndex].classList.remove("transition-effect-in");
+          objects[previousIndex].classList.remove("transition-effect-out");
+        }, 300);
+      }, 300);
+  
+      document.getElementById("currentIndex").textContent = (currentIndex + 1) + "/" + "{{reporte|length}}";
     }
   }
   function toggleSiguiente() {
-    if(currentIndex < parseInt("{{reporte|length}}")){
-    objects[currentIndex].style.display = "none";
-    currentIndex = (currentIndex + 1) % objects.length;
-    objects[currentIndex].style.display = "block";
-    objects[currentIndex].classList.add("transition-effect");
-    document.getElementById("currentIndex").textContent =  (currentIndex+1) + "/" + "{{reporte|length}}";
+    if (currentIndex < parseInt("{{reporte|length}}")) {
+      const previousIndex = currentIndex;
+      currentIndex = (currentIndex + 1) % objects.length;
+  
+      // Add the transition-out effect
+      objects[previousIndex].classList.add("transition-effect-out");
+      setTimeout(() => {
+        // Hide the previous object after the transition effect is complete
+        objects[previousIndex].style.display = "none";
+  
+        // Show the new object
+        objects[currentIndex].style.display = "block";
+  
+        // Add the transition-in effect
+        objects[currentIndex].classList.add("transition-effect-in");
+  
+        // After a small delay, remove the transition classes
+        setTimeout(() => {
+          objects[currentIndex].classList.remove("transition-effect-in");
+          objects[previousIndex].classList.remove("transition-effect-out");
+        }, 300); // 300ms should match the transition duration (0.3s)
+      }, 300); // 300ms should match the transition duration (0.3s)
+  
+      document.getElementById("currentIndex").textContent = (currentIndex + 1) + "/" + "{{reporte|length}}";
     }
   }
+  
 </script>
 
 {% endblock %}
