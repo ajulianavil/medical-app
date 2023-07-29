@@ -6,6 +6,7 @@
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/registrar_consulta.css' %}" />
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{% static 'js/reporte_script.js' %}"></script>
 {% endblock %}
@@ -253,19 +254,6 @@
           role="button">Ver análisis gráfico</a>
         </form>
       </div>
-      <!-- <form id="descargarPDF" method="GET" action="{% url 'reporte_pdf' consulta.consultaid r.idreporte %}">
-        {% csrf_token %}
-        <button class="btn download-button" id="download_button"
-        style="width: 200px !important; float: left; margin-bottom: 20px">Descargar todos reportes</button>
-      </form> -->
-      {% comment %} <div class="col-12" style="display: flex;
-      flex-direction: row-reverse;
-      justify-content: flex-end;
-      margin-top: 10px; margin-bottom: 10px">
-        <a class="btn analisis-button" href="/reporte/graficos/{{ consulta.consultaid }}/{{ r.idreporte }}" type="submit" id="full_analysis"
-        role="button">Ver análisis completo</a>
-      </div> {% endcomment %}
-
     </div>
   {% endfor %}
 </div>
@@ -324,6 +312,8 @@
       document.getElementById("currentIndex").textContent = (currentIndex + 1) + "/" + "{{reporte|length}}";
     }
   }
+
+
   
 </script>
 
