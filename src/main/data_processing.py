@@ -98,11 +98,8 @@ def process_data(file):
             flag = True
         if ('END FETALBIO' in line):
             False
-            
-        print(flag)
-        
+                    
         if flag:
-            print(flag, line)
             if ('BOD_JEANTY' in line):
                 BOD_JEANTY = line.strip().split("|")
                 BOD_JEANTY = BOD_JEANTY[:-1]
@@ -138,7 +135,6 @@ def process_data(file):
                 hc_hadlock_1 = np.round((float(hc_hadlock_1)*10), decimals=2) #To mm
             # Va Anterior Ventricle
             if ('Va' in line):
-                print(line)
                 Va = line.strip().split("|")
                 Va = Va[:-1]
                 va_1= Va[0].split("=")[1].split(" ")[0] #1
@@ -148,10 +144,8 @@ def process_data(file):
                 Vp = Vp[:-1]
                 vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
             if ('AFI' in line):
-                print(line)
                 afi = line.strip().split("|")
                 afi = afi[:-1]
-                print(afi)
                 afi_sum = afi[4].split("=")[1].split(" ")[0]
         if line.startswith('COMMENT'):
             try:

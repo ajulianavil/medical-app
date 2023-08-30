@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/main_fonts.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/upload_file.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/loading.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/lightbox.css' %}">
 
     <script src="https://kit.fontawesome.com/5bdb3c603b.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
@@ -40,7 +41,7 @@ padding: 50px;">
                     <div class="row">
                 {% endif %}
                 <div class="col-md-4">
-                    <a href="data:image/jpeg;base64,{{ img }}" data-toggle="lightbox" data-gallery="example-gallery" class="col-sm-4">
+                    <a href="data:image/jpeg;base64,{{ img }}"  data-lightbox="example-gallery" class="col-sm-4">
                         <img style="width: 200px;" src="data:image/jpeg;base64,{{ img }}" alt="Image" class="img-fluid">
                     </a>
                     <p>Imagen: {{ forloop.counter }}</p>
@@ -56,8 +57,7 @@ padding: 50px;">
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<script src="{% static 'js/lightbox.js' %}"></script>
 <script>
 
     function goBack() {
@@ -76,5 +76,11 @@ padding: 50px;">
     function activateLoader(){
         loadingIcon.style.display = "block";
     }
+
+    lightbox.option({
+        'resizeDuration': 200,
+        'wrapAround': true
+      });
 </script>
+
 {% endblock %}

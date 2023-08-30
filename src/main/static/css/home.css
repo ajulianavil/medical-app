@@ -22,21 +22,34 @@
     max-width: 50%;
 }
 
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(50%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
 .card2{
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    padding: 30px 10px 30px 10px;
-    text-align: center;
-    background-color: white;
-    /* background-color: #9FA0D0; */
-    border: none; 
-    border-radius: 17px;
-    height: auto;
-    cursor: pointer;
-    transition: all 0.5s;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    margin-top: 2em;
+  animation: 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 slideInFromBottom;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 30px 10px 30px 10px;
+  text-align: center;
+  background-color: #0796D8;
+  /* background-color: #9FA0D0; */
+  border: none; 
+  border-radius: 17px;
+  height: auto;
+  cursor: pointer;
+  transition: all 0.5s;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 2em;
 }
 
 .info {
@@ -75,7 +88,7 @@ h5{
     color: white;
     font-family: 'League Spartan', sans-serif;
     transition: all 0.5s;
-    background-color: #0279AF;
+    background-color: #26283E;
     cursor: default;
     color: white;
     transition: all 0.5s ease;

@@ -54,6 +54,29 @@ input[type="submit"] {
     font-family: 'League Spartan', sans-serif;
 }
 
+.enviar{
+    background-color: #0796D8;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.2), 0 6px 5px 0 rgba(0,0,0,0.19);
+    width: 200px;
+    height: 40px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'League Spartan', sans-serif;
+    transition: all 0.5s ease;
+}
+
+.enviar:hover{
+    
+    background-color: #036897;
+    color: white;
+}
+
 .btn-reset{
     background-color: #0796D8;
     color: #fff;

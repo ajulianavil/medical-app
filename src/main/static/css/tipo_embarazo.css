@@ -1,5 +1,28 @@
 
+@keyframes slideInFromLeft {
+    0% {
+      transform: translateX(-50%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInFromRight {
+    0% {
+      transform: translateX(50%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
 .square1 {
+    animation: 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 slideInFromLeft;
     height: 230px;
     width: 300px;
     background-color: #ccc;
@@ -16,6 +39,7 @@
     transform: scale(1.05);
   }
 .square2 {
+    animation: 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 slideInFromRight;
     height: 230px;
     width: 300px;
     position: relative;

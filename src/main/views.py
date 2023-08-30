@@ -113,9 +113,7 @@ def agregar_consulta(request):
             
         #------------------------------------- FUNCION TRATAMIENTO DE DATOS PACIENTE
         processedData = process_data(file)
-        print("----------------------------------")
-        print(processedData)
-        
+
         processedDataPat = processedData[0]
         for key, value in processedDataPat.items():
             if value is None:
@@ -167,7 +165,7 @@ def agregar_consulta(request):
         if paciente_serializer.is_valid():
             try:
                 paciente = paciente_serializer.save() #----> DESCOMENTAR PARA QUE SE GUARDE EL PACIENTE
-                messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
+                # messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
 
             except Exception as e:
                 messages.error(request, f"Error al guardar el paciente: {str(e)}")
@@ -226,13 +224,8 @@ def agregar_consulta(request):
                     )
             else:
                 num_embarazo = is_there_embarazo.numero_embarazo
-                print("is_there_embarazo", is_there_embarazo)
-                print("preg", preg)
-                
-                # if is_there_embarazo == 0:
-                # if int(preg) > is_there_embarazo:
+
                 if int(preg) != num_embarazo and int(preg) > num_embarazo:
-                        print("nuevo embarazo", preg, is_there_embarazo)
                         embarazo_info = {
                             'idpac': onpatient,
                             'numero_embarazo': preg
@@ -258,11 +251,13 @@ def agregar_consulta(request):
                                 template_name='consultas/agregar_consulta.html',
                                 context={"form": form}
                             )
-
+                elif int(preg) != num_embarazo and int(preg) < num_embarazo:
+                    embarazo = Embarazo.objects.filter(idpac=onpatient, numero_embarazo = num_embarazo).first()
+                    last_embarazo = embarazo.id_embarazo
                 else:
                     #------- Si existe el embarazo obtenemos su id
-                    last_embarazo = Embarazo.objects.filter(idpac=onpatient, numero_embarazo = preg).first().id_embarazo
-                    print("ya existe embarazo", last_embarazo)
+                    embarazo = Embarazo.objects.filter(idpac=onpatient, numero_embarazo = preg).first()
+                    last_embarazo = embarazo.id_embarazo
             # ------------------- CREA LA CONSULTA
             user_logged = current_user(request)
             info = list(user_logged.values())
@@ -303,7 +298,6 @@ def agregar_consulta(request):
                     context={"form": form}
                 )
 
-
             # ---------------- CREA EL REPORTE
             processedDataReport["consultaid"] = last_consulta
             processedDataReport["txtresults"] = comments
@@ -341,9 +335,11 @@ def agregar_consulta(request):
                     feto_medicion_diagnostico_serializer.save()
                 except Exception as e:
                     messages.error(request, f"Error al guardar el diagnóstico: {str(e)}")
-                    # Delete the paciente record
+                    
                     reporte.delete()   # Delete the reporte record
                     consulta.delete()  # Delete the consulta record
+                    embarazo.delete()
+                    paciente.delete()  # Delete the paciente record
                     return render(
                         request=request,
                         template_name='consultas/agregar_consulta.html',
@@ -355,13 +351,14 @@ def agregar_consulta(request):
                 # Delete the paciente record
                 reporte.delete()   # Delete the reporte record
                 consulta.delete()  # Delete the consulta record
+                embarazo.delete()
+                paciente.delete()  # Delete the paciente record
                 return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form}
                 )
             
-            # print("file_data", file_data)
             images = []
             for file_data in request.FILES.getlist('image_data'):
                 content = file_data.read()
@@ -379,7 +376,6 @@ def agregar_consulta(request):
 
                 else:
                     print(serializer.errors)
-                    print("no es válido")
         # messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
         target_url = reverse('registroinfo', args=[last_consulta])
         # Redirect to the target view
@@ -399,15 +395,22 @@ def agregar_consulta_multiple(request):
     if request.method == 'POST':
         storage = messages.get_messages(request)
         storage.used = True
-        
+        form = UploadFileForm(request.POST, request.FILES)
         processed_data = []
+        images_data = []
+        images_input=  [key for key in request.FILES.keys() if key.startswith('image')]
         file_inputs = [key for key in request.FILES.keys() if key.startswith('file')]
         if(len(file_inputs) < 2):
             messages.error(request, 'Para un embarazo múltiple debe ingresar al menos dos archivos.')
             return render(
                 request=request,
-                template_name='consultas/tipo_embarazo.html',
+                template_name='consultas/agregar_consulta.html',
+                context={"form": form, "multiple":'true'}
             )
+            # return render(
+            #     request=request,
+            #     template_name='consultas/tipo_embarazo.html',
+            # )
         else:
             try:
                 for file_input in file_inputs:
@@ -415,7 +418,9 @@ def agregar_consulta_multiple(request):
                     # Process the uploaded file as needed
                     processedData = process_data(uploaded_file)
                     processed_data.append(processedData)
-                form = UploadFileForm(request.POST, request.FILES)
+                for image_data in images_input:
+                        images_for_upload = request.FILES.getlist(image_data)
+                        images_data.append(images_for_upload)
 
                 pat_id = processed_data[0][0]['cedulapac']
                 preg = processed_data[0][0]['numgestacion']
@@ -661,25 +666,59 @@ def agregar_consulta_multiple(request):
                                 template_name='consultas/agregar_consulta.html',
                                 context={"form": form,"multiple":'true'}
                             )
+                        
+                    index = 0
+                    #--------------- SE GUARDAN LAS IMAGENES
+                    for images in images_data:
+                        for img in images:
+                            content = img.read()
+                            filename = img.name
+                            content_file = ContentFile(content, name=filename)    
+                            image_object = {
+                                'reporte': reportes_ids[index],
+                                'image_data': content_file
+                            }
+                            serializer = ImagesSerializer(data=image_object)
+
+                            if serializer.is_valid():
+                                serializer.save()
+                            else:
+                                print(serializer.errors)
+                                print("no es válido")
+                        index = index +1
+                        
+
                     # messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
                     target_url = reverse('registroinfo', args=[last_consulta])
                     # Redirect to the target view
                     return HttpResponseRedirect(target_url)
                 else:
+                    images_formatted = []
+                    for object_list in images_data:
+                        lista = []
+                        for object in object_list:
+                            data = {
+                                'filename': object.name,
+                                'content': base64.b64encode(object.read()).decode('utf-8')  # Assuming the file is a text file
+                            }
+                            lista.append(data)
+                        images_formatted.append(lista)
                     #--- Si existe el embarazo  se manda a la otra vista
                     serialized_objects = json.dumps(processed_data)
+                    serialized_images_objects = json.dumps(images_formatted)
                     request.session['my_data'] = serialized_objects
+                    request.session['images_data'] = serialized_images_objects
                     return redirect('/reportes/temporal/multiple')
                                             
 
             except Exception as e:
+                print(e)
                 messages.error(request, 'Por favor seleccione un archivo')
                 return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',
                     context={"form": form, "multiple":'true'}
                 )
-
     form = UploadFileForm()
     return render(
         request=request,
@@ -694,7 +733,9 @@ def temporal_embarazo(request):
 def temporal_historial(request):
     if request.method == 'POST':
         serialized_objects = request.session.get('my_data')
+        serialized_images_objects = request.session.get('images_data')
         processed_data = json.loads(serialized_objects)
+        images_data = json.loads(serialized_images_objects)
         del request.session['my_data']
 
         form_data = request.POST
@@ -833,6 +874,27 @@ def temporal_historial(request):
                     template_name='consultas/agregar_consulta.html',
                     context={"multiple":'true'}
                 )
+        index = 0
+        #--------------- SE GUARDAN LAS IMAGENES
+        for images in images_data:
+            for img in images:
+                content = base64.b64decode(img["content"])
+                filename = img["filename"]
+
+                content_file = ContentFile(content, name=filename)    
+                image_object = {
+                    'reporte': reportes_ids[index],
+                    'image_data': content_file
+                }
+                serializer = ImagesSerializer(data=image_object)
+
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    print(serializer.errors)
+                    print("no es válido")
+            index = index +1
+
 
         messages.success(request, "¡Se ha registrado correctamente al paciente en el sistema! De ahora en adelante podrá acceder a su historial clínico buscando su cédula en el módulo de 'Registros'.")
         target_url = reverse('registroinfo', args=[last_consulta])
@@ -950,20 +1012,16 @@ def reporteInfo(request, param: int):
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(param)
    
     diagnostico_list = []
-    print(matching_result_info)
 
     for diagnostico in matching_result_info:
         normal_columns = []
         anormales_columns = []
         for field in diagnostico._meta.fields:
             if(field.name != "idfetomediciondiagnostico" and field.name != "reporte"):
-                print("NAME", getattr(diagnostico, field.name))
                 if getattr(diagnostico, field.name) != 'None':
                     if getattr(diagnostico, field.name) == 'Normal':
-                        print("normal")
                         normal_columns.append(field.name)
                     else:
-                        print("anormal")
                         anormales_columns.append(field.name)
         diagnostico = { 
             'num_fields': len(normal_columns) + len(anormales_columns), 
@@ -1018,10 +1076,8 @@ def repositorio(request):
         end_date = datetime.now().date()
         start_date = end_date - timedelta(days=90)
         matching_consultas = Consulta.objects.filter(fecha_consulta__range=(start_date, end_date)).order_by('-fecha_consulta')
-        print("aaaaa",matching_consultas)
         for consulta in matching_consultas:
             matching_reporte = Reporte.objects.filter(consultaid=consulta.consultaid).first()
-            print(consulta, matching_reporte)
             diagnostico = FetoMedicionDiagnostico.objects.filter(reporte_id=matching_reporte.idreporte).first()
             obj = {
                 'reporte': matching_reporte,
@@ -1071,7 +1127,6 @@ def reporte_graficos(request, consultaid:int, idreporte:int):
     matching_report = Reporte.objects.filter(idreporte=idreporte).first()
     matching_consulta = Consulta.objects.get(consultaid=consultaid)
     mediciones = get_mediciones()
-    print('wtf mothaskjdkasd')
     mediciones_dict = {
         'hc_hadlock': 1,
         'bpd_hadlock': 2,
@@ -1088,8 +1143,6 @@ def reporte_graficos(request, consultaid:int, idreporte:int):
 
     
     for med, med_id in mediciones_dict.items():
-        # if med_id != 8:
-        print("aqui", med_id, matching_report.ga)
         medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
 
         column_mapping = {
@@ -1108,8 +1161,6 @@ def reporte_graficos(request, consultaid:int, idreporte:int):
         if med not in reporte_data:
             
             if getattr(matching_report, column_mapping.get(med, med)) != '0':
-                # print("--------------------------------")
-                # print(getattr(matching_report, column_mapping.get(med, med)))
         
                 if med_id == 1 or med_id == 2 or med_id == 3 or med_id == 9:
                     medvalue = Medicion.objects.get(ga=matching_report.ga, id_tipo_medicion=med_id)
@@ -1172,14 +1223,11 @@ def reporte_graficos(request, consultaid:int, idreporte:int):
 
 def chart_data_view(request, idpaciente:int,idreporte_id:int, nombreMedicion:str, ga: str, consultaid:int):
     mediciones = get_mediciones()
-    # value_reporte = my_filters.get_field_value(nombreMedicion)
-    print("nombreMedicion", nombreMedicion)
     valores_medicion = Medicion.objects.filter(id_tipo_medicion=mediciones[nombreMedicion])
     matching_report = Reporte.objects.filter(idreporte=idreporte_id).first()
     value_reporte = my_filters.get_field_value(matching_report,nombreMedicion)
         
     if nombreMedicion == 'cm':
-        print("entré en cm")
         values_min = [0] * 26
         values_max = [settings.CM_REF] * 26
         
@@ -1193,18 +1241,13 @@ def chart_data_view(request, idpaciente:int,idreporte_id:int, nombreMedicion:str
     
     
     else:
-        print("entré en otros")
         values_min = [result.valormin for result in valores_medicion]
         if nombreMedicion == 'cereb_hill':
             values_max = [51] * 26
         else:
             values_max = [result.valorinter for result in valores_medicion]
             
-        
-    values_ga = [result.ga for result in valores_medicion]
-
-    print (values_min)
-    
+    values_ga = [result.ga for result in valores_medicion]    
     
     hist_reportes = []
     #------------ OBTENER TODAS LAS CONSULTAS DEL PACIENTE
@@ -1425,8 +1468,6 @@ def reporte_pdf(request, consultaid: int, reporteid: int):
     
     # Information
     matching_consulta, matching_patient, matching_report, matching_result_info = get_matching_consulta(consultaid)
-    print('consulta id', consultaid)
-    print('reporteid id', reporteid)
     reporte = None
     diag = None
     for r in matching_report:
@@ -1436,9 +1477,7 @@ def reporte_pdf(request, consultaid: int, reporteid: int):
     for d in matching_result_info:
         if d.reporte.idreporte == reporte.idreporte:
             diag = d
-            print(diag)
             break
-    print('diag', diag)
 
     medico = Personalsalud.objects.get(cedulamed=matching_consulta.medConsulta_id)
 
@@ -1674,13 +1713,10 @@ def upload_images(request):
     if request.method == 'POST':
         for file_data in request.FILES.getlist('image_data'):
             form = ImageUploadForm(request.POST, request.FILES)
-            print("form", form)
             if form.is_valid():
-                    print("filedata", file_data)
                     image = form.save(commit=False)
                     # image.image_data = request.FILES['image_data'].read()
                     image.image_data = file_data.read()
-                    print(type(image))
                     image.save()
         return redirect('/profile')
     else:
@@ -1688,7 +1724,6 @@ def upload_images(request):
         return render(request, 'consultas/images.html', {'form': form})
     
 def display_image(request, reporte):
-    print(reporte)
     image = Images.objects.filter(reporte=reporte)
     image_data = []
     for image in image:
