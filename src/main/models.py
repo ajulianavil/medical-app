@@ -182,6 +182,6 @@ class FetoMedicionDiagnostico(models.Model):
         
 class Images(models.Model):
     idimage = models.BigAutoField(primary_key=True)
-    image_data = models.BinaryField()
+    image_data = models.FileField(upload_to='ultrasond_images/')
     reporte = models.ForeignKey(Reporte, models.CASCADE, default="")  # Field name made lowercase.
     

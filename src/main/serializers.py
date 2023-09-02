@@ -60,12 +60,12 @@ class ImagesSerializer(serializers.ModelSerializer):
         model = Images
         fields = ['image_data', 'reporte']
 
-    def create(self, validated_data):
-        image_data = validated_data.pop('image_data')
+    # def create(self, validated_data):
+    #     image_data = validated_data.pop('image_data')
         
-        if isinstance(image_data, ContentFile):
-            validated_data['image_data'] = image_data.read()
-        else:
-            raise serializers.ValidationError("Invalid image data.")
+    #     if isinstance(image_data, ContentFile):
+    #         validated_data['image_data'] = image_data.read()
+    #     else:
+    #         raise serializers.ValidationError("Invalid image data.")
 
-        return super().create(validated_data)
+    #     return super().create(validated_data)

@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views import View
+import requests
 from main.forms import RepositorioFilterForm
 from users.context_processors import current_user
 from main.forms import CreateUserForm, UploadFileForm, ImageUploadForm
@@ -366,7 +367,7 @@ def agregar_consulta(request):
                 content_file = ContentFile(content, name=filename)    
                 image = {
                 'reporte': last_report,
-                'image_data': content_file
+                'image_data': file_data
                 }
                 serializer = ImagesSerializer(data=image)
 
@@ -1649,14 +1650,21 @@ def reporte_pdf(request, consultaid: int, reporteid: int):
 
         for image_obj in image_objects:
             image_data = image_obj.image_data
-            try:
-                image_file = io.BytesIO(image_data)
-                image = Image(image_file, width=4*inch, height=3*inch)  # Adjust width and height as needed
-                elements.append(image)
-                elements.append(spacer_data)
-                
-            except Exception as e:
-                print(f"Error processing image: {e}")
+            response = requests.get(image_data.url)
+            
+            if response.status_code == 200:
+                try:
+                    # image_file = io.BytesIO(image_data)
+                    image_file = io.BytesIO(response.content)
+
+                    image = Image(image_file, width=4*inch, height=3*inch)  # Adjust width and height as needed
+                    elements.append(image)
+                    elements.append(spacer_data)
+                    
+                except Exception as e:
+                    print(f"Error processing image: {e}")
+            else:
+                print(f"Failed to download image from URL")
 
         #Footer
         # Define the page template with the footer
@@ -1726,8 +1734,8 @@ def upload_images(request):
 def display_image(request, reporte):
     image = Images.objects.filter(reporte=reporte)
     image_data = []
-    for image in image:
-        image_data.append(base64.b64encode(image.image_data).decode('utf-8')) 
+    for image in image:        
+        image_data.append(image.image_data.url) 
     return render(request, 'consultas/display_image.html', {'image_data': image_data})
 
 def get(self, request, *args, **kwargs):

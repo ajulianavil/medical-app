@@ -28,7 +28,7 @@
 padding: 50px;">
 </br>
     <h1 style="font-weight: bold; color: #0796D8">Imágenes </h1>
-    <h5 style="font-weight: bold; color: #26283E"> Aquí puede ver todas las imágenes adjuntadas a su reporte. </h5>
+    <h5 style="font-weight: bold; color: #26283E"> Aquí puede ver todas las imágenes adjuntas a su reporte. </h5>
     </br>
         <div id="loading-icon">
             <i class="fa fa-spinner fa-spin"></i>
@@ -41,8 +41,8 @@ padding: 50px;">
                     <div class="row">
                 {% endif %}
                 <div class="col-md-4">
-                    <a href="data:image/jpeg;base64,{{ img }}"  data-lightbox="example-gallery" class="col-sm-4">
-                        <img style="width: 200px;" src="data:image/jpeg;base64,{{ img }}" alt="Image" class="img-fluid">
+                    <a href="{{ img }}"  data-lightbox="example-gallery" class="col-sm-4">
+                        <img style="width: 200px;" src="{{ img }}" alt="Image" class="img-fluid">
                     </a>
                     <p>Imagen: {{ forloop.counter }}</p>
                 </div>

@@ -8,3 +8,5 @@ numpy
 reportlab
 django-material
 chartjs
+boto3 
+django-storages

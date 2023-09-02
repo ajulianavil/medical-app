@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'numpy',
     'material',
-    'chartjs'
+    'chartjs',
+    'storages',
 ]
 
 REST_FRAMEWORK = {
@@ -207,3 +208,13 @@ VT_MAX = 15
 
 AFI_MIN = 5
 AFI_MAX = 24
+
+AWS_ACCESS_KEY_ID = 'AKIA4P273VC3NWF2W67I'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'diagnosisapp-bucket'
+# AWS_S3_SIGNATURE_NAME = 's3v4',
+AWS_S3_REGION_NAME = 'us-east-2'
+#AWS_S3_FILE_OVERWRITE = False
+# AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_QUERYSTRING_AUTH = False

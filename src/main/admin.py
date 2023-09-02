@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Hospital, Personalsalud, Consulta
+from .models import Hospital, Images, Personalsalud, Consulta
 # Register your models here.
 class PersonalAdmin(admin.ModelAdmin) :
     fieldsets = [
@@ -21,5 +21,6 @@ class ConsultaAdmin(admin.ModelAdmin) :
 admin.site.register(Hospital, HospitalAdmin)
 admin.site.register(Personalsalud,PersonalAdmin)
 admin.site.register(Consulta,ConsultaAdmin)
+admin.site.register(Images)
 
 
