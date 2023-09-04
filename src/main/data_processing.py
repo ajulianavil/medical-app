@@ -171,7 +171,7 @@ def process_data(file):
     
     
     
-    return insert_paciente, reporte_info, convertedDate, med_name, med_lastname, comments
+    return insert_paciente, reporte_info, convertedDate, med_name, med_lastname, comments, ga_weeks
 
     
 def ConvertDateTime(studydate, studytime):

@@ -55,17 +55,19 @@ class FetoSerializer(serializers.ModelSerializer):
         
 class ImagesSerializer(serializers.ModelSerializer):
     image_data = serializers.FileField(required=True)
-
+    
     class Meta:
         model = Images
         fields = ['image_data', 'reporte']
-
-    # def create(self, validated_data):
-    #     image_data = validated_data.pop('image_data')
         
-    #     if isinstance(image_data, ContentFile):
-    #         validated_data['image_data'] = image_data.read()
-    #     else:
-    #         raise serializers.ValidationError("Invalid image data.")
-
-    #     return super().create(validated_data)
+    def save(self):
+        image_data = self.validated_data['image_data']
+        reporte = self.validated_data['reporte']
+        gaweeks = self.context.get('gaweeks')
+        
+        mymodel = Images(image_data=image_data, reporte=reporte)
+        options_dict = {"Metadata": {"x-amz-meta-sexo": "", 
+                                    "x-amz-meta-ga": gaweeks}
+                        } 
+        mymodel.image_data.storage.object_parameters.update(options_dict)
+        mymodel.save()

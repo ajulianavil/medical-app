@@ -364,12 +364,15 @@ def agregar_consulta(request):
             for file_data in request.FILES.getlist('image_data'):
                 content = file_data.read()
                 filename = file_data.name
+                gaweeks = processedData[6]
                 content_file = ContentFile(content, name=filename)    
                 image = {
                 'reporte': last_report,
                 'image_data': file_data
                 }
-                serializer = ImagesSerializer(data=image)
+                
+                context = {'gaweeks': gaweeks}
+                serializer = ImagesSerializer(data=image, context=context)
 
                 if serializer.is_valid():
                     serializer.save()
