@@ -65,7 +65,10 @@ class ImagesSerializer(serializers.ModelSerializer):
         reporte = self.validated_data['reporte']
         gaweeks = self.context.get('gaweeks')
         
+        print("--------------------------------------------")
+        print("imagedata", image_data, "reporte", reporte, "gaweeks", gaweeks)
         mymodel = Images(image_data=image_data, reporte=reporte)
+        print("model", mymodel)
         options_dict = {"Metadata": {"x-amz-meta-sexo": "", 
                                     "x-amz-meta-ga": gaweeks}
                         } 

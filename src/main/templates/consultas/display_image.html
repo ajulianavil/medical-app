@@ -36,6 +36,7 @@ padding: 50px;">
     </p>
     <div class="row justify-content-center">
         <div class="col-md-8">
+            {% if not image_data %} No hay imágenes para mostrar {%endif%}
             {% for img in image_data %}
                 {% if forloop.counter0|divisibleby:3 %}
                     <div class="row">

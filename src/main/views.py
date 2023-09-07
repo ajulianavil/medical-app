@@ -673,18 +673,24 @@ def agregar_consulta_multiple(request):
                         
                     index = 0
                     #--------------- SE GUARDAN LAS IMAGENES
+                    print("hasta aquí todo bien")
                     for images in images_data:
                         for img in images:
+                            print("images")
                             content = img.read()
                             filename = img.name
+                            gaweeks = processedData[6]
                             content_file = ContentFile(content, name=filename)    
                             image_object = {
                                 'reporte': reportes_ids[index],
                                 'image_data': content_file
                             }
-                            serializer = ImagesSerializer(data=image_object)
-
+                            
+                            context = {'gaweeks': gaweeks}
+                            serializer = ImagesSerializer(data=image_object, context=context)
+                            print("serializador", serializer)
                             if serializer.is_valid():
+                                print("si es válido")
                                 serializer.save()
                             else:
                                 print(serializer.errors)
@@ -717,7 +723,7 @@ def agregar_consulta_multiple(request):
 
             except Exception as e:
                 print(e)
-                messages.error(request, 'Por favor seleccione un archivo')
+                messages.error(request, 'Por favor seleccione un archivoooooo')
                 return render(
                     request=request,
                     template_name='consultas/agregar_consulta.html',
@@ -756,6 +762,7 @@ def temporal_historial(request):
 
         last_consulta = None
         #--------------- SE CREA LA CONSULTA
+        print("--------->>>>", processed_data)
         consulta = None
         fullDate = processed_data[0][2]
         med_name =  processed_data[0][3]
@@ -884,12 +891,14 @@ def temporal_historial(request):
             for img in images:
                 content = base64.b64decode(img["content"])
                 filename = img["filename"]
-
+                # gaweeks = last_report
+                
                 content_file = ContentFile(content, name=filename)    
                 image_object = {
                     'reporte': reportes_ids[index],
                     'image_data': content_file
                 }
+                # context = {'gaweeks': gaweeks}
                 serializer = ImagesSerializer(data=image_object)
 
                 if serializer.is_valid():
