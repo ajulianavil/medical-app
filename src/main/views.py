@@ -746,6 +746,8 @@ def temporal_historial(request):
         serialized_images_objects = request.session.get('images_data')
         processed_data = json.loads(serialized_objects)
         images_data = json.loads(serialized_images_objects)
+        
+        print("PROCESS", processed_data)
         del request.session['my_data']
 
         form_data = request.POST
@@ -887,6 +889,8 @@ def temporal_historial(request):
                 )
         index = 0
         #--------------- SE GUARDAN LAS IMAGENES
+        gaweeks = processed_data[0][1]['ga']
+        print("ga", gaweeks)
         for images in images_data:
             for img in images:
                 content = base64.b64decode(img["content"])
@@ -898,8 +902,8 @@ def temporal_historial(request):
                     'reporte': reportes_ids[index],
                     'image_data': content_file
                 }
-                # context = {'gaweeks': gaweeks}
-                serializer = ImagesSerializer(data=image_object)
+                context = {'gaweeks': gaweeks}
+                serializer = ImagesSerializer(data=image_object, context=context)
 
                 if serializer.is_valid():
                     serializer.save()
