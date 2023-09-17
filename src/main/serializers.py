@@ -71,7 +71,7 @@ class ImagesSerializer(serializers.ModelSerializer):
         print("model", mymodel)
         options_dict = {"Metadata": {"sexo": "", 
                                     "ga": gaweeks,
-                                    "tipoexamen": "Neurosonografia"}
+                                    "tipo_examen": "Neurosonografia"}
                         } 
         mymodel.image_data.storage.object_parameters.update(options_dict)
         mymodel.save()
