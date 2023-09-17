@@ -1,6 +1,9 @@
 from django.conf import settings
+from django.shortcuts import render
 import numpy as np
 import re
+from django.contrib import messages
+
 
 from main.models import Medicion, Tipomedicion
 
@@ -27,151 +30,157 @@ def process_data(file):
     afi_sum = None
     med_name = None
     med_lastname = None
+    comments = ""
+    insert_paciente = {}
+    reporte_info = {}
     
     count = 0
-    for row_bytes in file_readed:
-        row = row_bytes.decode("utf-8") 
-        if ('STUDYDATE' in row):
-            studydate = row.strip().split(" ")[1]
-        elif ('STUDYTIME' in row):
-            studytime = row.strip().split(" ")[1]
-        elif ('HOSPITAL' in row):
-            hospital = row.strip().split(" ")[1]
-            hospital = hospital[1:]
-            hospital = hospital[:-1]
-        elif ('PERFORMING_PH' in row):
-            med_name = row.strip().split(" ")[1]
-            med_name = med_name[1:]
-            med_lastname = row.strip().split(" ")[2]
-            med_lastname = med_lastname[:-1]
-        elif ('PATNAME' in row):
-            pat_fullname = row.strip().split(" ")[1]
-            pat_fullname = row.strip().split(", ")
-            pat_name = pat_fullname[1][:-1]
-            pat_lastname = pat_fullname[0].split(" ")[1][1:]
-        elif ('PATID' in row):
-            pat_id = row.strip().split(" ")[1]
-            pat_id = pat_id[1:]
-            pat_id = pat_id[:-1]
-        elif ('GESTATIONS' in row):
-            num_gesta = row.strip().split(" ")[1]
-        elif ('CLINICAL_LMP' in row):
-            lmp = row.strip().split(" ")[1]
-        elif ('CLINICAL_GA' in row):
-            clinical_ga = row.strip().split(" ")
-            ga_weeks = clinical_ga[1][:-1]
-            ga_days = clinical_ga[2][:-1]
-            clinical_ga = ga_weeks+" "+ga_days
-        elif ('CLINICAL_EDC' in row):
-            CLINICAL_EDC = row.strip().split(" ")[1]
-        elif ('EFW_HADLOCK' in row):
-            EFW = row.strip().split(" ")[1] # Estimated Fetal Weight
+    try:
+        for row_bytes in file_readed:
+            row = row_bytes.decode("utf-8") 
+            if ('STUDYDATE' in row):
+                studydate = row.strip().split(" ")[1]
+            elif ('STUDYTIME' in row):
+                studytime = row.strip().split(" ")[1]
+            elif ('HOSPITAL' in row):
+                hospital = row.strip().split(" ")[1]
+                hospital = hospital[1:]
+                hospital = hospital[:-1]
+            elif ('PERFORMING_PH' in row):
+                med_name = row.strip().split(" ")[1]
+                med_name = med_name[1:]
+                med_lastname = row.strip().split(" ")[2]
+                med_lastname = med_lastname[:-1]
+            elif ('PATNAME' in row):
+                pat_fullname = row.strip().split(" ")[1]
+                pat_fullname = row.strip().split(", ")
+                pat_name = pat_fullname[1][:-1]
+                pat_lastname = pat_fullname[0].split(" ")[1][1:]
+            elif ('PATID' in row):
+                pat_id = row.strip().split(" ")[1]
+                pat_id = pat_id[1:]
+                pat_id = pat_id[:-1]
+            elif ('GESTATIONS' in row):
+                num_gesta = row.strip().split(" ")[1]
+            elif ('CLINICAL_LMP' in row):
+                lmp = row.strip().split(" ")[1]
+            elif ('CLINICAL_GA' in row):
+                clinical_ga = row.strip().split(" ")
+                ga_weeks = clinical_ga[1][:-1]
+                ga_days = clinical_ga[2][:-1]
+                clinical_ga = ga_weeks+" "+ga_days
+            elif ('CLINICAL_EDC' in row):
+                CLINICAL_EDC = row.strip().split(" ")[1]
+            elif ('EFW_HADLOCK' in row):
+                EFW = row.strip().split(" ")[1] # Estimated Fetal Weight
+            else:
+                not_found_pacient = False
+                            
+        count += 1
+        
+        error = []
+        if not_found_pacient == True:
+            error.append('No se encontró información del paciente')
         else:
-            not_found_pacient = False
-                        
-    count += 1
-    
-    error = []
-    if not_found_pacient == True:
-        error.append('No se encontró información del paciente')
-    else:
-        if studydate and studytime:
-            convertedDate = ConvertDateTime(studydate, studytime)
-        else:
-            # Handle the case when studydate or studytime is not defined or empty
-            convertedDate = None  # Or any appropriate handling you prefer
+            if studydate and studytime:
+                convertedDate = ConvertDateTime(studydate, studytime)
+            else:
+                # Handle the case when studydate or studytime is not defined or empty
+                convertedDate = None  # Or any appropriate handling you prefer
 
-        insert_paciente = {
-        'cedulapac': pat_id,
-        'apellido_paterno': pat_lastname,
-        'nombreuno':pat_name,
-        'numgestacion':num_gesta,
-        'lmp': lmp
+            insert_paciente = {
+            'cedulapac': pat_id,
+            'apellido_paterno': pat_lastname,
+            'nombreuno':pat_name,
+            'numgestacion':num_gesta,
+            'lmp': lmp
+            }
+        
+        count = 0
+        flag = False
+        for row_bytes in file_readed:
+            line = row_bytes.decode("utf-8") 
+        # BIORBITAL DIAMETER Diámetro bi-orbitario externo
+            if ('BEGIN FETALBIO' in line):
+                flag = True
+            if ('END FETALBIO' in line):
+                False
+                        
+            if flag:
+                if ('BOD_JEANTY' in line):
+                    BOD_JEANTY = line.strip().split("|")
+                    BOD_JEANTY = BOD_JEANTY[:-1]
+                    BOD_JEANTY = BOD_JEANTY[0].split("=")[1].split(" ")[0] #1
+                    BOD_JEANTY = (float(BOD_JEANTY)*10) #To mm
+                # diámetro transverso del cerebelo
+                if ('CEREB_HILL' in line):
+                    CEREB_HILL = line.strip().split("|")
+                    CEREB_HILL = CEREB_HILL[:-1]
+                    cereb_hill_1 = CEREB_HILL[0].split("=")[1].split(" ")[0] #1
+                    cereb_hill_1 = np.round((float(cereb_hill_1)*10), decimals=2) #To mm
+                # BIPARIETAL DIAMETER Diametro Biparietal (Distancia en milímetros entre ambos huesos parietales de la cabeza del bebé)
+                if ('BPD_HADLOCK' in line):
+                    BPD_HADLOCK = line.strip().split("|")
+                    BPD_HADLOCK = BPD_HADLOCK[:-1]
+                    bpd_hadlock_1 = BPD_HADLOCK[0].split("=")[1].split(" ")[0] #1
+                    bpd_hadlock_1 = np.round((float(bpd_hadlock_1)*10), decimals=2) #To mm
+                # CISTERNA MAGNA
+                if ('CM' in line):
+                    CM = line.strip().split("|")
+                    CM = CM[:-1]
+                    cm_1 = CM[0].split("=")[1].split(" ")[0] #1
+                # CAVUM SEPTI PELLUCIDI
+                if ('CSP' in line):
+                    CSP = line.strip().split("|")
+                    CSP = CSP[:-1]
+                    csp_1 = CSP[0].split("=")[1].split(" ")[0] #1
+                # HEAD CIRCUMFERENCE
+                if ('HC_HADLOCK' in line):
+                    HC_HADLOCK = line.strip().split("|")
+                    HC_HADLOCK = HC_HADLOCK[:-1]
+                    hc_hadlock_1 = HC_HADLOCK[0].split("=")[1].split(" ")[0] #1
+                    hc_hadlock_1 = np.round((float(hc_hadlock_1)*10), decimals=2) #To mm
+                # Va Anterior Ventricle
+                if ('Va' in line):
+                    Va = line.strip().split("|")
+                    Va = Va[:-1]
+                    va_1= Va[0].split("=")[1].split(" ")[0] #1
+                # Vp Posterior ventricle
+                if ('Vp' in line):
+                    Vp = line.strip().split("|")
+                    Vp = Vp[:-1]
+                    vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
+                if ('AFI' in line):
+                    afi = line.strip().split("|")
+                    afi = afi[:-1]
+                    afi_sum = afi[4].split("=")[1].split(" ")[0]
+            if line.startswith('COMMENT'):
+                try:
+                    text = re.search(r'"([^"]*)"', line).group(1)
+                    comments = re.sub(r'\\n', ' - ', text)
+                except:
+                    comments = None
+                
+        reporte_info = {
+            'efw': EFW,
+            'edb': CLINICAL_EDC,
+            'ga': ga_weeks,
+            'csp_1': csp_1,
+            'cm_1': cm_1,
+            'hc_hadlock_1': hc_hadlock_1,
+            'bpd_hadlock_1': bpd_hadlock_1,
+            'cereb_hill_1': cereb_hill_1,
+            'va_1': va_1,
+            'vp_1': vp_1,
+            'ga_days': ga_days,
+            'afi': afi_sum
         }
-    
-    count = 0
-    flag = False
-    for row_bytes in file_readed:
-        line = row_bytes.decode("utf-8") 
-    # BIORBITAL DIAMETER Diámetro bi-orbitario externo
-        if ('BEGIN FETALBIO' in line):
-            flag = True
-        if ('END FETALBIO' in line):
-            False
-                    
-        if flag:
-            if ('BOD_JEANTY' in line):
-                BOD_JEANTY = line.strip().split("|")
-                BOD_JEANTY = BOD_JEANTY[:-1]
-                BOD_JEANTY = BOD_JEANTY[0].split("=")[1].split(" ")[0] #1
-                BOD_JEANTY = (float(BOD_JEANTY)*10) #To mm
-            # diámetro transverso del cerebelo
-            if ('CEREB_HILL' in line):
-                CEREB_HILL = line.strip().split("|")
-                CEREB_HILL = CEREB_HILL[:-1]
-                cereb_hill_1 = CEREB_HILL[0].split("=")[1].split(" ")[0] #1
-                cereb_hill_1 = np.round((float(cereb_hill_1)*10), decimals=2) #To mm
-            # BIPARIETAL DIAMETER Diametro Biparietal (Distancia en milímetros entre ambos huesos parietales de la cabeza del bebé)
-            if ('BPD_HADLOCK' in line):
-                BPD_HADLOCK = line.strip().split("|")
-                BPD_HADLOCK = BPD_HADLOCK[:-1]
-                bpd_hadlock_1 = BPD_HADLOCK[0].split("=")[1].split(" ")[0] #1
-                bpd_hadlock_1 = np.round((float(bpd_hadlock_1)*10), decimals=2) #To mm
-            # CISTERNA MAGNA
-            if ('CM' in line):
-                CM = line.strip().split("|")
-                CM = CM[:-1]
-                cm_1 = CM[0].split("=")[1].split(" ")[0] #1
-            # CAVUM SEPTI PELLUCIDI
-            if ('CSP' in line):
-                CSP = line.strip().split("|")
-                CSP = CSP[:-1]
-                csp_1 = CSP[0].split("=")[1].split(" ")[0] #1
-            # HEAD CIRCUMFERENCE
-            if ('HC_HADLOCK' in line):
-                HC_HADLOCK = line.strip().split("|")
-                HC_HADLOCK = HC_HADLOCK[:-1]
-                hc_hadlock_1 = HC_HADLOCK[0].split("=")[1].split(" ")[0] #1
-                hc_hadlock_1 = np.round((float(hc_hadlock_1)*10), decimals=2) #To mm
-            # Va Anterior Ventricle
-            if ('Va' in line):
-                Va = line.strip().split("|")
-                Va = Va[:-1]
-                va_1= Va[0].split("=")[1].split(" ")[0] #1
-            # Vp Posterior ventricle
-            if ('Vp' in line):
-                Vp = line.strip().split("|")
-                Vp = Vp[:-1]
-                vp_1 = Vp[0].split("=")[1].split(" ")[0] #1
-            if ('AFI' in line):
-                afi = line.strip().split("|")
-                afi = afi[:-1]
-                afi_sum = afi[4].split("=")[1].split(" ")[0]
-        if line.startswith('COMMENT'):
-            try:
-                text = re.search(r'"([^"]*)"', line).group(1)
-                comments = re.sub(r'\\n', ' - ', text)
-            except:
-                comments = None
-            
-    reporte_info = {
-        'efw': EFW,
-        'edb': CLINICAL_EDC,
-        'ga': ga_weeks,
-        'csp_1': csp_1,
-        'cm_1': cm_1,
-        'hc_hadlock_1': hc_hadlock_1,
-        'bpd_hadlock_1': bpd_hadlock_1,
-        'cereb_hill_1': cereb_hill_1,
-        'va_1': va_1,
-        'vp_1': vp_1,
-        'ga_days': ga_days,
-        'afi': afi_sum
-    }
-    
-    
-    
-    return insert_paciente, reporte_info, convertedDate, med_name, med_lastname, comments, ga_weeks
+        
+        
+        return insert_paciente, reporte_info, convertedDate, med_name, med_lastname, comments
+    except Exception as e:
+        # Handle the exception
+        print(f"An error occurred: {e}")
 
     
 def ConvertDateTime(studydate, studytime):

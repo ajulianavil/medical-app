@@ -364,8 +364,9 @@ def agregar_consulta(request):
             for file_data in request.FILES.getlist('image_data'):
                 content = file_data.read()
                 filename = file_data.name
-                gaweeks = processedData[6]
+                gaweeks = processedData[1]['ga']
                 content_file = ContentFile(content, name=filename)    
+                
                 image = {
                 'reporte': last_report,
                 'image_data': file_data
@@ -673,13 +674,12 @@ def agregar_consulta_multiple(request):
                         
                     index = 0
                     #--------------- SE GUARDAN LAS IMAGENES
-                    print("hasta aquí todo bien")
                     for images in images_data:
                         for img in images:
                             print("images")
                             content = img.read()
                             filename = img.name
-                            gaweeks = processedData[6]
+                            gaweeks = processedData[1]['ga']
                             content_file = ContentFile(content, name=filename)    
                             image_object = {
                                 'reporte': reportes_ids[index],
@@ -890,12 +890,10 @@ def temporal_historial(request):
         index = 0
         #--------------- SE GUARDAN LAS IMAGENES
         gaweeks = processed_data[0][1]['ga']
-        print("ga", gaweeks)
         for images in images_data:
             for img in images:
                 content = base64.b64decode(img["content"])
                 filename = img["filename"]
-                # gaweeks = last_report
                 
                 content_file = ContentFile(content, name=filename)    
                 image_object = {
@@ -1276,11 +1274,19 @@ def chart_data_view(request, idpaciente:int,idreporte_id:int, nombreMedicion:str
     semanas_gestacion = len(values_ga)
     values_historicos = [None] * semanas_gestacion
     index = 0
+    print("len", len(reporte))
+    print("hist_reportes", hist_reportes)
+    print("semanas_gestacion", semanas_gestacion)
+    
+    
     for reporte in hist_reportes:
         if(len(reporte) < 2 ):
             valor_medicion =  my_filters.get_field_value(reporte[0],nombreMedicion)
+            print("valor", valor_medicion)
             reporte_ga = reporte[0].ga
+            print("re", reporte_ga)
             index = values_ga.index(int(reporte_ga))
+            print("index", index)
             values_historicos[index] = valor_medicion
 
     data = {

@@ -84,7 +84,7 @@ def get_ref_values(reporte, medicion):
         prefixed_attr = medicion + '_1'
         value = getattr(reporte_value, prefixed_attr)
         
-    if idMedicion == 1 or idMedicion == 2 or idMedicion == 3 or idMedicion == 9:
+    if idMedicion == 1 or idMedicion == 2 or idMedicion == 3:
         try:
             med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
         
@@ -135,6 +135,19 @@ def get_ref_values(reporte, medicion):
         
         if float(value) > float(settings.AFI_MAX):
             return   ' en el rango > ' + str(settings.AFI_MAX)
+        
+    if idMedicion == 9:
+        try:
+            med = Medicion.objects.get(id_tipo_medicion=idMedicion, ga=reporte.ga)
+
+            print(med, med.valordev, value, med.valorinter)
+            if float(med.valordev) < float(value) < float(med.valorinter):
+                return ' en el rango ' + str(med.valormin) + ' - ' + str(med.valorinter)
+            else:
+                return ' fuera del rango ' + str(med.valordev) + ' - ' + str(med.valorinter)
+        except Medicion.DoesNotExist:
+            med = None
+            return '(No se hallaron valores de referencia)'
         
     
     
