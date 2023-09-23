@@ -73,7 +73,7 @@
                                     <div class="right-div">
                                         {% for feto in fetos %}
                                             <div class="feto-item">
-                                                <p class="radio-label">Feto {{forloop.counter }}</p> <input class="radio-input"  type="radio" id="radio_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" name="{{ forloop.parentloop.counter }}" value="{{ feto.idfeto }}" onclick="handleRadioButton(this)">
+                                                <p class="radio-label">Feto {{forloop.counter }}</p> <input class="radio-input" type="radio" id="radio_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" name="{{ forloop.parentloop.counter }}" value="{{ feto.idfeto }}" onclick="handleRadioButton(this)">
                                             </div>
                                         {% endfor %}
                                     </div>

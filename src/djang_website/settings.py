@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '(c@9=wl&3=c#nm@=5#hn$#dpw5zqm0vvmojfcr!d7%&7&ofz2n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -73,7 +73,6 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -161,17 +160,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
-STATIC_TMP= os.path.join(BASE_DIR,'static')
 STATIC_URL = '/static/'
 
-os.makedirs(STATIC_TMP, exist_ok=True)
-os.makedirs(STATIC_ROOT, exist_ok=True)
-
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static')
+    BASE_DIR / "main/static",
 ]
-
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -225,5 +218,3 @@ AWS_S3_REGION_NAME = 'us-east-2'
 # AWS_S3_VERITY = True
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_QUERYSTRING_AUTH = False
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
