@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(c@9=wl&3=c#nm@=5#hn$#dpw5zqm0vvmojfcr!d7%&7&ofz2n'
+SECRET_KEY = os.getenv("SECRET_KEY"),
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -73,6 +74,7 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -111,13 +113,17 @@ WSGI_APPLICATION = 'djang_website.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+load_dotenv()
+
+ 
 DATABASES={
    'default':{
       'ENGINE':'django.db.backends.postgresql',
-      'NAME':'postgres',
-      'USER':'postgres',
-      'PASSWORD':'adminuis123#',
-      'HOST':'db.ewkdqrafscbgapztsovm.supabase.co',
+      'NAME': os.getenv("NAME"),
+      'USER': os.getenv("USER"),
+      'PASSWORD': os.getenv("PASSWORD"),
+      'HOST': os.getenv("HOST"),
       'PORT':'5432',
    }
 }
@@ -160,11 +166,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+# STATIC_URL = '/static/'
+
+# STATICFILES_DIRS = [
+#     BASE_DIR / "main/static",
+# ]
+
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+STATIC_TMP = os.path.join(BASE_DIR,'static')
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / "main/static",
-]
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -209,12 +221,46 @@ VT_MAX = 15
 AFI_MIN = 5
 AFI_MAX = 24
 
-AWS_ACCESS_KEY_ID = 'AKIA4P273VC3NWF2W67I'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'diagnosisapp-bucket'
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("diagnosisapp-bucket")
 # AWS_S3_SIGNATURE_NAME = 's3v4',
 AWS_S3_REGION_NAME = 'us-east-2'
+AWS_DEFAULT_ACL = 'public-read'
 #AWS_S3_FILE_OVERWRITE = False
 # AWS_S3_VERITY = True
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_QUERYSTRING_AUTH = False
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+#Heroku Logging
+
+DEBUG_PROPAGATE_EXCEPTIONS = True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters' : {
+        'verbose' : {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'MYAPP': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    }
+}
