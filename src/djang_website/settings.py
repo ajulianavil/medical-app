@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -119,12 +119,12 @@ load_dotenv()
  
 DATABASES={
    'default':{
-      'ENGINE':'django.db.backends.postgresql',
-      'NAME': os.getenv("NAME"),
-      'USER': os.getenv("USER"),
-      'PASSWORD': os.getenv("PASSWORD"),
-      'HOST': os.getenv("HOST"),
-      'PORT':'5432',
+        'ENGINE':'django.db.backends.postgresql',
+        'NAME': os.getenv("NAME"),
+        'USER': os.getenv("USER"),
+        'PASSWORD': os.getenv("PASSWORD"),
+        'HOST': os.getenv("HOST"),
+        'PORT':'5432',
    }
 }
 
@@ -223,14 +223,8 @@ AFI_MAX = 24
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.getenv("diagnosisapp-bucket")
-# AWS_S3_SIGNATURE_NAME = 's3v4',
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = 'us-east-2'
-AWS_DEFAULT_ACL = 'public-read'
-#AWS_S3_FILE_OVERWRITE = False
-# AWS_S3_VERITY = True
-AWS_QUERYSTRING_AUTH = False
-
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

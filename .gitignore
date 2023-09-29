@@ -12,6 +12,9 @@ media
 # Backup files # 
 *.bak 
 
+#Environment variables
+*.env 
+
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml
